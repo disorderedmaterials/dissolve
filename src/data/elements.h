@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "base/enumOptions.h"
 #include "base/serialiser.h"
 #include <string>
 
@@ -134,6 +135,9 @@ enum Element
     Phantom,
     nElements
 };
+// Return EnumOptions for Element
+static EnumOptions<Element> element();
+EnumOptions<Element> getEnumOptions(Element);
 
 // Basic Element Definition (Z, name, symbol)
 class ElementData

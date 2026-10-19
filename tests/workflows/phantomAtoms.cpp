@@ -16,22 +16,20 @@ TEST(PhantomAtomsTest, Basic)
     // Construct the test graph
     TestGraph testGraph;
     const auto nMolecules = 100;
-    testGraph.createConfiguration("Box", {{"species/tetrahedral-argon.toml", nMolecules}}, {20.0, 20.0, 20.0},
-                                  {90.0, 90.0, 90.0});
+    testGraph.createConfiguration("Box", {{testGraph.importSpecies("species/tetrahedral-argon.toml"), nMolecules}},
+                                  {20.0, 20.0, 20.0}, {90.0, 90.0, 90.0});
 
     // Run the graph to set up the configuration
     ASSERT_EQ(testGraph.fetchHead()->run(), NodeConstants::ProcessResult::Success);
     ASSERT_EQ(testGraph.fetchHead()->versionIndex(), 0);
 
     // Grab the species
-    auto speciesNode = dynamic_cast<SpeciesNode *>(testGraph.findNode("TetrahedralArgon"));
-    ASSERT_TRUE(speciesNode);
-    auto &species = speciesNode->species();
+    auto *species = testGraph.findSpecies("TetrahedralArgon");
 
     // Basic species checks
-    EXPECT_EQ(species.nAtoms(), 5);
-    EXPECT_EQ(species.nAtoms(AtomConstants::Presence::Phantom), 4);
-    EXPECT_DOUBLE_EQ(species.mass(), AtomicMass::mass(Elements::Ar));
+    EXPECT_EQ(species->nAtoms(), 5);
+    EXPECT_EQ(species->nAtoms(AtomConstants::Presence::Phantom), 4);
+    EXPECT_DOUBLE_EQ(species->mass(), AtomicMass::mass(Elements::Ar));
 
     // Get the configuration
     auto *cfg = testGraph.fetchHead()->getOutputValue<Configuration *>("Configuration");
@@ -39,11 +37,11 @@ TEST(PhantomAtomsTest, Basic)
 
     // Basic configuration checks
     EXPECT_EQ(cfg->nMolecules(), nMolecules);
-    EXPECT_EQ(cfg->nAtoms(), nMolecules * species.nAtoms());
-    EXPECT_EQ(cfg->nAtoms(AtomConstants::Presence::Phantom), nMolecules * species.nAtoms(AtomConstants::Presence::Phantom));
+    EXPECT_EQ(cfg->nAtoms(), nMolecules * species->nAtoms());
+    EXPECT_EQ(cfg->nAtoms(AtomConstants::Presence::Phantom), nMolecules * species->nAtoms(AtomConstants::Presence::Phantom));
 
     // Check density - should correspond to number density of physical atoms only
-    EXPECT_NEAR(*cfg->atomicDensity(), (nMolecules * species.nAtoms(AtomConstants::Presence::Physical)) / cfg->box().volume(),
+    EXPECT_NEAR(*cfg->atomicDensity(), (nMolecules * species->nAtoms(AtomConstants::Presence::Physical)) / cfg->box().volume(),
                 1.0e-5);
 }
 
@@ -51,7 +49,7 @@ TEST(PhantomAtomsTest, Water)
 {
     // Set up the test graph
     TestGraph testGraph;
-    EXPECT_TRUE(testGraph.createConfiguration("Box", {{"species/water-with-lps.toml", 1000}}, 0.1));
+    EXPECT_TRUE(testGraph.createConfiguration("Box", {{testGraph.importSpecies("species/water-with-lps.toml"), 1000}}, 0.1));
     EXPECT_TRUE(testGraph.appendSetCoordinates("ImportXYZStructure", "xyz/water1000-phantom.xyz"));
 
     // Add correlation function nodes
@@ -62,8 +60,9 @@ TEST(PhantomAtomsTest, Water)
 
     // Add in NeutronSQ
     auto H2O = testGraph.appendNeutronSQ(sqNode, "H2O");
-    auto D2O = testGraph.appendNeutronSQ(sqNode, "D2O", {{"Water", "D2O", 1.0}});
-    auto HDO = testGraph.appendNeutronSQ(sqNode, "5050", {{"Water", "Natural", 1.0}, {"Water", "D2O", 1.0}});
+    auto D2O = testGraph.appendNeutronSQ(sqNode, "D2O", {{testGraph.findSpecies("Water"), "D2O", 1.0}});
+    auto HDO = testGraph.appendNeutronSQ(
+        sqNode, "5050", {{testGraph.findSpecies("Water"), "Natural", 1.0}, {testGraph.findSpecies("Water"), "D2O", 1.0}});
 
     // Add XRaySQ
     auto H2Ox = testGraph.appendXRaySQ(sqNode, "H2Ox", "epsr25/water1000-neutron-xray/PCCPfofq.txt", false);

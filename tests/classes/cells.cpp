@@ -7,6 +7,8 @@
 #include "kernels/energy.h"
 #include "main/dissolve.h"
 #include "math/mathFunc.h"
+#include "nodes/atomicSpecies.h"
+#include "nodes/importSpecies.h"
 #include "nodes/species.h"
 #include "tests/testGraph.h"
 
@@ -16,21 +18,22 @@ TEST(CellsTest, Basic)
 {
     // Set up the test graph
     TestGraph testGraph;
-    ASSERT_TRUE(testGraph.createConfiguration("Box", {{"Ar", 1}, {"species/water-dlpoly.toml", 267}}, 0.1,
-                                              Units::DensityUnits::AtomsPerAngstromUnits));
+    ASSERT_TRUE(testGraph.createConfiguration(
+        "Box", {{testGraph.createAtomicSpecies(Elements::Ar), 1}, {testGraph.importSpecies("species/water-dlpoly.toml"), 267}},
+        0.1, Units::DensityUnits::AtomsPerAngstromUnits));
     ASSERT_TRUE(testGraph.appendSetCoordinates("ImportDLPOLYStructure", "dlpoly/solvated_atom/solvated-argon-rcut5.CONFIG"));
 
     // Set all charge and short-range interaction potentials to zero
-    auto arSpeciesNode = dynamic_cast<SpeciesNode *>(testGraph.findNode("Ar"));
-    ASSERT_TRUE(arSpeciesNode);
-    for (auto &at : arSpeciesNode->species().atomTypes())
+    auto arSpecies = testGraph.findSpecies("Ar");
+    ASSERT_TRUE(arSpecies);
+    for (auto &at : arSpecies->atomTypes())
     {
         at->interactionPotential().setFormAndParameters(ShortRangeFunctions::Form::Undefined, "");
         at->setCharge(0.0);
     }
-    auto waterSpeciesNode = dynamic_cast<SpeciesNode *>(testGraph.findNode("Water"));
-    ASSERT_TRUE(waterSpeciesNode);
-    for (auto &at : waterSpeciesNode->species().atomTypes())
+    auto waterSpecies = testGraph.findSpecies("Water");
+    ASSERT_TRUE(waterSpecies);
+    for (auto &at : waterSpecies->atomTypes())
     {
         at->interactionPotential().setFormAndParameters(ShortRangeFunctions::Form::Undefined, "");
         at->setCharge(0.0);

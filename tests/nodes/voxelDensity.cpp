@@ -19,9 +19,17 @@ class VoxelDensityNodeTest : public ::testing::Test
 
     protected:
     // Set up the test graph
-    void setUp(std::string species, int population, double density, std::string referenceCoordinatesFile)
+    void setUp(std::variant<Elements::Element, std::filesystem::path> species, int population, double density,
+               std::string referenceCoordinatesFile, std::string interactionPotential = "")
     {
-        ASSERT_TRUE(testGraph_.createConfiguration("Box", {{species, population}}, density));
+        if (std::holds_alternative<Elements::Element>(species))
+            ASSERT_TRUE(testGraph_.createConfiguration(
+                "Box",
+                {{testGraph_.createAtomicSpecies(std::get<Elements::Element>(species), interactionPotential), population}},
+                density));
+        else
+            ASSERT_TRUE(testGraph_.createConfiguration(
+                "Box", {{testGraph_.importSpecies(std::get<std::filesystem::path>(species)), population}}, density));
         ASSERT_TRUE(testGraph_.appendSetCoordinates("ImportXYZStructure", referenceCoordinatesFile));
 
         // Add the analysis node to the graph
@@ -33,7 +41,7 @@ class VoxelDensityNodeTest : public ::testing::Test
 
 TEST_F(VoxelDensityNodeTest, Helium)
 {
-    setUp("He", 512, 1.0, "xyz/voxelDensity-helium.xyz");
+    setUp(Elements::He, 512, 1.0, "xyz/voxelDensity-helium.xyz");
 
     const auto binWidth = 0.05;
     auto runCount = 0;

@@ -11,13 +11,14 @@ TEST(AxisAngleNodeTest, Benzene)
 {
     // Set up the test graph
     TestGraph testGraph;
-    ASSERT_TRUE(testGraph.createConfiguration("Box", {{"species/benzene.toml", 3}}, {30.0, 30.0, 30.0}));
+    ASSERT_TRUE(
+        testGraph.createConfiguration("Box", {{testGraph.importSpecies("species/benzene.toml"), 3}}, {30.0, 30.0, 30.0}));
     ASSERT_TRUE(testGraph.appendSetCoordinates("ImportXYZStructure", "xyz/benzene-trio.xyz"));
 
     // Add the analysis module to the iterator
     auto axisAngle = dynamic_cast<AxisAngleNode *>(testGraph.createNode("AxisAngle"));
     ASSERT_TRUE(axisAngle);
-    auto *benzene = testGraph.findNode("Benzene")->getOutputValue<const Species *>("Species");
+    auto *benzene = testGraph.findSpecies("Benzene");
     ASSERT_TRUE(benzene);
     ASSERT_TRUE(axisAngle->setOption<SpeciesSites>("SiteA", {{benzene->findSite("COG")}}));
     ASSERT_TRUE(axisAngle->setOption<SpeciesSites>("SiteB", {{benzene->findSite("COG")}}));

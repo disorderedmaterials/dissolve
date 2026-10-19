@@ -11,6 +11,44 @@
 namespace Elements
 {
 
+// Return EnumOptions for Element
+EnumOptions<Element> elements()
+{
+    return EnumOptions<Element>(
+        "Element", {{Elements::Unknown, "XX"}, {Elements::H, "H"},   {Elements::He, "He"}, {Elements::Li, "Li"},
+                    {Elements::Be, "Be"},      {Elements::B, "B"},   {Elements::C, "C"},   {Elements::N, "N"},
+                    {Elements::O, "O"},        {Elements::F, "F"},   {Elements::Ne, "Ne"}, {Elements::Na, "Na"},
+                    {Elements::Mg, "Mg"},      {Elements::Al, "Al"}, {Elements::Si, "Si"}, {Elements::P, "P"},
+                    {Elements::S, "S"},        {Elements::Cl, "Cl"}, {Elements::Ar, "Ar"}, {Elements::K, "K"},
+                    {Elements::Ca, "Ca"},      {Elements::Sc, "Sc"}, {Elements::Ti, "Ti"}, {Elements::V, "V"},
+                    {Elements::Cr, "Cr"},      {Elements::Mn, "Mn"}, {Elements::Fe, "Fe"}, {Elements::Co, "Co"},
+                    {Elements::Ni, "Ni"},      {Elements::Cu, "Cu"}, {Elements::Zn, "Zn"}, {Elements::Ga, "Ga"},
+                    {Elements::Ge, "Ge"},      {Elements::As, "As"}, {Elements::Se, "Se"}, {Elements::Br, "Br"},
+                    {Elements::Kr, "Kr"},      {Elements::Rb, "Rb"}, {Elements::Sr, "Sr"}, {Elements::Y, "Y"},
+                    {Elements::Zr, "Zr"},      {Elements::Nb, "Nb"}, {Elements::Mo, "Mo"}, {Elements::Tc, "Tc"},
+                    {Elements::Ru, "Ru"},      {Elements::Rh, "Rh"}, {Elements::Pd, "Pd"}, {Elements::Ag, "Ag"},
+                    {Elements::Cd, "Cd"},      {Elements::In, "In"}, {Elements::Sn, "Sn"}, {Elements::Sb, "Sb"},
+                    {Elements::Te, "Te"},      {Elements::I, "I"},   {Elements::Xe, "Xe"}, {Elements::Cs, "Cs"},
+                    {Elements::Ba, "Ba"},      {Elements::La, "La"}, {Elements::Ce, "Ce"}, {Elements::Pr, "Pr"},
+                    {Elements::Nd, "Nd"},      {Elements::Pm, "Pm"}, {Elements::Sm, "Sm"}, {Elements::Eu, "Eu"},
+                    {Elements::Gd, "Gd"},      {Elements::Tb, "Tb"}, {Elements::Dy, "Dy"}, {Elements::Ho, "Ho"},
+                    {Elements::Er, "Er"},      {Elements::Tm, "Tm"}, {Elements::Yb, "Yb"}, {Elements::Lu, "Lu"},
+                    {Elements::Hf, "Hf"},      {Elements::Ta, "Ta"}, {Elements::W, "W"},   {Elements::Re, "Re"},
+                    {Elements::Os, "Os"},      {Elements::Ir, "Ir"}, {Elements::Pt, "Pt"}, {Elements::Au, "Au"},
+                    {Elements::Hg, "Hg"},      {Elements::Tl, "Tl"}, {Elements::Pb, "Pb"}, {Elements::Bi, "Bi"},
+                    {Elements::Po, "Po"},      {Elements::At, "At"}, {Elements::Rn, "Rn"}, {Elements::Fr, "Fr"},
+                    {Elements::Ra, "Ra"},      {Elements::Ac, "Ac"}, {Elements::Th, "Th"}, {Elements::Pa, "Pa"},
+                    {Elements::U, "U"},        {Elements::Np, "Np"}, {Elements::Pu, "Pu"}, {Elements::Am, "Am"},
+                    {Elements::Cm, "Cm"},      {Elements::Bk, "Bk"}, {Elements::Cf, "Cf"}, {Elements::Es, "Es"},
+                    {Elements::Fm, "Fm"},      {Elements::Md, "Md"}, {Elements::No, "No"}, {Elements::Lr, "Lr"},
+                    {Elements::Rf, "Rf"},      {Elements::Db, "Db"}, {Elements::Sg, "Sg"}, {Elements::Bh, "Bh"},
+                    {Elements::Hs, "Hs"},      {Elements::Mt, "Mt"}, {Elements::Ds, "Ds"}, {Elements::Rg, "Rg"},
+                    {Elements::Cn, "Cn"},      {Elements::Nh, "Nh"}, {Elements::Fl, "Fl"}, {Elements::Mc, "Mc"},
+                    {Elements::Lv, "Lv"},      {Elements::Ts, "Ts"}, {Elements::Og, "Og"}, {Elements::Phantom, "Phantom"}});
+}
+
+EnumOptions<Element> getEnumOptions(Element) { return elements(); }
+
 /*
  * Element
  */

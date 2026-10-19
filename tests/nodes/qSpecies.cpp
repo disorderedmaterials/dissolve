@@ -11,17 +11,14 @@ TEST(QSpeciesNodeTest, Simple)
 {
     // Set up the test graph
     TestGraph testGraph;
-    ASSERT_TRUE(testGraph.createConfiguration("Box", {{"Si", 10}, {"O", 11}}, {30.0, 30.0, 30.0}));
+    ASSERT_TRUE(testGraph.createConfiguration(
+        "Box", {{testGraph.createAtomicSpecies(Elements::Si), 10}, {testGraph.createAtomicSpecies(Elements::O), 11}},
+        {30.0, 30.0, 30.0}));
     ASSERT_TRUE(testGraph.appendSetCoordinates("ImportXYZStructure", "xyz/qSpecies-simple.xyz"));
 
     // Grab atomic species and set up simple sites
-    auto *Si = dynamic_cast<SpeciesNode *>(testGraph.findNode("Si"));
-    ASSERT_TRUE(Si);
-    auto &speciesSi = Si->species();
-
-    auto *O = dynamic_cast<SpeciesNode *>(testGraph.findNode("O"));
-    ASSERT_TRUE(O);
-    auto &speciesO = O->species();
+    auto &speciesSi = *testGraph.findSpecies("Si");
+    auto &speciesO = *testGraph.findSpecies("O");
 
     // Add a QSpecies node to the iterator
     auto qSpecies = dynamic_cast<QSpeciesNode *>(testGraph.createNode("QSpecies"));

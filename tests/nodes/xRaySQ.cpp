@@ -11,7 +11,7 @@ TEST(XRaySQNodeTest, WaterReferenceFT)
 {
     // Set up the test graph
     TestGraph testGraph;
-    EXPECT_TRUE(testGraph.createConfiguration("Box", {{"species/water.toml", 1000}}, 0.1));
+    EXPECT_TRUE(testGraph.createConfiguration("Box", {{testGraph.importSpecies("species/water.toml"), 1000}}, 0.1));
     EXPECT_TRUE(testGraph.appendSetCoordinates("ImportEPSRAtoStructure", "epsr25/water1000-neutron/waterbox.ato"));
 
     // Add correlation function nodes

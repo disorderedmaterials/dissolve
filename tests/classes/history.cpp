@@ -2,6 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "math/history.h"
+#include "nodes/atomicSpecies.h"
 #include "nodes/number.h"
 #include "nodes/species.h"
 #include "tests/testGraph.h"
@@ -88,12 +89,12 @@ TEST(History, CustomClass)
 
 TEST(History, CustomClassWithInitialiser)
 {
+    TestGraph graph;
     const auto avgLength = 3;
-    auto Arnode = TestGraph::createAtomicSpecies(Elements::Ar);
-    auto &Ar = Arnode->species();
+    auto Ar = graph.createAtomicSpecies(Elements::Ar);
 
     KeyedVector<const Species *, int> pop;
-    pop.add(&Ar, 100);
+    pop.add(Ar, 100);
 
     History<PartialSet> a(
         [&]()
