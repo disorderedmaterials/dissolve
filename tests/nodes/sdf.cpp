@@ -23,7 +23,7 @@ class SDFNodeWaterTest : public TestGraphFixture
     // Perform graph construction
     void constructGraph() override
     {
-        testGraph_.createConfiguration("Box", {{"species/water-dlpoly.toml", 267}}, 0.1);
+        testGraph_.createConfiguration("Box", {{testGraph_.importSpecies("species/water-dlpoly.toml"), 267}}, 0.1);
 
         // Create trajectory iterator
         auto iterator =
@@ -77,7 +77,7 @@ class SDFNodeBenzeneTest : public TestGraphFixture
     // Perform graph construction
     void constructGraph() override
     {
-        testGraph_.createConfiguration("Box", {{"species/benzene.toml", 181}},
+        testGraph_.createConfiguration("Box", {{testGraph_.importSpecies("species/benzene.toml"), 181}},
                                        {29.925089931000, 29.925089931000, 29.925089931000});
 
         // Create trajectory iterator
