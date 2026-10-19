@@ -650,6 +650,8 @@ template <typename DataClass> class SerialisableParameter : public Parameter<Dat
             else
                 Parameter<DataClass>::data_ = {};
         }
+        else if constexpr (std::is_same_v<DataClass, std::filesystem::path>)
+            Parameter<DataClass>::data_ = toml::find<std::string>(node, "data");
         else if constexpr (Deserialisable::Deserialisible<DataClass>)
             Parameter<DataClass>::data_ = Deserialisable::deser<DataClass>(node.at("data"));
         else
