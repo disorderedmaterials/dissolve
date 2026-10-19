@@ -94,7 +94,7 @@ TEST(History, CustomClassWithInitialiser)
     auto Ar = graph.createAtomicSpecies(Elements::Ar);
 
     KeyedVector<const Species *, int> pop;
-    pop.add(&Ar, 100);
+    pop.add(Ar, 100);
 
     History<PartialSet> a(
         [&]()
