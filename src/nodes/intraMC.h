@@ -28,7 +28,7 @@ class IntraMCNode : public Node
      */
     private:
     // Target configurations
-    Configuration *targetConfiguration_{nullptr};
+    Configuration *configuration_{nullptr};
     // Temperature (K)
     Number temperature_{300, 0.0};
     // Number of attempts to make per move

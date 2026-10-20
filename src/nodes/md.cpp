@@ -12,7 +12,7 @@
 MDNode::MDNode(Graph *parentGraph) : Node(parentGraph)
 {
     // Inputs
-    addInput("Configuration", "Set target configuration for the node", targetConfiguration_)
+    addInput("Configuration", "Set target configuration for the node", configuration_)
         ->setFlags({ParameterBase::Required, ParameterBase::ClearData});
     addInput("NSteps", "Number of MD steps to perform", nSteps_);
 
@@ -35,7 +35,7 @@ MDNode::MDNode(Graph *parentGraph) : Node(parentGraph)
               intramolecularForcesOnly_);
 
     // Outputs
-    addOutput("Configuration", "Output configuration", targetConfiguration_);
+    addOutput("Configuration", "Output configuration", configuration_);
 
     // State data
     addStateData("velocities", velocities_);
@@ -158,36 +158,36 @@ NodeConstants::ProcessResult MDNode::process()
     message("\n");
 
     // Create kernels
-    auto energyKernel = dissolveGraph()->createEnergyKernel(targetConfiguration_);
-    auto forceKernel = dissolveGraph()->createForceKernel(targetConfiguration_);
+    auto energyKernel = dissolveGraph()->createEnergyKernel(configuration_);
+    auto forceKernel = dissolveGraph()->createForceKernel(configuration_);
 
     /*
     if (onlyWhenEnergyStable_)
     {
-        auto stabilityResult = EnergyModule::checkStability(targetConfiguration_);
+        auto stabilityResult = EnergyModule::checkStability(configuration_);
         if (stabilityResult == EnergyModule::NotAssessable)
         {
             return NodeConstants::ProcessResult::Failed;
         }
         else if (stabilityResult == EnergyModule::EnergyUnstable)
         {
-            Messenger::print("Skipping MD for Configuration '{}'.\n", targetConfiguration_->name());
+            Messenger::print("Skipping MD for Configuration '{}'.\n", configuration_->name());
             return NodeConstants::ProcessResult::Unchanged;
         }
     }
     */
 
     // Get temperature from Configuration
-    const auto temperature = targetConfiguration_->temperature();
+    const auto temperature = configuration_->temperature();
 
     // Create arrays
-    std::vector<double> mass(targetConfiguration_->nAtoms(), 0.0);
-    std::vector<Vector3> geometryForces(targetConfiguration_->nAtoms()), pairPotentialForces(targetConfiguration_->nAtoms()),
-        accelerations(targetConfiguration_->nAtoms());
+    std::vector<double> mass(configuration_->nAtoms(), 0.0);
+    std::vector<Vector3> geometryForces(configuration_->nAtoms()), pairPotentialForces(configuration_->nAtoms()),
+        accelerations(configuration_->nAtoms());
 
     // Variables
     auto nCapped = 0;
-    auto &atoms = targetConfiguration_->atoms();
+    auto &atoms = configuration_->atoms();
     double tInstant, ke, tScale;
     Kernel::EnergyResult pe;
 
@@ -198,15 +198,15 @@ NodeConstants::ProcessResult MDNode::process()
     if (!velocities_)
         velocities_.emplace();
     auto &velocities = velocities_.value();
-    if ((randomVelocities_ || velocities.size() != targetConfiguration_->nAtoms()) && !intramolecularForcesOnly_)
+    if ((randomVelocities_ || velocities.size() != configuration_->nAtoms()) && !intramolecularForcesOnly_)
     {
         // Show warning message on array size mismatch
-        if (velocities.size() != targetConfiguration_->nAtoms())
+        if (velocities.size() != configuration_->nAtoms())
             Messenger::warn(
                 "Size of existing velocities array doesn't match the current configuration size - they will be ignored.");
 
         Messenger::print("Random initial velocities will be assigned.\n");
-        velocities.resize(targetConfiguration_->nAtoms(), Vector3());
+        velocities.resize(configuration_->nAtoms(), Vector3());
         for (auto &v : velocities)
         {
             v.set(exp(DissolveMath::random() - 0.5), exp(DissolveMath::random() - 0.5), exp(DissolveMath::random() - 0.5));
@@ -216,7 +216,7 @@ NodeConstants::ProcessResult MDNode::process()
     else if (intramolecularForcesOnly_)
     {
         Messenger::print("Only intramolecular forces will be calculated, so velocities will be zeroes.\n");
-        velocities.resize(targetConfiguration_->nAtoms(), Vector3());
+        velocities.resize(configuration_->nAtoms(), Vector3());
         std::fill(velocities.begin(), velocities.end(), Vector3());
     }
     else
@@ -262,7 +262,7 @@ NodeConstants::ProcessResult MDNode::process()
     std::ostreambuf_iterator<char> out(outfile);
     if (trajectoryFrequency && trajectoryFrequency > 0)
     {
-        std::string trajectoryFile = std::format("{}.md.xyz", targetConfiguration_->name());
+        std::string trajectoryFile = std::format("{}.md.xyz", configuration_->name());
         outfile.open(trajectoryFile, std::ios::app);
         if (!outfile)
         {
@@ -328,7 +328,7 @@ NodeConstants::ProcessResult MDNode::process()
         }
 
         // Update Atom locations
-        targetConfiguration_->updateAtomLocations();
+        configuration_->updateAtomLocations();
 
         // Calculate forces
         if (intramolecularForcesOnly_)
@@ -359,7 +359,7 @@ NodeConstants::ProcessResult MDNode::process()
         }
 
         // Rescale velocities for desired temperature
-        tInstant = ke * 2.0 / (3.0 * targetConfiguration_->nAtoms() * kb);
+        tInstant = ke * 2.0 / (3.0 * configuration_->nAtoms() * kb);
         tScale = sqrt(temperature / tInstant);
         std::transform(velocities.begin(), velocities.end(), velocities.begin(), [tScale](auto &v) { return v * tScale; });
 
@@ -386,7 +386,7 @@ NodeConstants::ProcessResult MDNode::process()
         if (trajectoryFrequency > 0 && (step % trajectoryFrequency == 0))
         {
             // Write number of atoms
-            std::format_to(out, "{}\n", targetConfiguration_->nAtoms());
+            std::format_to(out, "{}\n", configuration_->nAtoms());
 
             // Construct and write header
             std::format_to(out, "Step {} of {}, T = {:10.3e}, ke = {:10.3e}", step, nSteps, tInstant, ke);
@@ -414,7 +414,7 @@ NodeConstants::ProcessResult MDNode::process()
 
     // Increment configuration changeCount
     if (step > 1)
-        targetConfiguration_->notifyAtomicPositionsChanged();
+        configuration_->notifyAtomicPositionsChanged();
 
     /*
      * Calculation End

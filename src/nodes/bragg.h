@@ -33,7 +33,7 @@ class BraggNode : public Node
      */
     private:
     // Target configuration
-    Configuration *targetConfiguration_{nullptr};
+    Configuration *configuration_{nullptr};
     // Number of historical data sets to combine into final reflection data
     std::optional<Number> averagingLength_{5};
     // Bragg intensity scaling factor accounting for number of repeat units in Configuration

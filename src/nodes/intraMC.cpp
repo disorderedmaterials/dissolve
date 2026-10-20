@@ -13,8 +13,7 @@
 IntraMCNode::IntraMCNode(Graph *parentGraph) : Node(parentGraph)
 {
     // Inputs
-    addInput("Configuration", "Set target configuration for the module", targetConfiguration_)
-        ->setFlags({ParameterBase::Required});
+    addInput("Configuration", "Set target configuration for the module", configuration_)->setFlags({ParameterBase::Required});
     addInput("Temperature", "Temperature (K)", temperature_)->setFlags({ParameterBase::Required, ParameterBase::ClearData});
 
     // Options
@@ -29,7 +28,7 @@ IntraMCNode::IntraMCNode(Graph *parentGraph) : Node(parentGraph)
     addOption("TorsionStepSizeMax", "Maximum step size for torsion twists (degrees)", torsionStepSizeMax_);
 
     // Outputs
-    addOutput("Configuration", "Output configuration", targetConfiguration_);
+    addOutput("Configuration", "Output configuration", configuration_);
 
     // State data
     addStateData("BondStepSize", bondStepSize_);
@@ -76,15 +75,15 @@ NodeConstants::ProcessResult IntraMCNode::process()
     message("\n");
 
     // Prepare for energy calculation, generate kernel
-    auto kernel = dissolveGraph()->createEnergyKernel(targetConfiguration_);
+    auto kernel = dissolveGraph()->createEnergyKernel(configuration_);
 
     auto totalDelta = 0.0;
-    const auto &box = targetConfiguration_->box();
+    const auto &box = configuration_->box();
 
     Timer timer;
 
     // Loop over molecules in the configuration
-    for (auto &molecule : targetConfiguration_->molecules())
+    for (auto &molecule : configuration_->molecules())
     {
         // Store the current molecule coordinates
         auto currentCoordinates = molecule->atomCoordinates();
@@ -115,7 +114,7 @@ NodeConstants::ProcessResult IntraMCNode::process()
                     molecule->translate(vji, bond.attachedAtoms(terminus));
 
                     // Update Cell positions of the adjusted Atoms
-                    targetConfiguration_->updateAtomLocations(molecule, bond.attachedAtoms(terminus));
+                    configuration_->updateAtomLocations(molecule, bond.attachedAtoms(terminus));
 
                     // Calculate new energy and delta
                     auto newEnergy = kernel->totalEnergy(*molecule);
@@ -134,7 +133,7 @@ NodeConstants::ProcessResult IntraMCNode::process()
                     {
                         // Revert to the previous coordinates
                         molecule->setAtomCoordinates(currentCoordinates);
-                        targetConfiguration_->updateAtomLocations(molecule, bond.attachedAtoms(terminus));
+                        configuration_->updateAtomLocations(molecule, bond.attachedAtoms(terminus));
                     }
                 }
             }
@@ -165,7 +164,7 @@ NodeConstants::ProcessResult IntraMCNode::process()
                         angle.attachedAtoms(terminus));
 
                     // Update Cell positions of the adjusted Atoms
-                    targetConfiguration_->updateAtomLocations(molecule, angle.attachedAtoms(terminus));
+                    configuration_->updateAtomLocations(molecule, angle.attachedAtoms(terminus));
 
                     // Calculate new energy and delta
                     auto newEnergy = kernel->totalEnergy(*molecule);
@@ -184,7 +183,7 @@ NodeConstants::ProcessResult IntraMCNode::process()
                     {
                         // Revert to the previous coordinates
                         molecule->setAtomCoordinates(currentCoordinates);
-                        targetConfiguration_->updateAtomLocations(molecule, angle.attachedAtoms(terminus));
+                        configuration_->updateAtomLocations(molecule, angle.attachedAtoms(terminus));
                     }
                 }
             }
@@ -216,7 +215,7 @@ NodeConstants::ProcessResult IntraMCNode::process()
                         terminus == 0 ? j->r() : k->r(), torsion.attachedAtoms(terminus));
 
                     // Update Cell positions of the adjusted Atoms
-                    targetConfiguration_->updateAtomLocations(molecule, torsion.attachedAtoms(terminus));
+                    configuration_->updateAtomLocations(molecule, torsion.attachedAtoms(terminus));
 
                     // Calculate new energy and delta
                     auto newEnergy = kernel->totalEnergy(*molecule);
@@ -235,7 +234,7 @@ NodeConstants::ProcessResult IntraMCNode::process()
                     {
                         // Revert to the previous coordinates
                         molecule->setAtomCoordinates(currentCoordinates);
-                        targetConfiguration_->updateAtomLocations(molecule, torsion.attachedAtoms(terminus));
+                        configuration_->updateAtomLocations(molecule, torsion.attachedAtoms(terminus));
                     }
                 }
             }
@@ -279,7 +278,7 @@ NodeConstants::ProcessResult IntraMCNode::process()
 
     // Mark the configuration as having been modified
     if ((nBondMovesAccepted > 0) || (nAngleMovesAccepted > 0) || (nTorsionMovesAccepted > 0))
-        targetConfiguration_->notifyAtomicPositionsChanged();
+        configuration_->notifyAtomicPositionsChanged();
 
     return NodeConstants::ProcessResult::Success;
 }

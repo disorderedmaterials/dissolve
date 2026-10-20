@@ -10,10 +10,10 @@
 IntraDistanceNode::IntraDistanceNode(Graph *parentGraph) : Node(parentGraph)
 {
     // Inputs
-    addInput("Configuration", "Set target configuration for the node", targetConfiguration_);
+    addInput("Configuration", "Set target configuration for the node", configuration_);
 
     // Outputs
-    addOutput("Configuration", "Output configuration", targetConfiguration_);
+    addOutput("Configuration", "Output configuration", configuration_);
 
     // Options
     addOption("SiteA", "Specify site(s) which represent 'A' in the interaction A-B-C", a_);
@@ -57,10 +57,10 @@ void IntraDistanceNode::clearData()
 NodeConstants::ProcessResult IntraDistanceNode::process()
 {
     // Select site A
-    SiteSelector a(targetConfiguration_, a_.getSpeciesSites());
+    SiteSelector a(configuration_, a_.getSpeciesSites());
 
     // Select site B
-    SiteSelector b(targetConfiguration_, b_.getSpeciesSites());
+    SiteSelector b(configuration_, b_.getSpeciesSites());
 
     // Calculate rAB
     if (!histAB_)
@@ -76,7 +76,7 @@ NodeConstants::ProcessResult IntraDistanceNode::process()
                 continue;
             if (siteB == siteA)
                 continue;
-            histAB_->bin(targetConfiguration_->box().minimumDistance(siteA->origin(), siteB->origin()));
+            histAB_->bin(configuration_->box().minimumDistance(siteA->origin(), siteB->origin()));
         }
     }
 

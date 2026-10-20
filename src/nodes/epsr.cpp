@@ -22,7 +22,7 @@
 EPSRNode::EPSRNode(Graph *parentGraph) : Node(parentGraph)
 {
     // Inputs
-    addInput("Configuration", "Set target configuration for the node", targetConfiguration_);
+    addInput("Configuration", "Set target configuration for the node", configuration_);
 
     // Options
     addOption("Targets", "Add specified Node (and it's Reference data) as a refinement target", targetNames_);
@@ -82,7 +82,7 @@ NodeConstants::ProcessResult EPSRNode::process()
 
     if (!sqNode)
     {
-        error("EPSR could not find an SQ node corresponding to the input configuration {}", targetConfiguration_->name());
+        error("EPSR could not find an SQ node corresponding to the input configuration {}", configuration_->name());
         return NodeConstants::ProcessResult::Failed;
     }
 
@@ -95,7 +95,7 @@ NodeConstants::ProcessResult EPSRNode::process()
 
     // Default to applying generated potentials - an associated EPSRManager may turn this off in its own setup stage
     applyPotentials_ = true;
-    auto rho = targetConfiguration_->atomicDensity().value_or(0.1);
+    auto rho = configuration_->atomicDensity().value_or(0.1);
 
     // Try to calculate the deltaSQ array
     updateDeltaSQ();
@@ -132,15 +132,15 @@ NodeConstants::ProcessResult EPSRNode::process()
         return NodeConstants::ProcessResult::Failed;
     }
 
-    if (!targetConfiguration_)
+    if (!configuration_)
     {
         error("No target configuration is set.\n");
         return NodeConstants::ProcessResult::Failed;
     }
 
-    if (!targetConfiguration_->atomicDensity())
+    if (!configuration_->atomicDensity())
     {
-        error("No density available for target configuration '{}'\n", targetConfiguration_->name());
+        error("No density available for target configuration '{}'\n", configuration_->name());
         return NodeConstants::ProcessResult::Failed;
     }
 
@@ -179,7 +179,7 @@ NodeConstants::ProcessResult EPSRNode::process()
      */
 
     // Set up storage for the changes to coefficients used to generate the empirical potentials
-    const auto atomTypes = targetConfiguration_->atomTypeVector();
+    const auto atomTypes = configuration_->atomTypeVector();
     const auto nAtomTypes = atomTypes.size();
 
     Array3D<double> fluctuationCoefficients(nAtomTypes, nAtomTypes, ncoeffp);

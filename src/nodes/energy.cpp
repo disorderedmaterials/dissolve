@@ -11,11 +11,11 @@
 EnergyNode::EnergyNode(Graph *parentGraph) : Node(parentGraph)
 {
     // Inputs
-    addInput("Configuration", "Configuration to calculate energy for", targetConfiguration_)
+    addInput("Configuration", "Configuration to calculate energy for", configuration_)
         ->setFlags({ParameterBase::Required, ParameterBase::ClearData});
 
     // Outputs
-    addOutput("Configuration", "Output configuration", targetConfiguration_);
+    addOutput("Configuration", "Output configuration", configuration_);
 
     // Options
     addOption("StabilityThreshold", "Threshold value at which energy is deemed stable over the defined windowing period",
@@ -72,9 +72,9 @@ NodeConstants::ProcessResult EnergyNode::process()
 {
     message("\n");
 
-    message("Calculating total energy for Configuration '{}'...\n", targetConfiguration_->name());
+    message("Calculating total energy for Configuration '{}'...\n", configuration_->name());
 
-    auto kernel = dissolveGraph()->createEnergyKernel(targetConfiguration_);
+    auto kernel = dissolveGraph()->createEnergyKernel(configuration_);
 
     Timer timer;
     auto energy = kernel->totalEnergy();
@@ -116,8 +116,8 @@ NodeConstants::ProcessResult EnergyNode::process()
                 stabilityWindow_, grad, thresholdValue, DissolveSys::btoa(stable));
     }
 
-    targetConfiguration_->setEnergyGradient(grad);
-    targetConfiguration_->setEnergyStable(stable);
+    configuration_->setEnergyGradient(grad);
+    configuration_->setEnergyStable(stable);
 
     return NodeConstants::ProcessResult::Success;
 }

@@ -26,7 +26,7 @@ GRNode::GRNode(Graph *parentGraph)
                              })
 {
     // Inputs
-    addInput("Configuration", "Set target configuration for the node", targetConfiguration_)
+    addInput("Configuration", "Set target configuration for the node", configuration_)
         ->setFlags({ParameterBase::Required, ParameterBase::ClearData});
 
     // Outputs
@@ -87,9 +87,9 @@ void GRNode::clearData()
 bool GRNode::calculateGRTestSerial(const Array2D<typename std::map<std::string, Histogram1D>::iterator> &fullLUT)
 {
     // Calculate radial distribution functions with a simple double loop, in serial
-    const auto &box = targetConfiguration_->box();
+    const auto &box = configuration_->box();
 
-    dissolve::for_each_pair(ParallelPolicies::seq, targetConfiguration_->atoms(),
+    dissolve::for_each_pair(ParallelPolicies::seq, configuration_->atoms(),
                             [&](auto indexI, auto &atomI, auto indexJ, auto &atomJ)
                             {
                                 if (indexI != indexJ)
@@ -103,13 +103,13 @@ bool GRNode::calculateGRTestSerial(const Array2D<typename std::map<std::string, 
 // Calculate partial g(r) with optimised double-loop
 bool GRNode::calculateGRSimple(const Array2D<typename std::map<std::string, Histogram1D>::iterator> &fullLUT)
 {
-    auto typePopulations = targetConfiguration_->atomTypePopulations();
+    auto typePopulations = configuration_->atomTypePopulations();
     int n, m, typeI, typeJ, i, j, nPoints;
 
     // Construct local arrays of atom type positions
     auto nTypes = typePopulations.size();
     message("Constructing local partial working arrays for {} types.\n", nTypes);
-    const auto &box = targetConfiguration_->box();
+    const auto &box = configuration_->box();
     std::vector<Vector3 *> r(nTypes);
     std::vector<int> maxr(nTypes), nr(nTypes);
     std::vector<int *> binss(nTypes);
@@ -126,7 +126,7 @@ bool GRNode::calculateGRSimple(const Array2D<typename std::map<std::string, Hist
     }
 
     // Loop over Atoms and construct arrays
-    for (auto &atom : targetConfiguration_->atoms())
+    for (auto &atom : configuration_->atoms())
     {
         m = atom.atomTypeIndex();
         if (m == AtomConstants::TypeIndex::Ignore)
@@ -210,7 +210,7 @@ bool GRNode::calculateGRSimple(const Array2D<typename std::map<std::string, Hist
 // Calculate partial g(r) utilising Cell neighbour lists
 bool GRNode::calculateGRCells(double grRange, const Array2D<typename std::map<std::string, Histogram1D>::iterator> &fullLUT)
 {
-    auto &cellArray = targetConfiguration_->cells();
+    auto &cellArray = configuration_->cells();
 
     // Loop context is to use all processes in Pool as one group
     Combinations comb(cellArray.nCells());
@@ -233,8 +233,8 @@ bool GRNode::calculateGRCells(double grRange, const Array2D<typename std::map<st
     {
         // auto &histograms = combinableHistograms.local().histograms_;
         auto &histograms = combinableHistograms.local();
-        const auto &box = targetConfiguration_->box();
-        auto &cellArray = targetConfiguration_->cells();
+        const auto &box = configuration_->box();
+        auto &cellArray = configuration_->cells();
         auto [n, m] = comb.nthCombination(idx);
         auto *cellI = cellArray.cell(n);
         auto *cellJ = cellArray.cell(m);
@@ -336,22 +336,22 @@ bool GRNode::calculateRawGR(const double grRange, bool &alreadyUpToDate)
     // Is the PartialSet already up-to-date?
     // If so, can exit now, *unless* the Test method is requested, in which case we go ahead and calculate anyway
     alreadyUpToDate = false;
-    if (DissolveSys::sameString(rawGR_->fingerprint(), std::format("{}", targetConfiguration_->version())) &&
+    if (DissolveSys::sameString(rawGR_->fingerprint(), std::format("{}", configuration_->version())) &&
         (partialsMethod_ != PartialsMethod::TestMethod))
     {
-        message("Partial g(r) are up-to-date for Configuration '{}'.\n", targetConfiguration_->name());
+        message("Partial g(r) are up-to-date for Configuration '{}'.\n", configuration_->name());
         alreadyUpToDate = true;
         return true;
     }
 
-    message("Calculating partial g(r) for Configuration '{}'...\n", targetConfiguration_->name());
+    message("Calculating partial g(r) for Configuration '{}'...\n", configuration_->name());
 
     /*
      * Make sure histograms are set up, and reset any existing data
      */
 
     // Get local atom type vector from the Configuration
-    auto typeVector = targetConfiguration_->atomTypeVector();
+    auto typeVector = configuration_->atomTypeVector();
 
     if (!histograms_)
     {
@@ -365,7 +365,7 @@ bool GRNode::calculateRawGR(const double grRange, bool &alreadyUpToDate)
      */
 
     // Make sure type indexing is up-to-date and generate LUTs for all histogram types
-    targetConfiguration_->updateTypeIndexing();
+    configuration_->updateTypeIndexing();
     auto fullLUT = histograms_->fullHistograms().lookUpTable(typeVector, [](const auto &atomType) { return atomType->name(); });
     auto boundLUT =
         histograms_->boundHistograms().lookUpTable(typeVector, [](const auto &atomType) { return atomType->name(); });
@@ -379,14 +379,14 @@ bool GRNode::calculateRawGR(const double grRange, bool &alreadyUpToDate)
         calculateGRSimple(fullLUT);
     else if (partialsMethod_ == PartialsMethod::CellsMethod)
     {
-        dissolveGraph()->updateIndexingAndCells(targetConfiguration_);
+        dissolveGraph()->updateIndexingAndCells(configuration_);
         calculateGRCells(grRange, fullLUT);
     }
     else if (partialsMethod_ == PartialsMethod::AutoMethod)
     {
-        if (targetConfiguration_->nAtoms() > 10000)
+        if (configuration_->nAtoms() > 10000)
         {
-            dissolveGraph()->updateIndexingAndCells(targetConfiguration_);
+            dissolveGraph()->updateIndexingAndCells(configuration_);
             calculateGRCells(grRange, fullLUT);
         }
         else
@@ -399,11 +399,11 @@ bool GRNode::calculateRawGR(const double grRange, bool &alreadyUpToDate)
      * Calculate intramolecular partials
      */
 
-    const auto &box = targetConfiguration_->box();
+    const auto &box = configuration_->box();
     timer.start();
 
     // Loop over molecules
-    for (auto &mol : targetConfiguration_->molecules())
+    for (auto &mol : configuration_->molecules())
     {
         const auto &atoms = mol->atoms();
 
@@ -450,7 +450,7 @@ bool GRNode::calculateRawGR(const double grRange, bool &alreadyUpToDate)
 
     // Transform histogram data into radial distribution function
     dissolve::for_each_pair(
-        ParallelPolicies::seq, targetConfiguration_->atomTypePopulations(),
+        ParallelPolicies::seq, configuration_->atomTypePopulations(),
         [&](int indexI, auto &popI, int indexJ, auto &popJ)
         {
             DoubleKeyedMapKey key(popI.first->name(), popJ.first->name());
@@ -540,8 +540,8 @@ NodeConstants::ProcessResult GRNode::process()
     if (!unweightedGR_)
     {
         unweightedGR_.emplace();
-        unweightedGR_.value().initialise(targetConfiguration_->speciesPopulations());
-        unweightedGR_.value().setEffectiveDensity(targetConfiguration_->atomicDensity().value_or(0.0));
+        unweightedGR_.value().initialise(configuration_->speciesPopulations());
+        unweightedGR_.value().setEffectiveDensity(configuration_->atomicDensity().value_or(0.0));
     }
 
     // Create original GR storage if we need it
@@ -552,21 +552,21 @@ NodeConstants::ProcessResult GRNode::process()
     }
 
     // Check range
-    auto grRange = targetConfiguration_->box().inscribedSphereRadius();
+    auto grRange = configuration_->box().inscribedSphereRadius();
     if (!requestedRange_)
-        message("Maximal cutoff used for Configuration '{}' ({} Angstroms).\n", targetConfiguration_->name(), grRange);
+        message("Maximal cutoff used for Configuration '{}' ({} Angstroms).\n", configuration_->name(), grRange);
     else
     {
         if (requestedRange_.value_or(Number(0.0)) > grRange)
         {
             error("Specified RDF range of {} Angstroms is out of range for Configuration "
                   "'{}' (max = {} Angstroms).\n",
-                  requestedRange_.value().asDouble(), targetConfiguration_->name(), grRange);
+                  requestedRange_.value().asDouble(), configuration_->name(), grRange);
             return NodeConstants::ProcessResult::Failed;
         }
 
         grRange = requestedRange_.value().asDouble();
-        message("Cutoff for Configuration '{}' is {} Angstroms.\n", targetConfiguration_->name(), grRange);
+        message("Cutoff for Configuration '{}' is {} Angstroms.\n", configuration_->name(), grRange);
     }
 
     // 'Snap' grRange to nearest bin width...

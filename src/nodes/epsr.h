@@ -94,7 +94,7 @@ class EPSRNode : public Node
 
     private:
     // Target configurations
-    Configuration *targetConfiguration_{nullptr};
+    Configuration *configuration_{nullptr};
     // Limit of magnitude of additional potential for any one pair potential
     Number eReq_{3.0};
     // Expansion function type to use for potential fits

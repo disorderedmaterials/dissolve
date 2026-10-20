@@ -10,10 +10,10 @@
 IntraAngleNode::IntraAngleNode(Graph *parentGraph) : Node(parentGraph)
 {
     // Inputs
-    addInput("Configuration", "Set target configuration for the node", targetConfiguration_);
+    addInput("Configuration", "Set target configuration for the node", configuration_);
 
     // Outputs
-    addOutput("Configuration", "Output configuration", targetConfiguration_);
+    addOutput("Configuration", "Output configuration", configuration_);
 
     // Options
     addOption("SiteA", "Specify site(s) which represent 'A' in the interaction A-B-C", a_);
@@ -61,13 +61,13 @@ void IntraAngleNode::clearData()
 NodeConstants::ProcessResult IntraAngleNode::process()
 {
     // Select site A
-    SiteSelector a(targetConfiguration_, a_.getSpeciesSites());
+    SiteSelector a(configuration_, a_.getSpeciesSites());
 
     // Select site B
-    SiteSelector b(targetConfiguration_, b_.getSpeciesSites());
+    SiteSelector b(configuration_, b_.getSpeciesSites());
 
     // Select site C
-    SiteSelector c(targetConfiguration_, c_.getSpeciesSites());
+    SiteSelector c(configuration_, c_.getSpeciesSites());
 
     // Intramolecular angle histogram
     if (!intraAngleHist_)
@@ -86,7 +86,7 @@ NodeConstants::ProcessResult IntraAngleNode::process()
             if (siteB == siteA)
                 continue;
 
-            if (!rangeAB_.contains(targetConfiguration_->box().minimumDistance(siteA->origin(), siteB->origin())))
+            if (!rangeAB_.contains(configuration_->box().minimumDistance(siteA->origin(), siteB->origin())))
                 continue;
 
             for (const auto &[siteC, indexC] : c.sites())
@@ -101,10 +101,10 @@ NodeConstants::ProcessResult IntraAngleNode::process()
                 if (siteC == siteB)
                     continue;
 
-                if (!rangeBC_.contains(targetConfiguration_->box().minimumDistance(siteB->origin(), siteC->origin())))
+                if (!rangeBC_.contains(configuration_->box().minimumDistance(siteB->origin(), siteC->origin())))
                     continue;
 
-                auto angle = targetConfiguration_->box().angleInDegrees(siteA->origin(), siteB->origin(), siteC->origin());
+                auto angle = configuration_->box().angleInDegrees(siteA->origin(), siteB->origin(), siteC->origin());
                 if (symmetric_ && angle > 90.0)
                     angle = 180.0 - angle;
                 intraAngleHist_->bin(angle);
