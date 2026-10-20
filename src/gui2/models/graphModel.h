@@ -31,7 +31,7 @@ class GraphModel : public QObject
     // Read-only graph properties
     Q_PROPERTY(bool graphControlsEnabled READ graphControlsEnabled NOTIFY graphProgressChanged);
     Q_PROPERTY(QUrl statusIcon READ statusIcon NOTIFY graphProgressChanged);
-    Q_PROPERTY(int nodeCount READ count NOTIFY graphChanged);
+    Q_PROPERTY(int nodeCount READ nNodes NOTIFY graphChanged);
     Q_PROPERTY(int edgeCount READ nEdges NOTIFY graphChanged);
     Q_PROPERTY(QString location READ location NOTIFY graphChanged);
     Q_PROPERTY(bool atRoot READ atRoot NOTIFY graphChanged);
@@ -78,7 +78,7 @@ class GraphModel : public QObject
     // Returns the graph status icon
     QUrl statusIcon();
     // The total number of nodes in the graph
-    int count();
+    int nNodes();
     // The total number of edges in the graph
     int nEdges();
     // The path to the current graph
@@ -186,7 +186,6 @@ class GraphModel : public QObject
 
     Q_SIGNALS:
     void graphChanged();
-    void graphInvalidated();
     void canvasDimensionsChanged();
     void graphRunStarted();
     void graphRunComplete(NodeConstants::ProcessResult status, std::string runnerNode);
