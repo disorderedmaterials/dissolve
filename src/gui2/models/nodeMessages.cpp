@@ -114,11 +114,19 @@ void NodeMessages::setGraphModel(GraphModel *graphModel)
                          }
                          peekNode();
                      });
-    QObject::connect(graphModel_, &GraphModel::graphInvalidated, this,
+    QObject::connect(graphModel_, &GraphModel::graphChanged, this,
                      [this]()
                      {
                          // The graph has been invalidated, but alerts are present on this node - keep them visible
                          if (hasAlerts())
+                             return;
+
+                         auto sourceNode = graphModel_->graph()->findNode(nodeName_.toStdString());
+                         if (!sourceNode)
+                             return;
+
+                         // If node is up to date, don't alter notification status
+                         if (sourceNode->isUpToDate())
                              return;
 
                          // Place node on standby since graph's connections have changed since last successful run

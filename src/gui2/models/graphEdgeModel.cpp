@@ -38,6 +38,7 @@ bool GraphEdgeModel::remove(Edge &edge)
         return false;
     else
     {
+        const EdgeDefinition removedEdgeDefinition = edge.definition();
         std::size_t row = index - edges().begin();
         if (row >= edges().size())
             return false;
@@ -49,7 +50,7 @@ bool GraphEdgeModel::remove(Edge &edge)
             return false;
         }
         endRemoveRows();
-        Q_EMIT parent_->graphInvalidated();
+        Q_EMIT parent_->graphChanged();
         return true;
     }
 }
@@ -69,11 +70,12 @@ void GraphEdgeModel::removeConnected(std::string nodeName)
     {
         if (toRemove(*edgeIt))
         {
+            const EdgeDefinition removedEdgeDefinition = edgeIt->get()->definition();
             const auto row = std::distance(allEdges.begin(), edgeIt);
             beginRemoveRows(QModelIndex(), row, row);
             edgeIt = allEdges.erase(edgeIt);
             endRemoveRows();
-            Q_EMIT parent_->graphInvalidated();
+            Q_EMIT parent_->graphChanged();
         }
         else
             edgeIt++;
@@ -90,7 +92,7 @@ bool GraphEdgeModel::add(EdgeDefinition &definition)
         return false;
     }
     endInsertRows();
-    Q_EMIT parent_->graphInvalidated();
+    Q_EMIT parent_->graphChanged();
     return true;
 }
 

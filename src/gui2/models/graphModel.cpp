@@ -87,7 +87,7 @@ QUrl GraphModel::statusIcon()
     return QUrl("qrc:/DissolveIconsModule/false.svg");
 }
 
-int GraphModel::count() { return nodes_.rowCount(); }
+int GraphModel::nNodes() { return nodes_.rowCount(); }
 
 QString GraphModel::location() const
 {
