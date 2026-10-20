@@ -3,10 +3,9 @@
 
 #pragma once
 
-#include "classes/species.h"
-#include "nodes/node.h"
+#include "nodes/speciesBase.h"
 
-class ImportSpeciesNode : public Node
+class ImportSpeciesNode : public SpeciesBaseNode
 {
     public:
     ImportSpeciesNode(Graph *parentGraph);
@@ -27,8 +26,6 @@ class ImportSpeciesNode : public Node
     private:
     // File path
     std::filesystem::path filePath_;
-    // Species
-    Species species_;
 
     /*
      * Processing

@@ -3,13 +3,10 @@
 
 #include "nodes/importSpecies.h"
 
-ImportSpeciesNode::ImportSpeciesNode(Graph *parentGraph) : Node(parentGraph)
+ImportSpeciesNode::ImportSpeciesNode(Graph *parentGraph) : SpeciesBaseNode(parentGraph)
 {
     // Options
     addOption("FilePath", "File path", filePath_);
-
-    // Outputs
-    addPointerOutput<const Species>("Species", "Imported species", species_);
 }
 
 /*

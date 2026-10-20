@@ -3,10 +3,9 @@
 
 #pragma once
 
-#include "classes/species.h"
-#include "nodes/node.h"
+#include "nodes/speciesBase.h"
 
-class AtomicSpeciesNode : public Node
+class AtomicSpeciesNode : public SpeciesBaseNode
 {
     public:
     AtomicSpeciesNode(Graph *parentGraph);
@@ -29,8 +28,6 @@ class AtomicSpeciesNode : public Node
     Elements::Element element_;
     // Species parameter string
     std::string parameters_{""};
-    // Species
-    Species species_;
     // Charge on the atom
     Number q_;
 
