@@ -47,7 +47,7 @@ class GRNode : public Node
 
     private:
     // Target configurations
-    Configuration *targetConfiguration_{nullptr};
+    Configuration *configuration_{nullptr};
     // Unweighted g(r)
     std::optional<PartialSet> unweightedGR_;
     // Number of historical partial sets to combine into final partials

@@ -46,7 +46,7 @@ EPSRNode::TargetCorrelationDataMap EPSRNode::findTargetCorrelationData()
         auto neutronSQNode = dynamic_cast<NeutronSQNode *>(nodePtr.get());
 
         // If NeutronSQNode cast is not null, check configuration matches and add to target data
-        if (neutronSQNode && neutronSQNode->sourceConfiguration() == targetConfiguration_)
+        if (neutronSQNode && neutronSQNode->sourceConfiguration() == configuration_)
         {
             appendTarget(result, nodePtr.get(), NeutronSQ, namedWeights_.value());
             continue;
@@ -56,7 +56,7 @@ EPSRNode::TargetCorrelationDataMap EPSRNode::findTargetCorrelationData()
         auto xRaySQNode = dynamic_cast<XRaySQNode *>(nodePtr.get());
 
         // If XRaySQNode cast is not null, check configuration matches and add to target data
-        if (xRaySQNode && xRaySQNode->sourceConfiguration() == targetConfiguration_)
+        if (xRaySQNode && xRaySQNode->sourceConfiguration() == configuration_)
         {
             appendTarget(result, nodePtr.get(), XRaySQ, namedWeights_.value());
             continue;
@@ -66,7 +66,7 @@ EPSRNode::TargetCorrelationDataMap EPSRNode::findTargetCorrelationData()
         auto sqNode = dynamic_cast<SQNode *>(nodePtr.get());
 
         // If SQNode cast is not null, check configuration matches and add to target data
-        if (sqNode && sqNode->sourceConfiguration() == targetConfiguration_)
+        if (sqNode && sqNode->sourceConfiguration() == configuration_)
         {
             appendTarget(result, nodePtr.get(), SQ, namedWeights_.value());
             continue;
@@ -87,7 +87,7 @@ EPSRNode::TargetCorrelationDataMap EPSRNode::findTargetCorrelationData()
         result[NeutronSQ].size(), result[NeutronSQ].size() > 0 ? std::format(" ({}) ", foundNodeNames[NeutronSQ]) : "",
         result[XRaySQ].size(), result[XRaySQ].size() > 0 ? std::format(" ({}) ", foundNodeNames[XRaySQ]) : "",
         result[SQ].size(), result[SQ].size() > 0 ? std::format(" ({}) ", foundNodeNames[SQ]) : "",
-        std::string(targetConfiguration_->name()));
+        std::string(configuration_->name()));
 
     return result;
 }

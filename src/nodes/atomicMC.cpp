@@ -12,7 +12,7 @@
 AtomicMCNode::AtomicMCNode(Graph *parentGraph) : Node(parentGraph)
 {
     // Inputs
-    addInput("Configuration", "Set target configuration for the node", targetConfiguration_)
+    addInput("Configuration", "Set target configuration for the node", configuration_)
         ->setFlags({ParameterBase::Required, ParameterBase::ClearData});
     addInput("Temperature", "Temperature (K)", temperature_);
 
@@ -23,7 +23,7 @@ AtomicMCNode::AtomicMCNode(Graph *parentGraph) : Node(parentGraph)
     addOption("StepSizeMin", "Minimum allowed value for step size, in Angstroms", stepSizeMin_);
 
     // Outputs
-    addOutput("Configuration", "Output configuration", targetConfiguration_);
+    addOutput("Configuration", "Output configuration", configuration_);
 
     // State data
     addStateData("stepSize", stepSize_);
@@ -60,7 +60,7 @@ NodeConstants::ProcessResult AtomicMCNode::process()
     message("\n");
 
     // Prepare for energy calculation, generate kernel
-    auto kernel = dissolveGraph()->createEnergyKernel(targetConfiguration_);
+    auto kernel = dissolveGraph()->createEnergyKernel(configuration_);
 
     auto nAttempts = 0, nAccepted = 0;
     auto totalDelta = 0.0;
@@ -68,7 +68,7 @@ NodeConstants::ProcessResult AtomicMCNode::process()
     Timer timer;
 
     // Loop over Molecules
-    for (auto mol : targetConfiguration_->molecules())
+    for (auto mol : configuration_->molecules())
     {
         // Loop over atoms in the Molecule
         for (const auto &i : mol->atoms())
@@ -83,7 +83,7 @@ NodeConstants::ProcessResult AtomicMCNode::process()
 
                 // Translate Atom randomly according to the stepsize and update its Cell position
                 *i += Vector3::randomUnit() * stepSize_;
-                targetConfiguration_->updateAtomLocation(i);
+                configuration_->updateAtomLocation(i);
 
                 // Calculate new energy
                 auto eNew = kernel->totalEnergy(*i);
@@ -106,7 +106,7 @@ NodeConstants::ProcessResult AtomicMCNode::process()
                 {
                     // Move not accepted - revert to initial position
                     i->setR(moveInitialPos);
-                    targetConfiguration_->updateAtomLocation(i);
+                    configuration_->updateAtomLocation(i);
                 }
                 ++nAttempts;
             }
@@ -134,7 +134,7 @@ NodeConstants::ProcessResult AtomicMCNode::process()
 
     // Mark the configuration as having been modified
     if (nAccepted > 0)
-        targetConfiguration_->notifyAtomicPositionsChanged();
+        configuration_->notifyAtomicPositionsChanged();
 
     return NodeConstants::ProcessResult::Success;
 }

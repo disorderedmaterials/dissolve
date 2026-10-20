@@ -17,7 +17,7 @@ BraggNode::BraggNode(Graph *parentGraph)
                              })
 {
     // Inputs
-    addInput("Configuration", "Set target configuration for the node", targetConfiguration_)
+    addInput("Configuration", "Set target configuration for the node", configuration_)
         ->setFlags({ParameterBase::Required, ParameterBase::ClearData});
     addInput("UnweightedSQ", "Unweighted partials for target configuration", unweightedSQ_);
 
@@ -77,10 +77,10 @@ bool BraggNode::calculateBraggTerms()
     Vector3i braggMaximumHKL;
 
     // Grab some useful values
-    const auto &box = targetConfiguration_->box();
-    auto nTypes = targetConfiguration_->atomTypePopulations().size();
-    auto nAtoms = targetConfiguration_->nAtoms(AtomConstants::Presence::Physical);
-    auto &atoms = targetConfiguration_->atoms();
+    const auto &box = configuration_->box();
+    auto nTypes = configuration_->atomTypePopulations().size();
+    auto nAtoms = configuration_->nAtoms(AtomConstants::Presence::Physical);
+    auto &atoms = configuration_->atoms();
 
     // Set up reciprocal axes and lengths - take those from the Box and scale based on the multiplicity
     auto rAxes = box.reciprocalAxes();
@@ -357,7 +357,7 @@ bool BraggNode::formReflectionFunctions()
     // Loop over pairs of atom types, adding in contributions from our calculated BraggReflections
     double qCentre;
     int bin;
-    auto types = targetConfiguration_->atomTypePopulations();
+    auto types = configuration_->atomTypePopulations();
     dissolve::for_each_pair(ParallelPolicies::seq, types,
                             [&](int typeI, auto &popI, int typeJ, auto &popJ)
                             {
@@ -392,7 +392,7 @@ bool BraggNode::reBinReflections()
     auto &braggPartials = braggPartials_.value();
     const auto nReflections = braggReflections.size();
 
-    const auto nTypes = targetConfiguration_->atomTypePopulations().size();
+    const auto nTypes = configuration_->atomTypePopulations().size();
 
     // Create a temporary Data1D into which we will generate individual Bragg peak contributions
     const auto qDelta = braggPartials[{0, 0}].xAxis(1) - braggPartials[{0, 0}].xAxis(0);
@@ -416,7 +416,7 @@ bool BraggNode::reBinReflections()
         ++nAdded[bin];
 
         // Loop over pairs of atom types, binning intensity contributions from this reflection
-        auto types = targetConfiguration_->atomTypePopulations();
+        auto types = configuration_->atomTypePopulations();
         int typeI = 0;
         for (auto atd1 = types.begin(); atd1 != types.end(); typeI++, atd1++)
         {
@@ -451,7 +451,7 @@ NodeConstants::ProcessResult BraggNode::process()
     if (!braggReflections_)
         braggReflections_.emplace();
 
-    const auto nTypes = targetConfiguration_->atomTypePopulations().size();
+    const auto nTypes = configuration_->atomTypePopulations().size();
 
     if (!braggPartials_)
     {
@@ -491,7 +491,7 @@ NodeConstants::ProcessResult BraggNode::process()
     message("\n");
 
     // Store unit cell information
-    const auto unitCellVolume = targetConfiguration_->box().volume() / (multiplicity_.x * multiplicity_.y * multiplicity_.z);
+    const auto unitCellVolume = configuration_->box().volume() / (multiplicity_.x * multiplicity_.y * multiplicity_.z);
 
     // Calculate Bragg vectors and intensities for the current Configuration
     if (!calculateBraggTerms())

@@ -29,7 +29,7 @@ class EnergyNode : public Node
      */
     private:
     // Target configuration
-    Configuration *targetConfiguration_{nullptr};
+    Configuration *configuration_{nullptr};
     // Threshold value at which energy is deemed stable over the defined windowing period
     double stabilityThreshold_{0.001};
     // Number of points over which to assess the stability of the energy (per Configuration)

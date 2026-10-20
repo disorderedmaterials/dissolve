@@ -41,7 +41,7 @@ class MDNode : public Node
 
     private:
     // Target configurations
-    Configuration *targetConfiguration_{nullptr};
+    Configuration *configuration_{nullptr};
     // Control whether atomic forces are capped every step
     bool capForces_{false};
     // Set cap on allowable force (kJ/mol) per atom

@@ -12,8 +12,7 @@
 MCNode::MCNode(Graph *parentGraph) : Node(parentGraph)
 {
     // Inputs
-    addInput("Configuration", "Set target configuration for the module", targetConfiguration_)
-        ->setFlags({ParameterBase::Required});
+    addInput("Configuration", "Set target configuration for the module", configuration_)->setFlags({ParameterBase::Required});
     addInput("Temperature", "Temperature (K)", temperature_);
 
     // Options
@@ -26,7 +25,7 @@ MCNode::MCNode(Graph *parentGraph) : Node(parentGraph)
     addOption("TranslationStepSizeMax", "Maximum step size for translations (Angstroms)", translationStepSizeMax_);
 
     // Outputs
-    addOutput("Configuration", "Output configuration", targetConfiguration_);
+    addOutput("Configuration", "Output configuration", configuration_);
 
     // State data
     addStateData("RotationStepSize", rotationStepSize_);
@@ -66,12 +65,12 @@ NodeConstants::ProcessResult MCNode::process()
     message("\n");
 
     // Prepare for energy calculation, generate kernel
-    auto kernel = dissolveGraph()->createEnergyKernel(targetConfiguration_);
+    auto kernel = dissolveGraph()->createEnergyKernel(configuration_);
 
     auto nRotationAttempts = 0, nTranslationAttempts = 0, nRotationsAccepted = 0, nTranslationsAccepted = 0,
          nGeneralAttempts = 0;
     auto totalDelta = 0.0;
-    const auto &box = targetConfiguration_->box();
+    const auto &box = configuration_->box();
 
     /*
      * In order to be able to adjust translation and rotational steps independently, we will perform 80% of moves
@@ -85,7 +84,7 @@ NodeConstants::ProcessResult MCNode::process()
     Timer timer;
 
     // Loop over molecules in the configuration
-    for (auto &molecule : targetConfiguration_->molecules())
+    for (auto &molecule : configuration_->molecules())
     {
         // Store the current molecule coordinates
         auto currentCoordinates = molecule->atomCoordinates();
@@ -121,7 +120,7 @@ NodeConstants::ProcessResult MCNode::process()
             }
 
             // Update cell locations for atoms in the molecule
-            targetConfiguration_->updateAtomLocations(molecule);
+            configuration_->updateAtomLocations(molecule);
 
             // Calculate new energy
             auto newEnergy = kernel
@@ -149,7 +148,7 @@ NodeConstants::ProcessResult MCNode::process()
             {
                 // Revert to the previous coordinates
                 molecule->setAtomCoordinates(currentCoordinates);
-                targetConfiguration_->updateAtomLocations(molecule);
+                configuration_->updateAtomLocations(molecule);
             }
 
             // Increase and fold move type counter
@@ -183,7 +182,7 @@ NodeConstants::ProcessResult MCNode::process()
 
     // Mark the configuration as having been modified
     if ((nRotationsAccepted > 0) || (nTranslationsAccepted > 0))
-        targetConfiguration_->notifyAtomicPositionsChanged();
+        configuration_->notifyAtomicPositionsChanged();
 
     return NodeConstants::ProcessResult::Success;
 }

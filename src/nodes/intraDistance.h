@@ -30,7 +30,7 @@ class IntraDistanceNode : public Node
      */
     private:
     // Target configuration
-    Configuration *targetConfiguration_{nullptr};
+    Configuration *configuration_{nullptr};
     // Target SpeciesSite definitions
     SpeciesSites a_, b_;
     // Range (min, max, delta) of distance axis

@@ -31,7 +31,7 @@ class IntraAngleNode : public Node
      */
     private:
     // Target configuration
-    Configuration *targetConfiguration_{nullptr};
+    Configuration *configuration_{nullptr};
     // Target SpeciesSite definitions
     SpeciesSites a_, b_, c_;
     // Range of A-B distance axis
