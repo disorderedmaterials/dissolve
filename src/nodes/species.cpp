@@ -4,14 +4,11 @@
 #include "nodes/species.h"
 #include "nodes/constants.h"
 
-SpeciesNode::SpeciesNode(Graph *parentGraph) : Node(parentGraph)
+SpeciesNode::SpeciesNode(Graph *parentGraph) : SpeciesBaseNode(parentGraph)
 {
     // Inputs
     addInput("Structure", "Structure of the species", structure_)->setFlags(ParameterBase::ParameterFlags::Required);
     addInput("Recipe", "Forcefield recipe to apply to the species", recipe_);
-
-    // Outputs
-    addPointerOutput<const Species>("Species", "Created species", species_);
 
     // State data
     addStateData("Species", species_);
@@ -26,14 +23,6 @@ std::string_view SpeciesNode::type() const { return "Species"; }
 
 // Return short summary of the node's purpose
 std::string_view SpeciesNode::summary() const { return "Produce a species"; }
-
-/*
- * Data
- */
-
-// Return the species object
-Species &SpeciesNode::species() { return species_; }
-const Species &SpeciesNode::species() const { return species_; }
 
 /*
  * Processing

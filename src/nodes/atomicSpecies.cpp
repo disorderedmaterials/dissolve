@@ -3,7 +3,7 @@
 
 #include "nodes/atomicSpecies.h"
 
-AtomicSpeciesNode::AtomicSpeciesNode(Graph *parentGraph) : Node(parentGraph)
+AtomicSpeciesNode::AtomicSpeciesNode(Graph *parentGraph) : SpeciesBaseNode(parentGraph)
 {
     // Options
     addOption("Charge", "Charge on the atom", q_);
@@ -11,9 +11,6 @@ AtomicSpeciesNode::AtomicSpeciesNode(Graph *parentGraph) : Node(parentGraph)
     addOption("InteractionPotential",
               "String containing the parameters for the short range function describing the species interaction potential",
               parameters_);
-
-    // Outputs
-    addPointerOutput<const Species>("Species", "Created species", species_);
 }
 
 /*

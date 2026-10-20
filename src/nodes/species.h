@@ -3,13 +3,13 @@
 
 #pragma once
 
-#include "classes/species.h"
 #include "classes/structure.h"
 #include "nodes/forcefield.h"
 #include "nodes/node.h"
+#include "nodes/speciesBase.h"
 
 // Species Node
-class SpeciesNode : public Node
+class SpeciesNode : public SpeciesBaseNode
 {
     public:
     SpeciesNode(Graph *parentGraph);
@@ -28,20 +28,10 @@ class SpeciesNode : public Node
      * Data
      */
     private:
-    // Species object
-    Species species_;
     // Structure source for the species (optional)
     std::optional<Structure> structure_;
     // Forcefield recipe for the species (optional)
     std::optional<ForcefieldRecipe> recipe_;
-
-    /*
-     * Accessors
-     */
-    public:
-    // Access the species information (Needed for SpeciesModel)
-    Species &species();
-    const Species &species() const;
 
     /*
      * Processing
