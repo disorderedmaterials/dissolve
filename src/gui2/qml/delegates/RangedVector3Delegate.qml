@@ -94,7 +94,6 @@ DelegateChoice {
             height: applyMinMaxCheckBox.height * 1.2
             width: height
             icon.source: "qrc:/DissolveIconsModule/wizard.svg"
-            property bool editorOpen: false
             property Popup editor: Popup {
                 id: popup
                 width: 120

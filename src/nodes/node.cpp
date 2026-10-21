@@ -87,30 +87,11 @@ void Node::setUpdateRequired()
 // Return whether the node is volatile
 bool Node::isVolatile() const { return volatile_; }
 
-// Set the progress tracker to a false state since the node's progress has started
-void Node::started()
-{
-    if (processComplete_.has_value())
-        throw std::runtime_error(std::format(
-            "{}::processComplete_ already has a value, which should not be possible when node process starts.", name()));
-    processComplete_.emplace(false);
-}
-
-// Set the progress tracker to a true state since the node's progress has finished
-void Node::finished()
-{
-    if (!processComplete_.has_value() || !processComplete_.value() == false)
-        throw std::runtime_error(std::format("{}::processComplete_ either does not already have a value, or the value is true; "
-                                             "neither case should be possible when node process finishes.",
-                                             name()));
-    *processComplete_ = true;
-}
-
 // Returns the current state of the node's progress tracker
-const std::optional<bool> &Node::processComplete() const { return processComplete_; }
+const std::optional<NodeConstants::ProcessResult> &Node::completionStatus() const { return completionStatus_; }
 
 // Reset the progress tracker for the node
-void Node::resetProgressTracker() { processComplete_.reset(); }
+void Node::resetProgressTracker() { completionStatus_.reset(); }
 
 // Return whether the node's data is up-to-date
 bool Node::isUpToDate() const { return upToDate_; }
@@ -137,7 +118,7 @@ bool Node::inputsAreValid() const
 // Run the node, retrieving dependent inputs as necessary
 NodeConstants::ProcessResult Node::run()
 {
-    if (processComplete_.has_value())
+    if (completionStatus_.has_value())
         resetProgressTracker();
 
     // Pull all input edges. If any are out-of-date and get re-set this will automatically unset upToDate_
@@ -148,7 +129,8 @@ NodeConstants::ProcessResult Node::run()
             switch (edge->pull())
             {
                 case (NodeConstants::ProcessResult::Failed):
-                    error("Input '{}' is receiving bad data from source node '{}'.\n", inputName, edge->sourceNode().name());
+                    completionStatus_.emplace(error("Input '{}' is receiving bad data from source node '{}'.\n", inputName,
+                                                    edge->sourceNode().name()));
                     return NodeConstants::ProcessResult::Failed;
                 case (NodeConstants::ProcessResult::Success):
                 case (NodeConstants::ProcessResult::Unchanged):
@@ -159,7 +141,13 @@ NodeConstants::ProcessResult Node::run()
 
     // If input links have updated or we are currently flagged as invalid we must reprocess
     auto result = NodeConstants::ProcessResult::Unchanged;
-    started();
+
+    // Start monitoring node progress
+    if (completionStatus_.has_value())
+        throw std::runtime_error(std::format(
+            "{}::completionStatus_ already has a value, which should not be possible when node process starts.", name()));
+    completionStatus_.emplace(NodeConstants::ProcessResult::Running);
+
     if (!upToDate_ || versionIndex_ == NodeConstants::InvalidVersion)
     {
         result = process();
@@ -176,7 +164,14 @@ NodeConstants::ProcessResult Node::run()
                 break;
         }
     }
-    finished();
+
+    // Finish monitoring node progress
+    if (!completionStatus_.has_value() || !(completionStatus_.value() == NodeConstants::ProcessResult::Running))
+        throw std::runtime_error(std::format("{}::completionStatus_ either does not already have a value, or the value is "
+                                             "already a complete value (one of Unchanged, Success, or Failed); "
+                                             "neither case should be possible when node process finishes.",
+                                             name()));
+    *completionStatus_ = result;
 
     return result;
 }
@@ -459,6 +454,24 @@ std::set<const Node *> Node::allAncestors() const
     if (parentGraph())
         result.merge(parentGraph()->allAncestors());
     return result;
+}
+
+// Check if this node has a given ancestor node
+bool Node::hasAncestor(const Node *node) const
+{
+    if (allAncestors().contains(node))
+        return true;
+
+    return false;
+}
+
+// Check if this node is an ancestor to a given node
+bool Node::isAncestor(const Node *node) const
+{
+    if (node->allAncestors().contains(this))
+        return true;
+
+    return false;
 }
 
 void Node::saveRestart(std::filesystem::path directory) const
