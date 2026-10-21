@@ -1,14 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "nodes/siteRDF.h"
+#include "nodes/analysis/siteRDF.h"
 #include "analyser/dataOperator1D.h"
 #include "main/dissolve.h"
 #include "math/histogram1D.h"
 #include "math/integrator.h"
 #include "math/sampledData1D.h"
 #include "math/sampledDouble.h"
-#include "nodes/exportData.h"
+#include "nodes/export/data.h"
 #include "templates/algorithms.h"
 #include "templates/combinable.h"
 

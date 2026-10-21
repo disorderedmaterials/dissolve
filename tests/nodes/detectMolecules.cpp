@@ -4,7 +4,7 @@
 #include "nodes/detectMolecules.h"
 #include "classes/configuration.h"
 #include "nodes/calculateBonding.h"
-#include "nodes/importXYZStructure.h"
+#include "nodes/import/xyzStructure.h"
 #include "tests/testGraph.h"
 #include <gtest/gtest.h>
 #include <string>

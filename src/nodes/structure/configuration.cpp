@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "nodes/configuration.h"
+#include "nodes/structure/configuration.h"
 #include "base/serialiser.h"
 #include "base/serialiserLibrary.h"
 #include <algorithm>

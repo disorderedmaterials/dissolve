@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "nodes/replicatedConfiguration.h"
+#include "nodes/structure/replicatedConfiguration.h"
 #include "math/vector3.h"
 
 ReplicatedConfigurationNode::ReplicatedConfigurationNode(Graph *parentGraph) : Node(parentGraph)

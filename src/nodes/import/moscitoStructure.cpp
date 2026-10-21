@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "nodes/importMoscitoStructure.h"
+#include "nodes/import/moscitoStructure.h"
 #include "base/parserLibrary.h"
 
 ImportMoscitoStructureNode::ImportMoscitoStructureNode(Graph *parentGraph) : Node(parentGraph)

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "nodes/qSpecies.h"
+#include "nodes/analysis/qSpecies.h"
 #include "analyser/dataOperator1D.h"
 #include "analyser/siteFilter.h"
 #include "analyser/siteSelector.h"

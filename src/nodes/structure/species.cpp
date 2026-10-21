@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "nodes/species.h"
+#include "nodes/structure/species.h"
 #include "nodes/constants.h"
 
 SpeciesNode::SpeciesNode(Graph *parentGraph) : SpeciesBaseNode(parentGraph)

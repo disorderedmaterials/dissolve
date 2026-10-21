@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "nodes/numberNode.h"
+#include "nodes/math/number.h"
 
 NumberNode::NumberNode(Graph *parentGraph) : Node(parentGraph)
 {

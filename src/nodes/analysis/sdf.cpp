@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "nodes/sdf.h"
+#include "nodes/analysis/sdf.h"
 #include "analyser/dataOperator3D.h"
 #include "analyser/siteSelector.h"
 

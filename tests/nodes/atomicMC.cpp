@@ -2,9 +2,9 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "nodes/atomicMC.h"
-#include "nodes/configuration.h"
 #include "nodes/dissolve.h"
 #include "nodes/iterableGraph.h"
+#include "nodes/structure/configuration.h"
 #include "tests/testGraph.h"
 #include <vector>
 

@@ -2,7 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #define _USE_MATH_DEFINES
-#include "nodes/bragg.h"
+#include "nodes/correlation/bragg.h"
 #include "base/timer.h"
 #include "classes/atomType.h"
 #include "classes/partialSet.h"

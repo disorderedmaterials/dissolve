@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "nodes/importSpecies.h"
+#include "nodes/import/species.h"
 
 ImportSpeciesNode::ImportSpeciesNode(Graph *parentGraph) : SpeciesBaseNode(parentGraph)
 {

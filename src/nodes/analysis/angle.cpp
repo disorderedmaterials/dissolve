@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "nodes/angle.h"
+#include "nodes/analysis/angle.h"
 #include "analyser/dataOperator1D.h"
 #include "analyser/dataOperator2D.h"
 #include "analyser/siteSelector.h"

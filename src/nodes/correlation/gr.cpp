@@ -2,7 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #define _USE_MATH_DEFINES
-#include "nodes/gr.h"
+#include "nodes/correlation/gr.h"
 #include "classes/atomType.h"
 #include "classes/box.h"
 #include "classes/cell.h"

@@ -6,12 +6,12 @@
 #include "classes/box.h"
 #include "expression/variable.h"
 #include "main/dissolve.h"
-#include "nodes/configuration.h"
 #include "nodes/dissolve.h"
-#include "nodes/importDLPOLYStructure.h"
+#include "nodes/import/dlpolyStructure.h"
 #include "nodes/insertRandom.h"
-#include "nodes/setCoordinates.h"
 #include "nodes/species.h"
+#include "nodes/structure/configuration.h"
+#include "nodes/structure/setCoordinates.h"
 #include <string>
 
 namespace Benchmarks

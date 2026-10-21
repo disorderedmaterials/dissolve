@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "nodes/mc.h"
+#include "nodes/evolution/mc.h"
 #include "base/timer.h"
 #include "classes/configuration.h"
 #include "kernels/energy.h"

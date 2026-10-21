@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "nodes/importXYZStructure.h"
+#include "nodes/import/xyzStructure.h"
 #include "base/parserLibrary.h"
 #include <fstream>
 #include <iostream>

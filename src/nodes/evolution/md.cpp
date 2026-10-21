@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "nodes/md.h"
+#include "nodes/evolution/md.h"
 #include "data/atomicMasses.h"
 #include "kernels/energy.h"
 #include "kernels/force.h"

@@ -2,12 +2,12 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #define _USE_MATH_DEFINES
-#include "nodes/sq.h"
+#include "nodes/correlation/sq.h"
 #include "base/timer.h"
 #include "math/ft.h"
 #include "math/mathFunc.h"
+#include "nodes/correlation/gr.h"
 #include "nodes/edge.h"
-#include "nodes/gr.h"
 #include "templates/algorithms.h"
 
 SQNode::SQNode(Graph *parentGraph)

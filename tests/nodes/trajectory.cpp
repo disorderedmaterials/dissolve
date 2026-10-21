@@ -2,8 +2,8 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "nodes/constants.h"
-#include "nodes/exportXYZTrajectory.h"
-#include "nodes/importXYZTrajectory.h"
+#include "nodes/export/xyzTrajectory.h"
+#include "nodes/import/xyzTrajectory.h"
 #include "tests/tempFile.h"
 #include "tests/testGraph.h"
 #include <fstream>

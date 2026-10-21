@@ -9,7 +9,7 @@
 #include "gui2/models/legacy/speciesBondModel.h"
 #include "gui2/models/legacy/speciesImproperModel.h"
 #include "gui2/models/legacy/speciesTorsionModel.h"
-#include "nodes/species.h"
+#include "nodes/structure/species.h"
 #include <QAbstractTableModel>
 #include <QModelIndex>
 

@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "nodes/importXYZTrajectory.h"
-#include "nodes/importXYZStructure.h"
+#include "nodes/import/xyzTrajectory.h"
+#include "nodes/import/xyzStructure.h"
 
 ImportXYZTrajectoryNode::ImportXYZTrajectoryNode(Graph *parentGraph) : Node(parentGraph)
 {

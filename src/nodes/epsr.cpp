@@ -13,9 +13,9 @@
 #include "math/gaussFit.h"
 #include "math/mathFunc.h"
 #include "math/poissonFit.h"
-#include "nodes/neutronSQ.h"
-#include "nodes/sq.h"
-#include "nodes/xRaySQ.h"
+#include "nodes/correlation/neutronSQ.h"
+#include "nodes/correlation/sq.h"
+#include "nodes/correlation/xRaySQ.h"
 #include "templates/algorithms.h"
 #include <functional>
 

@@ -1,4 +1,4 @@
-#include "nodes/subtract.h"
+#include "nodes/math/subtract.h"
 
 SubtractNode::SubtractNode(Graph *parentGraph) : Node(parentGraph)
 {

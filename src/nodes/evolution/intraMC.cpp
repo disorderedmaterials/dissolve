@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "nodes/intraMC.h"
+#include "nodes/evolution/intraMC.h"
 #include "base/timer.h"
 #include "classes/configuration.h"
 #include "classes/species.h"

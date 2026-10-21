@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "nodes/exportDLPUtilsPDensData.h"
+#include "nodes/export/dlputilsPDensData.h"
 
 ExportDLPUtilsPDensDataNode::ExportDLPUtilsPDensDataNode(Graph *parentGraph) : Node(parentGraph)
 {

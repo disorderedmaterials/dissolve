@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "nodes/calculateBonding.h"
+#include "nodes/structure/calculateBonding.h"
 #include "classes/cellArray.h"
 #include "data/atomicRadii.h"
 #include "main/dissolve.h"

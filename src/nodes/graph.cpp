@@ -6,7 +6,7 @@
 #include "nodes/inputs.h"
 #include "nodes/outputs.h"
 #include "nodes/registry.h"
-#include "nodes/species.h"
+#include "nodes/structure/species.h"
 #include <algorithm>
 #include <filesystem>
 

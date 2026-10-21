@@ -2,14 +2,14 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #define _USE_MATH_DEFINES
-#include "nodes/xRaySQ.h"
+#include "nodes/correlation/xRaySQ.h"
 #include "classes/configuration.h"
 #include "classes/xRayWeights.h"
 #include "math/filters.h"
 #include "math/ft.h"
+#include "nodes/correlation/gr.h"
+#include "nodes/correlation/sq.h"
 #include "nodes/edge.h"
-#include "nodes/gr.h"
-#include "nodes/sq.h"
 
 XRaySQNode::XRaySQNode(Graph *parentGraph) : Node(parentGraph)
 {

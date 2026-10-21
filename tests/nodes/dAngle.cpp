@@ -3,7 +3,7 @@
 
 #include "nodes/dAngle.h"
 #include "analyser/dataOperator2D.h"
-#include "nodes/importDLPUtilsSurface.h"
+#include "nodes/import/dlputilsSurface.h"
 #include "nodes/iterableGraph.h"
 #include "nodes/species.h"
 #include "tests/testGraph.h"

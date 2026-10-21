@@ -2,7 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "nodes/orientedSDF.h"
-#include "nodes/importDLPUtilsPDens.h"
+#include "nodes/import/dlputilsPDens.h"
 #include "nodes/iterableGraph.h"
 #include "nodes/species.h"
 #include "tests/testGraph.h"

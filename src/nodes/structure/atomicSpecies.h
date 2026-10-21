@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "nodes/speciesBase.h"
+#include "nodes/structure/speciesBase.h"
 
 class AtomicSpeciesNode : public SpeciesBaseNode
 {

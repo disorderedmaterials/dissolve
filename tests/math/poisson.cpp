@@ -4,7 +4,7 @@
 #include "base/applicative.h"
 #include "base/parserLibrary.h"
 #include "math/poissonFit.h"
-#include "nodes/importXYData.h"
+#include "nodes/import/xyData.h"
 #include "tests/testing.h"
 #include <fstream>
 

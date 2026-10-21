@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "nodes/atomicSpecies.h"
+#include "nodes/structure/atomicSpecies.h"
 
 AtomicSpeciesNode::AtomicSpeciesNode(Graph *parentGraph) : SpeciesBaseNode(parentGraph)
 {

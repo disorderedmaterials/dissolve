@@ -7,7 +7,7 @@
 #include "nodes/calculateBonding.h"
 #include "nodes/cif/importCIFStructure.h"
 #include "nodes/detectMolecules.h"
-#include "nodes/exportXYZConfiguration.h"
+#include "nodes/export/xyzConfiguration.h"
 #include "nodes/replicatedConfiguration.h"
 #include "nodes/species.h"
 #include "tests/tempFile.h"

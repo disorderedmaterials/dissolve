@@ -6,7 +6,7 @@
 #include "base/sysFunc.h"
 #include "nodes/edge.h"
 #include "nodes/graph.h"
-#include "nodes/species.h"
+#include "nodes/structure/species.h"
 #include <algorithm>
 #include <filesystem>
 #include <fstream>

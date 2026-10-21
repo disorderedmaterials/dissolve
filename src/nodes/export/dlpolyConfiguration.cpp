@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "nodes/exportDLPOLYConfiguration.h"
+#include "nodes/export/dlpolyConfiguration.h"
 #include "classes/atomType.h"
 #include "classes/configuration.h"
 #include "data/atomicMasses.h"

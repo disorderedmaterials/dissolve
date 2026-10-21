@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "nodes/intraDistance.h"
+#include "nodes/analysis/intraDistance.h"
 #include "analyser/dataExporter.h"
 #include "analyser/dataOperator1D.h"
 #include "analyser/siteSelector.h"

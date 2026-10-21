@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "nodes/setBox.h"
+#include "nodes/structure/setBox.h"
 
 SetBoxNode::SetBoxNode(Graph *parentGraph) : Node(parentGraph)
 {

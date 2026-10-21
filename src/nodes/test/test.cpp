@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "nodes/test.h"
+#include "nodes/test/test.h"
 
 TestNode::TestNode(Graph *parentGraph) : Node(parentGraph)
 {

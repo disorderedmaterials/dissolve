@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "nodes/setCoordinates.h"
+#include "nodes/structure/setCoordinates.h"
 #include "classes/configuration.h"
 
 SetCoordinatesNode::SetCoordinatesNode(Graph *parentGraph) : Node(parentGraph)

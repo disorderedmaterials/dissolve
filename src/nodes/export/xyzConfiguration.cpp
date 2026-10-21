@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "nodes/exportXYZConfiguration.h"
+#include "nodes/export/xyzConfiguration.h"
 #include "classes/configuration.h"
 #include "nodes/constants.h"
 #include <fstream>

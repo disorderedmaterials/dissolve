@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "nodes/insertRandom.h"
+#include "nodes/structure/insertRandom.h"
 #include "classes/box.h"
 #include "classes/configuration.h"
 #include "classes/species.h"

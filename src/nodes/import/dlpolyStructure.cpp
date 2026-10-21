@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "nodes/importDLPOLYStructure.h"
+#include "nodes/import/dlpolyStructure.h"
 #include "base/applicative.h"
 #include "base/parserLibrary.h"
 #include "data/elements.h"

@@ -5,8 +5,7 @@
 
 #include "classes/structure.h"
 #include "nodes/forcefield.h"
-#include "nodes/node.h"
-#include "nodes/speciesBase.h"
+#include "nodes/structure/speciesBase.h"
 
 // Species Node
 class SpeciesNode : public SpeciesBaseNode

@@ -2,15 +2,15 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #define _USE_MATH_DEFINES
-#include "nodes/neutronSQ.h"
+#include "nodes/correlation/neutronSQ.h"
 #include "classes/configuration.h"
 #include "classes/neutronWeights.h"
 #include "main/dissolve.h"
 #include "math/filters.h"
 #include "math/ft.h"
+#include "nodes/correlation/sq.h"
 #include "nodes/edge.h"
-#include "nodes/exportData.h"
-#include "nodes/sq.h"
+#include "nodes/export/data.h"
 
 NeutronSQNode::NeutronSQNode(Graph *parentGraph) : Node(parentGraph)
 {

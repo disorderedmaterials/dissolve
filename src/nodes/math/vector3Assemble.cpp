@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "nodes/vector3Assemble.h"
+#include "nodes/math/vector3Assemble.h"
 
 Vector3AssembleNode::Vector3AssembleNode(Graph *parentGraph) : Node(parentGraph)
 {

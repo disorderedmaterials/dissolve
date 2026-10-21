@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "nodes/exportBlockData.h"
+#include "nodes/export/blockData.h"
 
 ExportBlockDataNode::ExportBlockDataNode(Graph *parentGraph) : Node(parentGraph)
 {

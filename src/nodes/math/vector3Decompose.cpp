@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "nodes/vector3Decompose.h"
+#include "nodes/math/vector3Decompose.h"
 
 Vector3DecomposeNode::Vector3DecomposeNode(Graph *parentGraph) : Node(parentGraph)
 {
