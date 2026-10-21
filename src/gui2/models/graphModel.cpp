@@ -24,24 +24,25 @@ GraphModel::GraphModel() : nodes_(this), graph_(nullptr), edges_(this, graph_)
 }
 
 // Return the graph status
-const std::optional<NodeConstants::ProcessResult> &GraphModel::graphStatus() const { return graphStatus_; }
+const std::variant<GraphModel::GraphGlobalStates, NodeConstants::ProcessResult> &GraphModel::graphStatus() const
+{
+    return graphStatus_;
+}
 
 // Returns bool - true if the graph progress is complete, therefore enabling the graph controls in the GUI
-bool GraphModel::graphControlsEnabled() { return graphProgressComplete_; }
+bool GraphModel::graphControlsEnabled()
+{
+    if (std::holds_alternative<GraphGlobalStates>(graphStatus_))
+        if (std::get<GraphGlobalStates>(graphStatus_) == GraphGlobalStates::InProgress)
+            return false;
+    return true;
+}
 
 // Returns a lambda to assign a default position to nodes of type input/output/loopbacks
 std::function<std::optional<double>(Node *)> &GraphModel::nodeXPositionInitialiser() { return nodeXPositionInitialiser_; }
 
 // Returns a lambda to assign a default position to nodes of type input/output/loopbacks
 std::function<std::optional<double>(Node *)> &GraphModel::nodeYPositionInitialiser() { return nodeYPositionInitialiser_; }
-
-// Set the graph status
-void GraphModel::setGraphStatus(NodeConstants::ProcessResult status)
-{
-    if (graphStatus_.has_value())
-        graphStatus_.reset();
-    graphStatus_.emplace(status);
-}
 
 Graph *GraphModel::graph() { return graph_; }
 
@@ -78,11 +79,15 @@ GraphNodeModel *GraphModel::nodes() { return &nodes_; }
 // Returns the graph status icon
 QUrl GraphModel::statusIcon()
 {
-    if (!graphProgressComplete_)
-        return QUrl("qrc:/DissolveIconsModule/waiting.svg");
-    if (!graphStatus_.has_value())
-        return QUrl("qrc:/DissolveIconsModule/unknown.svg");
-    if (*graphStatus_ == NodeConstants::ProcessResult::Unchanged || *graphStatus_ == NodeConstants::ProcessResult::Success)
+    if (std::holds_alternative<GraphGlobalStates>(graphStatus_))
+    {
+        if (std::get<GraphGlobalStates>(graphStatus_) == GraphGlobalStates::InProgress)
+            return QUrl("qrc:/DissolveIconsModule/waiting.svg");
+        else
+            return QUrl("qrc:/DissolveIconsModule/unknown.svg");
+    }
+    else if (std::get<NodeConstants::ProcessResult>(graphStatus_) == NodeConstants::ProcessResult::Unchanged ||
+             std::get<NodeConstants::ProcessResult>(graphStatus_) == NodeConstants::ProcessResult::Success)
         return QUrl("qrc:/DissolveIconsModule/true.svg");
     return QUrl("qrc:/DissolveIconsModule/false.svg");
 }
@@ -308,41 +313,46 @@ bool GraphModel::isValidNode(QVariant nodeName) const { return graph_->findNode(
 // Return bool - true if graph run was successful/unchanged, false if failed
 void GraphModel::run(QVariant nodeName)
 {
-    auto name = nodeName.toString().toStdString();
-    auto node = graph_->findNode(name);
+    auto runnerNode = graph_->findNode(nodeName.toString().toStdString());
     auto result = std::make_shared<NodeConstants::ProcessResult>();
-    auto *dissolveThread = QThread::create([this, node, result] { *result = node->run(); });
+    auto *dissolveThread = QThread::create([this, runnerNode, result] { *result = runnerNode->run(); });
     QObject::connect(dissolveThread, &QThread::started, this, [this]() { Q_EMIT graphRunStarted(); });
     QObject::connect(this, &GraphModel::graphRunStarted, this,
                      [this]()
                      {
-                         graphProgressComplete_ = false;
+                         graphStatus_ = GraphModel::GraphGlobalStates::InProgress;
 
                          // Graph progress changed (started), so update controls enabled
                          Q_EMIT graphProgressChanged();
                      });
     QObject::connect(dissolveThread, &QThread::finished, this,
-                     [this, node, result]()
+                     [this, runnerNode, result]()
                      {
                          if (!result)
                          {
-                             Q_EMIT graphRunComplete(NodeConstants::ProcessResult::Failed, std::string(node->name()));
+                             // Runner node process result is a nullptr, so it has failed
+                             Q_EMIT graphRunComplete(NodeConstants::ProcessResult::Failed, std::string(runnerNode->name()));
+
+                             // Reset graph global state
+                             graphStatus_ = GraphGlobalStates::Initialised;
                              return;
                          }
-                         setGraphStatus(*result.get());
+
+                         graphStatus_ = *result.get();
 
                          // Update dynamic outputs
                          auto dynamicNodes = nodes_.findAllByRoleTrue(GraphNodeModel::HAS_DYNAMIC_OUTPUTS + Qt::UserRole);
                          for (auto &nodeWrapper : dynamicNodes)
                              nodeWrapper->outputs->resetParameters();
 
-                         Q_EMIT graphRunComplete(*result.get(), std::string(node->name()));
+                         Q_EMIT graphRunComplete(*result.get(), std::string(runnerNode->name()));
+
+                         // Reset graph global state
+                         graphStatus_ = GraphGlobalStates::Initialised;
                      });
     QObject::connect(this, &GraphModel::graphRunComplete, this,
                      [this]()
                      {
-                         graphProgressComplete_ = true;
-
                          // Graph progress changed (finished), so update controls enabled
                          Q_EMIT graphProgressChanged();
                      });

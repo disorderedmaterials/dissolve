@@ -8,6 +8,7 @@ namespace NodeConstants
 // Processing result
 enum class ProcessResult
 {
+    Running,
     Failed,
     Unchanged,
     Success

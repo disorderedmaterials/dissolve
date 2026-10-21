@@ -54,6 +54,14 @@ class GraphModel : public QObject
     using NodeParameterEndPointsMap = std::map<const Node *, std::map<std::string, QQuickItem *>>;
     GraphModel();
 
+    // Enum to describe graph 'null' states not captures by NodeConstants::ProcessResult
+    // These signify that the graph is either in an initialised state (has not yet been run), or is currently in progress
+    enum GraphGlobalStates
+    {
+        Initialised,
+        InProgress
+    };
+
     public:
     // Returns bool - true if the graph progress is complete, therefore enabling the graph controls in the GUI
     bool graphControlsEnabled();
@@ -61,10 +69,8 @@ class GraphModel : public QObject
     std::function<std::optional<double>(Node *)> &nodeXPositionInitialiser();
     // Returns a lambda to assign a default position to nodes of type input/output/loopbacks
     std::function<std::optional<double>(Node *)> &nodeYPositionInitialiser();
-    // Set the graph status
-    void setGraphStatus(NodeConstants::ProcessResult status);
     // Return the graph status
-    const std::optional<NodeConstants::ProcessResult> &graphStatus() const;
+    const std::variant<GraphGlobalStates, NodeConstants::ProcessResult> &graphStatus() const;
     // Access the actual nodes in the model
     Graph *graph();
     // Set the current graph being modelled
@@ -115,7 +121,7 @@ class GraphModel : public QObject
                                                                                       (nodeHeight * 4);
                                                                            }};
     // Graph status
-    std::optional<NodeConstants::ProcessResult> graphStatus_;
+    std::variant<GraphGlobalStates, NodeConstants::ProcessResult> graphStatus_{GraphGlobalStates::Initialised};
     // List of node names corresponding to the current graph's existing nodes, that will be reconstructed
     std::optional<std::vector<std::string>> reconstructibleNodes_;
     // Random number generator
@@ -126,8 +132,6 @@ class GraphModel : public QObject
     NodeParameterEndPointsMap curveInputEndPoints_;
     // Rendered edge curve endpoints for all outputs
     NodeParameterEndPointsMap curveOutputEndPoints_;
-    // Bool - true if the graph progress is complete, therefore enabling the graph controls in the GUI
-    bool graphProgressComplete_{true};
 
     protected:
     // The abstract data model for the parameter endpoints
