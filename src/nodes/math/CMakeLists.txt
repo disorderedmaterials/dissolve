@@ -10,8 +10,8 @@ add_library(
   integrator.h
   multiply.cpp
   multiply.h
-  numberNode.cpp
-  numberNode.h
+  number.cpp
+  number.h
   subtract.cpp
   subtract.h
   vector3Assemble.cpp
