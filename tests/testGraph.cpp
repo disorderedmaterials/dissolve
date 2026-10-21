@@ -67,7 +67,7 @@ Node *TestGraph::createAndInsertSpecies(Node *cfgSourceNode, std::string cfgSour
     // Add Species and Insert nodes
     for (auto &[speciesPtr, population] : species)
     {
-        auto insertNodeName = std::format("Insert-{}", speciesPtr->name());
+        auto insertNodeName = std::format("InsertRandom-{}", speciesPtr->name());
         EXPECT_TRUE(appendNode("InsertRandom", insertNodeName));
         EXPECT_TRUE(fetchHead()->setInput<Number>("Population", population));
         EXPECT_TRUE(fetchHead()->setInput<Number>("Density", rho));
@@ -203,7 +203,7 @@ IterableGraph *TestGraph::appendTrajectoryIterator(std::string trajectoryImportN
     auto oldGraph = currentGraph_;
 
     // Add iterator node and make it the current graph
-    currentGraph_ = dynamic_cast<IterableGraph *>(appendNode("Iterator", "Iterator"));
+    currentGraph_ = dynamic_cast<IterableGraph *>(appendNode("Iterator"));
     EXPECT_TRUE(currentGraph_);
     head_ = nullptr;
 
