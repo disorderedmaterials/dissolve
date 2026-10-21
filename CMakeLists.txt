@@ -202,7 +202,7 @@ if(APPLE)
 endif(APPLE)
 
 # Process CMakeLists in subdirs
-set(MODULE_LINK_LIBS
+set(NODE_LINK_LIBS
     ""
     CACHE INTERNAL ""
 )
@@ -276,10 +276,9 @@ set(BASIC_LINK_LIBS
     # Forcefields
     ff
     ${FF_LINK_LIBS}
-    # Modules
-    ${MODULE_LINK_LIBS}
     # Nodes
     nodes
+    ${NODES_LINK_LIBS}
 )
 
 # Set linker options for complete/no archive

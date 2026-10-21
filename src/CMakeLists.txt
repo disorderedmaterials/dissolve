@@ -7,9 +7,8 @@ add_subdirectory(kernels)
 add_subdirectory(main)
 add_subdirectory(math)
 add_subdirectory(neta)
+add_subdirectory(nodes)
 
 if(GUI)
   add_subdirectory(gui2)
 endif(GUI)
-
-add_subdirectory(nodes)

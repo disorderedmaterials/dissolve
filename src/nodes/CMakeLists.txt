@@ -1,53 +1,62 @@
-file(
-  GLOB_RECURSE node_sources
-  RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-  "./*.cpp"
+add_library(
+  nodes
+  constants.h
+  dissolve.cpp
+  dissolve.h
+  edge.cpp
+  edge.h
+  energy.cpp
+  energy.h
+  epsr.cpp
+  epsr.h
+  epsrHelpers.cpp
+  forcefield.cpp
+  forcefield.h
+  graph.cpp
+  graph.h
+  inputs.cpp
+  inputs.h
+  iterableGraph.cpp
+  iterableGraph.h
+  loopBack.cpp
+  loopBack.h
+  node.cpp
+  node.h
+  number.cpp
+  number.h
+  outputs.cpp
+  outputs.h
+  parameter.cpp
+  parameter.h
+  registry.cpp
+  registry.h
+  serialisableData.h
 )
 
-file(
-  GLOB_RECURSE node_headers
-  RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-  "./*.h"
-)
-
-# CIF/ANTLR
-set(CIF_IO_DIR "${CMAKE_CURRENT_SOURCE_DIR}/cif/io")
-set(ANTLR_CIF_PREFIX "NodeCIFImport")
-
-# CIFImport ANTLR Lexer/Parser
-antlr_target(CIFImportGrammarLexer "${CIF_IO_DIR}/CIFImportLexer.g4" LEXER)
-# PACKAGE CIFImportGrammar)
-antlr_target(
-  CIFImportGrammarParser
-  "${CIF_IO_DIR}/CIFImportParser.g4"
-  PARSER
-  # PACKAGE CIFImportGrammar
-  DEPENDS_ANTLR
-  CIFImportGrammarLexer
-  COMPILE_FLAGS
-  -no-listener
-  -visitor
-  -lib
-  ${ANTLR_CIFImportGrammarLexer_OUTPUT_DIR}
-)
-
-# Append path to ANTLR parser output, and set cache variable
-list(APPEND ANTLR_OUTPUT_DIRS ${ANTLR_CIFImportGrammarLexer_OUTPUT_DIR})
-list(APPEND ANTLR_OUTPUT_DIRS ${ANTLR_CIFImportGrammarParser_OUTPUT_DIR})
-set(ANTLR_OUTPUT_DIRS
-    ${ANTLR_OUTPUT_DIRS}
-    CACHE INTERNAL ""
-)
-
-add_library(nodes ${node_sources} ${node_headers} ${ANTLR_CIFImportGrammarLexer_CXX_OUTPUTS} ${ANTLR_CIFImportGrammarParser_CXX_OUTPUTS})
-
-message(
-  STATUS
-    "ANTLR generated products located in the following directories: ${ANTLR_CIFImportGrammarLexer_CXX_OUTPUTS}, ${ANTLR_CIFImportGrammarParser_CXX_OUTPUTS}"
-)
-
-target_include_directories(
-  nodes PUBLIC ${PROJECT_SOURCE_DIR}/src ${PROJECT_BINARY_DIR}/src ${ANTLR_CIFImportGrammarLexer_OUTPUT_DIR}
-               ${ANTLR_CIFImportGrammarParser_OUTPUT_DIR}
-)
+target_include_directories(nodes PRIVATE ${PROJECT_SOURCE_DIR}/src)
 target_link_libraries(nodes PUBLIC base ${THREADING_LINK_LIBS})
+
+# Node subdirectories
+message(STATUS "Looking for nodes in ${CMAKE_CURRENT_SOURCE_DIR}...")
+file(
+  GLOB children
+  RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+  "*"
+)
+set(NODE_DIRS "")
+foreach(child ${children})
+  if(IS_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/${child} AND EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${child}/CMakeLists.txt)
+    list(APPEND NODE_DIRS ${child})
+  endif()
+endforeach()
+
+foreach(subdir ${NODE_DIRS})
+  message(STATUS " ... Adding node directory '${subdir}'...")
+  add_subdirectory(${subdir})
+
+  # Add to global link list
+  set(NODES_LINK_LIBS
+      ${NODES_LINK_LIBS} "nodes_${subdir}"
+      CACHE INTERNAL "" FORCE
+  )
+endforeach()
