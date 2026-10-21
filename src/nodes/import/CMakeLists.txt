@@ -1,25 +1,25 @@
 add_library(
   nodes_import
-  importDLPOLYStructure.cpp
-  importDLPOLYStructure.h
-  importDLPOLYTrajectory.cpp
-  importDLPOLYTrajectory.h
-  importDLPUtilsPDens.cpp
-  importDLPUtilsPDens.h
-  importDLPUtilsSurface.cpp
-  importDLPUtilsSurface.h
-  importEPSRAtoStructure.cpp
-  importEPSRAtoStructure.h
-  importMoscitoStructure.cpp
-  importMoscitoStructure.h
-  importSpecies.cpp
-  importSpecies.h
-  importXYData.cpp
-  importXYData.h
-  importXYZStructure.cpp
-  importXYZStructure.h
-  importXYZTrajectory.cpp
-  importXYZTrajectory.h
+dlpolyStructure.cpp
+dlpolyStructure.h
+dlpolyTrajectory.cpp
+dlpolyTrajectory.h
+dlputilsPDens.cpp
+dlputilsPDens.h
+dlputilsSurface.cpp
+dlputilsSurface.h
+epsRAtoStructure.cpp
+epsRAtoStructure.h
+moscitoStructure.cpp
+moscitoStructure.h
+species.cpp
+species.h
+xyData.cpp
+xyData.h
+xyzStructure.cpp
+xyzStructure.h
+xyzTrajectory.cpp
+xyzTrajectory.h
 )
 
 target_include_directories(nodes_import PRIVATE ${PROJECT_SOURCE_DIR}/src)
