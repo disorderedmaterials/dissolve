@@ -1,9 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "nodes/cif/io/cifClasses.h"
+#include "nodes/import/cifClasses.h"
 #include "classes/empiricalFormula.h"
-#include "classes/molecule.h"
 #include "classes/species.h"
 
 /*

@@ -1,14 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "nodes/cif/importCIFStructure.h"
-#include "CIFImportLexer.h"
-#include "CIFImportParser.h"
+#include "nodes/import/cifStructure.h"
+#include "CIFLexer.h"
+#include "CIFParser.h"
 #include "base/messenger.h"
 #include "base/sysFunc.h"
 #include "classes/empiricalFormula.h"
-#include "nodes/cif/io/CIFImportErrorListeners.h"
-#include "nodes/cif/io/CIFImportVisitor.h"
+#include "nodes/import/cifErrorListeners.h"
+#include "nodes/import/cifVisitor.h"
 #include "templates/algorithms.h"
 #include <sstream>
 #include <string>
@@ -237,7 +237,7 @@ bool ImportCIFStructureNode::parse(std::string_view filename, CIFImportVisitor::
     antlr4::ANTLRInputStream input(cifFile);
 
     // Create ANTLR lexer and set-up error listener
-    CIFImportLexer lexer(&input);
+    cifLexer lexer(&input);
     CIFImportLexerErrorListener lexerErrorListener;
     lexer.removeErrorListeners();
     lexer.addErrorListener(&lexerErrorListener);
@@ -246,7 +246,7 @@ bool ImportCIFStructureNode::parse(std::string_view filename, CIFImportVisitor::
     antlr4::CommonTokenStream tokens(&lexer);
 
     // Create ANTLR parser and set-up error listeners
-    CIFImportParser parser(&tokens);
+    cifImportParser parser(&tokens);
     CIFImportParserErrorListener parserErrorListener;
     parser.removeErrorListeners();
     parser.removeParseListeners();

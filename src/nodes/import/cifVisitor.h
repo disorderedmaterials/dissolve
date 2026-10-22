@@ -3,12 +3,12 @@
 
 #pragma once
 
-#include "CIFImportParserBaseVisitor.h"
+#include "CIFParserBaseVisitor.h"
 #include "templates/optionalRef.h"
 #include <antlr4-runtime.h>
 
 // CIFImport Visitor for ANTLR
-class CIFImportVisitor : CIFImportParserBaseVisitor
+class CIFImportVisitor : CIFParserBaseVisitor
 {
 
     public:
@@ -28,13 +28,13 @@ class CIFImportVisitor : CIFImportParserBaseVisitor
 
     public:
     // Extract information from tree
-    void extract(CIFImportParser::CifContext *tree);
+    void extract(CIFParser::CifContext *tree);
 
     /*
      * Visitor Overrides
      */
     private:
-    antlrcpp::Any visitDataBlockHeading(CIFImportParser::DataBlockHeadingContext *ctx) override;
-    antlrcpp::Any visitTaggedData(CIFImportParser::TaggedDataContext *ctx) override;
-    antlrcpp::Any visitLoopedData(CIFImportParser::LoopedDataContext *ctx) override;
+    antlrcpp::Any visitDataBlockHeading(CIFParser::DataBlockHeadingContext *ctx) override;
+    antlrcpp::Any visitTaggedData(CIFParser::TaggedDataContext *ctx) override;
+    antlrcpp::Any visitLoopedData(CIFParser::LoopedDataContext *ctx) override;
 };

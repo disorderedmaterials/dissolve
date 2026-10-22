@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "nodes/cif/io/CIFImportVisitor.h"
+#include "nodes/import/cifVisitor.h"
 #include "base/messenger.h"
 #include "base/sysFunc.h"
-#include "nodes/cif/io/CIFImportErrorListeners.h"
+#include "nodes/import/cifErrorListeners.h"
 
 CIFImportVisitor::CIFImportVisitor(CIFTags &tags) : tags_(tags) {}
 
@@ -13,7 +13,7 @@ CIFImportVisitor::CIFImportVisitor(CIFTags &tags) : tags_(tags) {}
  */
 
 // Extract information from tree into supplied objects
-void CIFImportVisitor::extract(CIFImportParser::CifContext *tree)
+void CIFImportVisitor::extract(CIFParser::CifContext *tree)
 {
     // Traverse the AST
     visitChildren(tree);
@@ -26,21 +26,21 @@ void CIFImportVisitor::extract(CIFImportParser::CifContext *tree)
  * Visitor Overrides
  */
 
-antlrcpp::Any CIFImportVisitor::visitDataBlockHeading(CIFImportParser::DataBlockHeadingContext *ctx)
+antlrcpp::Any CIFImportVisitor::visitDataBlockHeading(CIFParser::DataBlockHeadingContext *ctx)
 {
     tags_["DATA_"].push_back(std::string(DissolveSys::afterChar(ctx->getText(), "DATA_")));
 
     return visitChildren(ctx);
 }
 
-antlrcpp::Any CIFImportVisitor::visitTaggedData(CIFImportParser::TaggedDataContext *ctx)
+antlrcpp::Any CIFImportVisitor::visitTaggedData(CIFParser::TaggedDataContext *ctx)
 {
     tags_[ctx->name->getText()].push_back(ctx->value->getText());
 
     return visitChildren(ctx);
 }
 
-antlrcpp::Any CIFImportVisitor::visitLoopedData(CIFImportParser::LoopedDataContext *ctx)
+antlrcpp::Any CIFImportVisitor::visitLoopedData(CIFParser::LoopedDataContext *ctx)
 {
     // Sanity check table data size
     if (ctx->loop()->values.size() % ctx->loop()->columns.size())

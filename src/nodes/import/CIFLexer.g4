@@ -1,15 +1,15 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-lexer grammar CIFImportLexer;
+lexer grammar CIFLexer;
 
 // Lexer file header
-@lexer::header {/* CIFImport ANTLR Lexer */}
+@lexer::header {/* CIF ANTLR Lexer */}
 
 // Add custom includes after standard ANTLR includes in both *.h and *.cpp files
 @lexer::postinclude {
     #include "base/sysFunc.h"
-    #include "nodes/cif/io/CIFImportVisitor.h"
+    #include "nodes/import/cifVisitor.h"
 }
 
 // Directly precedes the lexer class declaration in the h file (e.g. for additional types etc.).

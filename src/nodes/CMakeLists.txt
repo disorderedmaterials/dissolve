@@ -33,7 +33,7 @@ add_library(
   serialisableData.h
 )
 
-target_include_directories(nodes PRIVATE ${PROJECT_SOURCE_DIR}/src)
+target_include_directories(nodes PRIVATE ${PROJECT_SOURCE_DIR}/src ${ANTLR_OUTPUT_DIRS})
 target_link_libraries(nodes PUBLIC base ${THREADING_LINK_LIBS})
 
 # Node subdirectories

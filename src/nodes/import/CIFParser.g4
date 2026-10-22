@@ -1,14 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-parser grammar CIFImportParser;
+parser grammar CIFParser;
 
 options {
-	tokenVocab = CIFImportLexer;
+	tokenVocab = CIFLexer;
 }
 
 // Parser file header
-@parser::header {/* CIFImport ANTLR Parser */}
+@parser::header {/* CIF ANTLR Parser */}
 
 // Add custom includes after standard ANTLR includes in both *.h and *.cpp files
 @parser::postinclude { }
@@ -23,7 +23,7 @@ options {
 @parser::definitions {/* parser definitions section */}
 
 /*
- * CIFImport Grammar
+ * CIF Grammar
  *
  * Rules defined here are based on those specified for CIF 1.1 (https://www.iucr.org/resources/cif/spec/version1.1/cifsyntax#bnf).
  * Some additional flexibility has been added, principally removing the enforced ordering of items to permit "looser" CIF files

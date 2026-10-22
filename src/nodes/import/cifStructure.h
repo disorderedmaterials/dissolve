@@ -5,8 +5,8 @@
 
 #include "classes/structure.h"
 #include "data/spaceGroups.h"
-#include "nodes/cif/io/CIFImportVisitor.h"
-#include "nodes/cif/io/cifClasses.h"
+#include "nodes/import/cifClasses.h"
+#include "nodes/import/cifVisitor.h"
 #include "nodes/node.h"
 #include <map>
 
