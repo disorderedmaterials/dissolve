@@ -5,8 +5,8 @@
 #include "data/structureFactors.h"
 #include "gui2/models/enumOptionsModel.h"
 #include "math/windowFunction.h"
-#include "nodes/gr.h"
-#include "nodes/md.h"
+#include "nodes/correlation/gr.h"
+#include "nodes/evolution/md.h"
 #include "nodes/registry.h"
 
 std::map<std::type_index, std::shared_ptr<EnumOptionsModel>> EnumRegistry::options_;

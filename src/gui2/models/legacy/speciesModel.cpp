@@ -3,7 +3,7 @@
 
 #include "gui2/models/legacy/speciesModel.h"
 #include "gui2/models/graphModel.h"
-#include "nodes/species.h"
+#include "nodes/structure/species.h"
 #include "speciesAtomModel.h"
 #include <memory>
 

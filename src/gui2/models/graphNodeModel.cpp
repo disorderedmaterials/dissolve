@@ -3,11 +3,11 @@
 
 #include "graphNodeModel.h"
 #include "graphModel.h"
-#include "nodes/detectMolecules.h"
 #include "nodes/dissolve.h"
 #include "nodes/inputs.h"
 #include "nodes/iterableGraph.h"
 #include "nodes/outputs.h"
+#include "nodes/structure/detectMolecules.h"
 #include <qvariant.h>
 
 GraphNodeModel::GraphNodeModel(GraphModel *parent) : parent_(parent) { setConnections(); }

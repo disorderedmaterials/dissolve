@@ -6,7 +6,7 @@
 #include "base/units.h"
 #include "kernels/common.h"
 #include "nodes/dissolve.h"
-#include "nodes/insertRandom.h"
+#include "nodes/structure/insertRandom.h"
 #include "tests/testing.h"
 #include <gtest/gtest.h>
 

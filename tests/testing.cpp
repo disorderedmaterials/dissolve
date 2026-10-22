@@ -5,7 +5,7 @@
 #include "classes/species.h"
 #include "kernels/energy.h"
 #include "kernels/force.h"
-#include "nodes/importXYData.h"
+#include "nodes/import/xyData.h"
 #include <gtest/gtest.h>
 
 namespace UnitTest

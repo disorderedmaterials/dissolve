@@ -1,0 +1,133 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2026 Team Dissolve and contributors
+
+#include "nodes/import/xyData.h"
+#include "base/applicative.h"
+#include "base/parserLibrary.h"
+#include "math/data1D.h"
+#include "math/filters.h"
+
+ImportXYDataNode::ImportXYDataNode(Graph *parentGraph) : Node(parentGraph)
+{
+    // Options
+    addOption("FilePath", "File path", filePath_);
+    addOption("Histogram", "Whether the data's x-values represent histogram bin boundaries (e.g. Gudrun mint files)",
+              histogram_);
+    addOption("RemoveAverageFromX", "Remove average from X values", removeAverageFromX_);
+    addOption("XMin", "Minimum X value", xMin_);
+    addOption("XMax", "Maximum X value", xMax_);
+    addOption("NPointsToRemove", "Number of points to remove", nPointsToRemove_);
+    addOption("XColumn", "Column index of data X values", xColumn_);
+    addOption("YColumn", "Column index of data Y values", yColumn_);
+    addOption("ErrorColumn", "Column index of data error values", errorColumn_);
+
+    // Outputs
+    addOutput("Data", "Imported data", data_);
+}
+
+/*
+ * Definition
+ */
+
+// Return type of the node
+std::string_view ImportXYDataNode::type() const { return "ImportXYData"; }
+
+// Return short summary of the node's purpose
+std::string_view ImportXYDataNode::summary() const { return "Import 1D (XY) data"; }
+
+/*
+ * Processing
+ */
+
+// Perform processing
+NodeConstants::ProcessResult ImportXYDataNode::process()
+{
+    auto filePath = filePath_.string();
+
+    message("Reading XYZ data from '{}'...\n", filePath);
+
+    // Clear the structure, and initialise error arrays if necessary
+    data_.emplace();
+    if (errorColumn_)
+        data_->addErrors();
+
+    // Parse the file
+    if (!read(*data_, filePath, xColumn_.asInteger(), yColumn_.asInteger(), errorColumn_.value_or(Number(0)).asInteger(),
+              histogram_))
+        return error("Failed to read Data1D from file '{}'\n", filePath);
+
+    // Handle any additional options
+    // -- Remove points from the start of the data?
+    for (auto n = 0; n < nPointsToRemove_.asInteger(); ++n)
+        data_->removeFirstPoint();
+    // -- Trim range?
+    if (xMin_ || xMax_)
+    {
+        auto xMin = xMin_ ? xMin_->asDouble() : data_->xAxis().front() - 1.0;
+        auto xMax = xMax_ ? xMax_->asDouble() : data_->xAxis().back() + 1.0;
+        Filters::trim(*data_, xMin, xMax);
+    }
+    // -- Subtract average level from data?
+    if (removeAverageFromX_)
+    {
+        double level = Filters::subtractAverage(*data_, removeAverageFromX_->asDouble());
+        message("Removed average level of {} from data, forming average over x >= {}.\n", level,
+                removeAverageFromX_->asDouble());
+    }
+
+    // Validity check on number of points in loaded file
+    if (data_->nValues() == 0)
+        return error("File '{}' contains no data.\n", filePath);
+
+    return NodeConstants::ProcessResult::Success;
+}
+
+// Read data specified
+bool ImportXYDataNode::read(Data1D &data, std::string filePath, int xColumn, int yColumn, int errorColumn, bool histogram)
+{
+    using namespace Parsers;
+    // Clear the data
+    data.clear();
+
+    // Convert human-indexed columns into zero-indexed ones
+    --xColumn;
+    --yColumn;
+    --errorColumn;
+
+    // Open file and check that we're OK to proceed importing from it
+    std::ifstream infile(filePath);
+    if (!infile)
+        return false;
+
+    std::optional<std::vector<std::string>> commentLine;
+    // Treat lines that begin with # as empty data points
+    auto comment =
+        "#"_p >> inlines() >> newlines().map([](const auto x) -> std::optional<std::vector<std::string>> { return {}; });
+    // We *may* have to deal with mixed numeric and alphabetic data,
+    // so treat each line as a list of strings and only parse the
+    // double at the end.  Use the map command to wrap the data in an optionsl
+    auto line = comment | (some(maybe(inlineSpaces()) >> graphs()) << spaces())
+                              .map([](auto x) -> std::optional<std::vector<std::string>> { return x; });
+    auto parsed = some(line).parse(infile);
+    if (!parsed)
+        return false;
+    auto lines = std::get<0>(*parsed);
+    if (errorColumn == -1)
+        for (auto l : lines)
+        {
+            if (!l) // just a comment;
+                continue;
+            if (errorColumn == -1)
+                data.addPoint(std::stod(l->at(xColumn)), std::stod(l->at(yColumn)));
+            else
+                data.addPoint(std::stod(l->at(xColumn)), std::stod(l->at(yColumn)), std::stod(l->at(errorColumn)));
+        }
+
+    infile.close();
+
+    // If we have a histogram, convert bin boundaries to centre-bin values
+    if (histogram)
+        Filters::convertBinBoundaries(data);
+
+    return true;
+}

@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "nodes/add.h"
 #include "nodes/edge.h"
 #include "nodes/graph.h"
+#include "nodes/math/add.h"
+#include "nodes/math/number.h"
 #include "nodes/number.h"
-#include "nodes/numberNode.h"
 #include "tests/testGraph.h"
 
 namespace UnitTest

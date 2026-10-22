@@ -3,10 +3,10 @@
 
 #include "base/applicative.h"
 #include "base/parserLibrary.h"
-#include "nodes/importDLPOLYStructure.h"
-#include "nodes/importDLPOLYTrajectory.h"
-#include "nodes/importMoscitoStructure.h"
-#include "nodes/importXYZStructure.h"
+#include "nodes/import/dlpolyStructure.h"
+#include "nodes/import/dlpolyTrajectory.h"
+#include "nodes/import/moscitoStructure.h"
+#include "nodes/import/xyzStructure.h"
 #include <gtest/gtest.h>
 #include <sstream>
 #include <string_view>

@@ -1,53 +1,63 @@
+add_library(
+  nodes
+  constants.h
+  dissolve.cpp
+  dissolve.h
+  edge.cpp
+  edge.h
+  energy.cpp
+  energy.h
+  epsr.cpp
+  epsr.h
+  epsrHelpers.cpp
+  forcefield.cpp
+  forcefield.h
+  graph.cpp
+  graph.h
+  inputs.cpp
+  inputs.h
+  iterableGraph.cpp
+  iterableGraph.h
+  loopBack.cpp
+  loopBack.h
+  node.cpp
+  node.h
+  number.cpp
+  number.h
+  outputs.cpp
+  outputs.h
+  parameter.cpp
+  parameter.h
+  registry.cpp
+  registry.h
+  serialisableData.h
+)
+
+# Node subdirectories
+message(STATUS "Looking for nodes in ${CMAKE_CURRENT_SOURCE_DIR}...")
 file(
-  GLOB_RECURSE node_sources
+  GLOB children
   RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-  "./*.cpp"
+  "*"
 )
 
-file(
-  GLOB_RECURSE node_headers
-  RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-  "./*.h"
-)
+foreach(child ${children})
+  if(IS_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/${child} AND EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${child}/CMakeLists.txt)
+    list(APPEND NODE_DIRS ${child})
+    message(STATUS " ... Adding node directory '${child}'...")
+    add_subdirectory(${child})
 
-# CIF/ANTLR
-set(CIF_IO_DIR "${CMAKE_CURRENT_SOURCE_DIR}/cif/io")
-set(ANTLR_CIF_PREFIX "NodeCIFImport")
+    # Add to global link list
+    set(NODE_LINK_LIBS
+        ${NODE_LINK_LIBS} "nodes_${child}"
+        CACHE INTERNAL "" FORCE
+    )
+  endif()
+endforeach()
 
-# CIFImport ANTLR Lexer/Parser
-antlr_target(CIFImportGrammarLexer "${CIF_IO_DIR}/CIFImportLexer.g4" LEXER)
-# PACKAGE CIFImportGrammar)
-antlr_target(
-  CIFImportGrammarParser
-  "${CIF_IO_DIR}/CIFImportParser.g4"
-  PARSER
-  # PACKAGE CIFImportGrammar
-  DEPENDS_ANTLR
-  CIFImportGrammarLexer
-  COMPILE_FLAGS
-  -no-listener
-  -visitor
-  -lib
-  ${ANTLR_CIFImportGrammarLexer_OUTPUT_DIR}
-)
+foreach(subdir ${NODE_DIRS})
 
-# Append path to ANTLR parser output, and set cache variable
-list(APPEND ANTLR_OUTPUT_DIRS ${ANTLR_CIFImportGrammarLexer_OUTPUT_DIR})
-list(APPEND ANTLR_OUTPUT_DIRS ${ANTLR_CIFImportGrammarParser_OUTPUT_DIR})
-set(ANTLR_OUTPUT_DIRS
-    ${ANTLR_OUTPUT_DIRS}
-    CACHE INTERNAL ""
-)
+endforeach()
 
-add_library(nodes ${node_sources} ${node_headers} ${ANTLR_CIFImportGrammarLexer_CXX_OUTPUTS} ${ANTLR_CIFImportGrammarParser_CXX_OUTPUTS})
-
-message(
-  STATUS
-    "ANTLR generated products located in the following directories: ${ANTLR_CIFImportGrammarLexer_CXX_OUTPUTS}, ${ANTLR_CIFImportGrammarParser_CXX_OUTPUTS}"
-)
-
-target_include_directories(
-  nodes PUBLIC ${PROJECT_SOURCE_DIR}/src ${PROJECT_BINARY_DIR}/src ${ANTLR_CIFImportGrammarLexer_OUTPUT_DIR}
-               ${ANTLR_CIFImportGrammarParser_OUTPUT_DIR}
-)
-target_link_libraries(nodes PUBLIC base ${THREADING_LINK_LIBS})
+target_include_directories(nodes PRIVATE ${PROJECT_SOURCE_DIR}/src ${ANTLR_OUTPUT_DIRS})
+target_link_libraries(nodes PUBLIC base ${NODE_LINK_LIBS} ${THREADING_LINK_LIBS})

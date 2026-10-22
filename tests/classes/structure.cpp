@@ -2,7 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/structure.h"
-#include "nodes/calculateBonding.h"
+#include "nodes/structure/calculateBonding.h"
 #include "tests/testGraph.h"
 #include <cmath>
 

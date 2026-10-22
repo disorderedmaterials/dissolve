@@ -2,7 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "data/ff/library.h"
-#include "nodes/species.h"
+#include "nodes/structure/species.h"
 #include "tests/testGraph.h"
 
 namespace UnitTest

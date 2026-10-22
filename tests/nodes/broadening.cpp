@@ -2,9 +2,9 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "math/windowFunction.h"
-#include "nodes/gr.h"
-#include "nodes/neutronSQ.h"
-#include "nodes/sq.h"
+#include "nodes/correlation/gr.h"
+#include "nodes/correlation/neutronSQ.h"
+#include "nodes/correlation/sq.h"
 #include "tests/testGraph.h"
 
 namespace UnitTest

@@ -1,9 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "nodes/averageMolecule.h"
+#include "nodes/analysis/averageMolecule.h"
 #include "nodes/iterableGraph.h"
-#include "nodes/species.h"
 #include "tests/testGraph.h"
 
 namespace UnitTest

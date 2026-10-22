@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "nodes/sq.h"
+#include "nodes/correlation/sq.h"
 #include "math/windowFunction.h"
-#include "nodes/gr.h"
+#include "nodes/correlation/gr.h"
 #include "tests/testGraph.h"
 
 namespace UnitTest

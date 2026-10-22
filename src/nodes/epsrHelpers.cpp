@@ -6,12 +6,12 @@
 #include "math/gaussFit.h"
 #include "math/mathFunc.h"
 #include "math/poissonFit.h"
-#include "nodes/configuration.h"
+#include "nodes/correlation/neutronSQ.h"
+#include "nodes/correlation/sq.h"
+#include "nodes/correlation/xRaySQ.h"
 #include "nodes/dissolve.h"
 #include "nodes/epsr.h"
-#include "nodes/neutronSQ.h"
-#include "nodes/sq.h"
-#include "nodes/xRaySQ.h"
+#include "nodes/structure/configuration.h"
 #include "templates/algorithms.h"
 
 // Return enum option info for ExpansionFunctionType

@@ -2,8 +2,8 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "kernels/energy.h"
-#include "nodes/neutronSQ.h"
-#include "nodes/species.h"
+#include "nodes/correlation/neutronSQ.h"
+#include "nodes/structure/species.h"
 #include "tests/testGraph.h"
 
 namespace UnitTest

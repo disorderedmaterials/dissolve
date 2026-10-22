@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "nodes/add.h"
 #include "nodes/dissolve.h"
+#include "nodes/math/add.h"
 #include "nodes/registry.h"
 #include "tests/testGraph.h"
 

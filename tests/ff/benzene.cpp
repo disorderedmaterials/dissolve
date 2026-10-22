@@ -4,7 +4,7 @@
 #include "kernels/energy.h"
 #include "kernels/force.h"
 #include "nodes/dissolve.h"
-#include "nodes/species.h"
+#include "nodes/structure/species.h"
 #include "tests/testGraph.h"
 
 namespace UnitTest

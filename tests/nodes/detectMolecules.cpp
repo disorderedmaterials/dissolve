@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "nodes/detectMolecules.h"
+#include "nodes/structure/detectMolecules.h"
 #include "classes/configuration.h"
-#include "nodes/calculateBonding.h"
-#include "nodes/importXYZStructure.h"
+#include "nodes/import/xyzStructure.h"
+#include "nodes/structure/calculateBonding.h"
 #include "tests/testGraph.h"
 #include <gtest/gtest.h>
 #include <string>

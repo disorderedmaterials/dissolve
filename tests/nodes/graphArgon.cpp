@@ -3,10 +3,9 @@
 
 #include "base/units.h"
 #include "classes/configuration.h"
-#include "classes/isotopologueSet.h"
 #include "data/structureFactors.h"
-#include "nodes/neutronSQ.h"
-#include "nodes/sq.h"
+#include "nodes/correlation/neutronSQ.h"
+#include "nodes/correlation/sq.h"
 #include "tests/testGraph.h"
 
 namespace UnitTest
