@@ -1,13 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "nodes/bragg.h"
-#include "classes/partialSet.h"
+#include "nodes/correlation/bragg.h"
 #include "classes/speciesSites.h"
 #include "math/rangedVector3.h"
-#include "nodes/gr.h"
-#include "nodes/iterableGraph.h"
-#include "nodes/sq.h"
+#include "nodes/correlation/gr.h"
+#include "nodes/correlation/sq.h"
 #include "tests/testGraph.h"
 #include <memory>
 

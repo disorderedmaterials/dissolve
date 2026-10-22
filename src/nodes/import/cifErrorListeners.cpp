@@ -6,35 +6,35 @@
 #include "base/sysFunc.h"
 
 /*
- * CIFImport Lexer Error Listener
+ * CIF Lexer Error Listener
  */
 
-CIFImportLexerErrorListener::CIFImportLexerErrorListener() {}
+CIFLexerErrorListener::CIFLexerErrorListener() {}
 
-void CIFImportLexerErrorListener::syntaxError(antlr4::Recognizer *recognizer, antlr4::Token *token, size_t line,
-                                              size_t charPositionInLine, const std::string &message, std::exception_ptr ep)
+void CIFLexerErrorListener::syntaxError(antlr4::Recognizer *recognizer, antlr4::Token *token, size_t line,
+                                        size_t charPositionInLine, const std::string &message, std::exception_ptr ep)
 {
-    Messenger::print("\nError in CIFImport definition on line {}, column {}.\n", line, charPositionInLine);
+    Messenger::print("\nError in CIF definition on line {}, column {}.\n", line, charPositionInLine);
 
     // The actual error message can contain braces, so escape those to avoid breaking fmt
     auto escaped = DissolveSys::replace(DissolveSys::replace(message, "{", "{{"), "}", "}}");
 
-    throw CIFImportExceptions::CIFImportSyntaxException(std::format("Syntax Error: {}", escaped));
+    throw CIFExceptions::CIFSyntaxException(std::format("Syntax Error: {}", escaped));
 }
 
 /*
- * CIFImport Parser Error Listener
+ * CIF Parser Error Listener
  */
 
-CIFImportParserErrorListener::CIFImportParserErrorListener() {}
+CIFParserErrorListener::CIFParserErrorListener() {}
 
-void CIFImportParserErrorListener::syntaxError(antlr4::Recognizer *recognizer, antlr4::Token *token, size_t line,
-                                               size_t charPositionInLine, const std::string &message, std::exception_ptr ep)
+void CIFParserErrorListener::syntaxError(antlr4::Recognizer *recognizer, antlr4::Token *token, size_t line,
+                                         size_t charPositionInLine, const std::string &message, std::exception_ptr ep)
 {
-    Messenger::print("\nError in CIFImport definition on line {}, column {}.\n", line, charPositionInLine);
+    Messenger::print("\nError in CIF definition on line {}, column {}.\n", line, charPositionInLine);
 
     // The actual error message can contain braces, so escape those to avoid breaking fmt
     auto escaped = DissolveSys::replace(DissolveSys::replace(message, "{", "{{"), "}", "}}");
 
-    throw CIFImportExceptions::CIFImportSyntaxException(std::format("Syntax Error: {}", escaped));
+    throw CIFExceptions::CIFSyntaxException(std::format("Syntax Error: {}", escaped));
 }

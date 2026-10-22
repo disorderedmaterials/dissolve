@@ -1,8 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "nodes/modifierOSites.h"
-#include "nodes/species.h"
+#include "nodes/analysis/modifierOSites.h"
 #include "tests/testGraph.h"
 
 namespace UnitTest

@@ -1,10 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "nodes/intraDistance.h"
+#include "nodes/analysis/intraDistance.h"
 #include "classes/speciesSites.h"
 #include "nodes/iterableGraph.h"
-#include "nodes/species.h"
 #include "tests/testGraph.h"
 #include <vector>
 

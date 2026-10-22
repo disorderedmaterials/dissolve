@@ -6,13 +6,13 @@
 #include <antlr4-runtime.h>
 #include <exception>
 
-namespace CIFImportExceptions
+namespace CIFExceptions
 {
-// CIFImport Syntax Exception
-class CIFImportSyntaxException : public std::exception
+// CIF Syntax Exception
+class CIFSyntaxException : public std::exception
 {
     public:
-    CIFImportSyntaxException(std::string_view message = "Undefined CIFImport Syntax Exception") : message_{message} {}
+    CIFSyntaxException(std::string_view message = "Undefined CIF Syntax Exception") : message_{message} {}
 
     private:
     // Error message
@@ -21,13 +21,13 @@ class CIFImportSyntaxException : public std::exception
     public:
     virtual const char *what() const throw() { return message_.c_str(); }
 };
-} // namespace CIFImportExceptions
+} // namespace CIFExceptions
 
-// CIFImport Lexer Error Listener
-class CIFImportLexerErrorListener : public antlr4::BaseErrorListener
+// CIF Lexer Error Listener
+class CIFLexerErrorListener : public antlr4::BaseErrorListener
 {
     public:
-    CIFImportLexerErrorListener();
+    CIFLexerErrorListener();
 
     /*
      * BaseErrorListener Overrides
@@ -37,11 +37,11 @@ class CIFImportLexerErrorListener : public antlr4::BaseErrorListener
                      const std::string &, std::exception_ptr ep);
 };
 
-// CIFImport Parser Error Listener
-class CIFImportParserErrorListener : public antlr4::BaseErrorListener
+// CIF Parser Error Listener
+class CIFParserErrorListener : public antlr4::BaseErrorListener
 {
     public:
-    CIFImportParserErrorListener();
+    CIFParserErrorListener();
 
     /*
      * BaseErrorListener Overrides

@@ -2,8 +2,8 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "base/cbor.h"
+#include "nodes/correlation/gr.h"
 #include "nodes/structure/configuration.h"
-#include "src/nodes/gr.h"
 #include "tests/testGraph.h"
 #include <filesystem>
 #include <memory>

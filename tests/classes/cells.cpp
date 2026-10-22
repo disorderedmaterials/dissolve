@@ -7,9 +7,6 @@
 #include "kernels/energy.h"
 #include "main/dissolve.h"
 #include "math/mathFunc.h"
-#include "nodes/atomicSpecies.h"
-#include "nodes/import/species.h"
-#include "nodes/species.h"
 #include "tests/testGraph.h"
 
 namespace UnitTest

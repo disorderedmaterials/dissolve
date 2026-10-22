@@ -7,8 +7,8 @@
 #include "templates/optionalRef.h"
 #include <antlr4-runtime.h>
 
-// CIFImport Visitor for ANTLR
-class CIFImportVisitor : CIFParserBaseVisitor
+// CIF Visitor for ANTLR
+class CIFVisitor : CIFParserBaseVisitor
 {
 
     public:
@@ -16,8 +16,8 @@ class CIFImportVisitor : CIFParserBaseVisitor
     using CIFTags = std::map<std::string, std::vector<std::string>>;
 
     public:
-    CIFImportVisitor(CIFTags &tags);
-    ~CIFImportVisitor() override = default;
+    CIFVisitor(CIFTags &tags);
+    ~CIFVisitor() override = default;
 
     /*
      * Data

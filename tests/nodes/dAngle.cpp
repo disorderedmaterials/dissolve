@@ -1,11 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "nodes/dAngle.h"
+#include "nodes/analysis/dAngle.h"
 #include "analyser/dataOperator2D.h"
 #include "nodes/import/dlputilsSurface.h"
 #include "nodes/iterableGraph.h"
-#include "nodes/species.h"
 #include "tests/testGraph.h"
 
 namespace UnitTest

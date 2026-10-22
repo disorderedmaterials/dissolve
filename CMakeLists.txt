@@ -277,8 +277,8 @@ set(BASIC_LINK_LIBS
     ff
     ${FF_LINK_LIBS}
     # Nodes
-    nodes
     ${NODES_LINK_LIBS}
+    nodes
 )
 
 # Set linker options for complete/no archive

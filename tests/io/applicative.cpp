@@ -5,8 +5,8 @@
 #include "base/parserLibrary.h"
 #include "nodes/import/dlpolyStructure.h"
 #include "nodes/import/dlpolyTrajectory.h"
+#include "nodes/import/moscitoStructure.h"
 #include "nodes/import/xyzStructure.h"
-#include "nodes/importMoscitoStructure.h"
 #include <gtest/gtest.h>
 #include <sstream>
 #include <string_view>

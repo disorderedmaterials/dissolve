@@ -6,14 +6,14 @@
 #include "base/sysFunc.h"
 #include "nodes/import/cifErrorListeners.h"
 
-CIFImportVisitor::CIFImportVisitor(CIFTags &tags) : tags_(tags) {}
+CIFVisitor::CIFVisitor(CIFTags &tags) : tags_(tags) {}
 
 /*
  * Data
  */
 
 // Extract information from tree into supplied objects
-void CIFImportVisitor::extract(CIFParser::CifContext *tree)
+void CIFVisitor::extract(CIFParser::CifContext *tree)
 {
     // Traverse the AST
     visitChildren(tree);
@@ -26,21 +26,21 @@ void CIFImportVisitor::extract(CIFParser::CifContext *tree)
  * Visitor Overrides
  */
 
-antlrcpp::Any CIFImportVisitor::visitDataBlockHeading(CIFParser::DataBlockHeadingContext *ctx)
+antlrcpp::Any CIFVisitor::visitDataBlockHeading(CIFParser::DataBlockHeadingContext *ctx)
 {
     tags_["DATA_"].push_back(std::string(DissolveSys::afterChar(ctx->getText(), "DATA_")));
 
     return visitChildren(ctx);
 }
 
-antlrcpp::Any CIFImportVisitor::visitTaggedData(CIFParser::TaggedDataContext *ctx)
+antlrcpp::Any CIFVisitor::visitTaggedData(CIFParser::TaggedDataContext *ctx)
 {
     tags_[ctx->name->getText()].push_back(ctx->value->getText());
 
     return visitChildren(ctx);
 }
 
-antlrcpp::Any CIFImportVisitor::visitLoopedData(CIFParser::LoopedDataContext *ctx)
+antlrcpp::Any CIFVisitor::visitLoopedData(CIFParser::LoopedDataContext *ctx)
 {
     // Sanity check table data size
     if (ctx->loop()->values.size() % ctx->loop()->columns.size())

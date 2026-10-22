@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "nodes/voxelDensity.h"
+#include "nodes/analysis/voxelDensity.h"
 #include "data/atomicMasses.h"
 #include "nodes/structure/configuration.h"
 #include "tests/testGraph.h"

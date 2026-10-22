@@ -227,7 +227,7 @@ std::optional<double> ImportCIFStructureNode::getBondDistance(std::string_view l
 }
 
 // Parse supplied file into the destination objects
-bool ImportCIFStructureNode::parse(std::string_view filename, CIFImportVisitor::CIFTags &tags) const
+bool ImportCIFStructureNode::parse(std::string_view filename, CIFVisitor::CIFTags &tags) const
 {
     // Set up ANTLR input stream
     std::ifstream cifFile(std::string(filename), std::ios::in | std::ios::binary);
@@ -237,8 +237,8 @@ bool ImportCIFStructureNode::parse(std::string_view filename, CIFImportVisitor::
     antlr4::ANTLRInputStream input(cifFile);
 
     // Create ANTLR lexer and set-up error listener
-    cifLexer lexer(&input);
-    CIFImportLexerErrorListener lexerErrorListener;
+    CIFLexer lexer(&input);
+    CIFLexerErrorListener lexerErrorListener;
     lexer.removeErrorListeners();
     lexer.addErrorListener(&lexerErrorListener);
 
@@ -246,32 +246,32 @@ bool ImportCIFStructureNode::parse(std::string_view filename, CIFImportVisitor::
     antlr4::CommonTokenStream tokens(&lexer);
 
     // Create ANTLR parser and set-up error listeners
-    cifImportParser parser(&tokens);
-    CIFImportParserErrorListener parserErrorListener;
+    CIFParser parser(&tokens);
+    CIFParserErrorListener parserErrorListener;
     parser.removeErrorListeners();
     parser.removeParseListeners();
     parser.addErrorListener(&lexerErrorListener);
     parser.addErrorListener(&parserErrorListener);
 
     // Generate the AST
-    CIFImportParser::CifContext *tree = nullptr;
+    CIFParser::CifContext *tree = nullptr;
     try
     {
         tree = parser.cif();
     }
-    catch (CIFImportExceptions::CIFImportSyntaxException &ex)
+    catch (CIFExceptions::CIFSyntaxException &ex)
     {
         Messenger::error("{}", ex.what());
         return false;
     }
 
     // Visit the nodes in the AST
-    CIFImportVisitor visitor(tags);
+    CIFVisitor visitor(tags);
     try
     {
         visitor.extract(tree);
     }
-    catch (CIFImportExceptions::CIFImportSyntaxException &ex)
+    catch (CIFExceptions::CIFSyntaxException &ex)
     {
         return Messenger::error("{}", ex.what());
     }

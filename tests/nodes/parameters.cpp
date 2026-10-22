@@ -2,8 +2,8 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "nodes/dissolve.h"
-#include "nodes/numberNode.h"
-#include "nodes/test.h"
+#include "nodes/math/number.h"
+#include "nodes/test/test.h"
 #include "tests/testGraph.h"
 
 namespace UnitTest

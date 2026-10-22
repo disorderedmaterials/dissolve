@@ -3,7 +3,7 @@
 
 #include "classes/configuration.h"
 #include "kernels/energy.h"
-#include "nodes/species.h"
+#include "nodes/structure/species.h"
 #include "templates/algorithms.h"
 #include "tests/testGraph.h"
 

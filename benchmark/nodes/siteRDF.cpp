@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "nodes/siteRDF.h"
+#include "nodes/analysis/siteRDF.h"
 #include "classes/speciesSites.h"
 #include "common/problems.h"
 #include <benchmark/benchmark.h>

@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "nodes/xRaySQ.h"
-#include "nodes/gr.h"
+#include "nodes/correlation/xRaySQ.h"
+#include "nodes/correlation/gr.h"
 #include "tests/testGraph.h"
 
 namespace UnitTest

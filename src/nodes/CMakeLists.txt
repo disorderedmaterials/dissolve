@@ -33,9 +33,6 @@ add_library(
   serialisableData.h
 )
 
-target_include_directories(nodes PRIVATE ${PROJECT_SOURCE_DIR}/src ${ANTLR_OUTPUT_DIRS})
-target_link_libraries(nodes PUBLIC base ${THREADING_LINK_LIBS})
-
 # Node subdirectories
 message(STATUS "Looking for nodes in ${CMAKE_CURRENT_SOURCE_DIR}...")
 file(
@@ -43,20 +40,24 @@ file(
   RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
   "*"
 )
-set(NODE_DIRS "")
+
 foreach(child ${children})
   if(IS_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/${child} AND EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${child}/CMakeLists.txt)
     list(APPEND NODE_DIRS ${child})
+    message(STATUS " ... Adding node directory '${child}'...")
+    add_subdirectory(${child})
+
+    # Add to global link list
+    set(NODE_LINK_LIBS
+        ${NODE_LINK_LIBS} "nodes_${child}"
+        CACHE INTERNAL "" FORCE
+    )
   endif()
 endforeach()
 
 foreach(subdir ${NODE_DIRS})
-  message(STATUS " ... Adding node directory '${subdir}'...")
-  add_subdirectory(${subdir})
 
-  # Add to global link list
-  set(NODES_LINK_LIBS
-      ${NODES_LINK_LIBS} "nodes_${subdir}"
-      CACHE INTERNAL "" FORCE
-  )
 endforeach()
+
+target_include_directories(nodes PRIVATE ${PROJECT_SOURCE_DIR}/src ${ANTLR_OUTPUT_DIRS})
+target_link_libraries(nodes PUBLIC base ${NODE_LINK_LIBS} ${THREADING_LINK_LIBS})

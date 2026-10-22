@@ -2,9 +2,9 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "math/history.h"
-#include "nodes/atomicSpecies.h"
 #include "nodes/number.h"
-#include "nodes/species.h"
+#include "nodes/structure/atomicSpecies.h"
+#include "nodes/structure/species.h"
 #include "tests/testGraph.h"
 
 namespace UnitTest

@@ -36,7 +36,7 @@ class ImportCIFStructureNode : public Node
     // CIF filepath
     std::filesystem::path filePath_;
     // Vector of enumerated data items
-    CIFImportVisitor::CIFTags tags_;
+    CIFVisitor::CIFTags tags_;
     // Tolerance for removal of overlapping atoms
     double overlapTolerance_{0.1};
     // Atom assemblies
@@ -80,7 +80,7 @@ class ImportCIFStructureNode : public Node
     // Return whether a bond distance is defined for the specified label pair
     std::optional<double> getBondDistance(std::string_view labelI, std::string_view labelJ) const;
     // Parse supplied file into the destination objects
-    bool parse(std::string_view filename, CIFImportVisitor::CIFTags &tags) const;
+    bool parse(std::string_view filename, CIFVisitor::CIFTags &tags) const;
     // Read CIF data from specified file
     bool read(std::string_view filename);
     // Create structure from basic unit cell atoms and connectivity
