@@ -3,27 +3,54 @@ type = "Dissolve"
 x = 0
 y = 0
 
-edges = [
-  {sourceNode = "x", sourceOutput = "Result", targetNode = "z", targetInput = "X"},
-  {sourceNode = "y", sourceOutput = "Result", targetNode = "z" ,targetInput = "Y"}
-]
-
 [nodes]
-
 [nodes.x]
-type = "Add"
 name = "x"
+type = "Add"
 x = 300
 y = 400
 
+[nodes.x.inputs]
+[nodes.x.inputs.X]
+data = 0
+
+[nodes.x.inputs.Y]
+data = 0
+
 [nodes.y]
-type = "Add"
 name = "y"
+type = "Add"
 x = 350
 y = 600
 
+[nodes.y.inputs]
+[nodes.y.inputs.X]
+data = 0
+
+[nodes.y.inputs.Y]
+data = 0
+
 [nodes.z]
-type = "Add"
 name = "z"
+type = "Add"
 x = 750
 y = 500
+
+[nodes.z.inputs]
+[nodes.z.inputs.X]
+data = 0
+
+[nodes.z.inputs.Y]
+data = 0
+
+[[edges]]
+sourceNode = "x"
+sourceOutput = "Result"
+targetNode = "z"
+targetInput = "X"
+
+[[edges]]
+sourceNode = "y"
+sourceOutput = "Result"
+targetNode = "z"
+targetInput = "Y"

@@ -82,7 +82,7 @@ void SpeciesSites::deserialise(const SerialisedValue &node)
 {
     clear();
 
-    Deserialisable::map(node, "set",
+    Deserialisable::map(node, "sites",
                         [&](const std::string &speciesName, const SerialisedValue &sites)
                         {
                             auto &set = sites_[speciesName];
@@ -94,26 +94,26 @@ void SpeciesSites::deserialise(const SerialisedValue &node)
 // Resolve internal resolvable name references with supplied data
 void SpeciesSites::resolve(const std::map<std::string, const Species *> &speciesInScope)
 {
-    for (auto &[resolvableSpecies, topes] : sites_)
+    for (auto &[resolvableSpecies, siteWeight] : sites_)
     {
         // Find the named species
         if (speciesInScope.contains(std::string(resolvableSpecies.name())))
             resolvableSpecies.resolve(speciesInScope.at(std::string(resolvableSpecies.name())));
         else
-            throw(std::runtime_error(std::format("Species '{}' is used in SpeciesSites, but no such species is in scope.\n",
+            throw(std::runtime_error(std::format("A site is referenced in species '{}' but no such species is in scope.\n",
                                                  resolvableSpecies.name())));
 
         // Resolve SpeciesSites
         auto *sp = resolvableSpecies.raw();
-        for (auto &resolvableSpeciesSite : std::views::keys(topes))
+        for (auto &resolvableSpeciesSite : std::views::keys(siteWeight))
         {
             auto *site = sp->findSite(resolvableSpeciesSite.name());
             if (site)
                 resolvableSpeciesSite.resolve(site);
             else
                 throw(std::runtime_error(
-                    std::format("Species site '{}' from species '{}' is used in SpeciesSites, but no such site exists.\n",
-                                sp->name(), resolvableSpeciesSite.name())));
+                    std::format("Species site '{}' from species '{}' is referenced but no such site exists.\n",
+                                resolvableSpeciesSite.name(), sp->name())));
         }
     }
 }
