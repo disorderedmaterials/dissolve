@@ -5,13 +5,17 @@ import QtQuick.Dialogs
 import Qt.labs.qmlmodels
 import Dissolve
 import DissolveIconsModule
+import DissolveDelegatesModule
 import "../DissolveIconsModule"
+import "../DissolveDelegatesModule"
 import "../Dissolve"
 
 DelegateChooser {
     id: root
 
     role: "type"
+
+    property bool enabled: true
 
     DelegateChoice {
         roleValue: "bool"
@@ -21,6 +25,7 @@ DelegateChooser {
             Layout.column: 2
             Layout.row: index
             checked: param
+            enabled: root.enabled
 
             onClicked: param = !param
         }
@@ -36,7 +41,6 @@ DelegateChooser {
                 top: 10e9
                 decimals: 5
             }
-            onAccepted: {console.log(Number(text)); param = Number(text); console.log(param); }
             onActiveFocusChanged: { if (activeFocus) { selectAll(); } else {param = Number(text); }}
         }
     }
@@ -50,6 +54,7 @@ DelegateChooser {
 
             CheckBox {
                 checked: param != null
+                enabled: root.enabled
 
                 onClicked: {
                     if (param == null) {
@@ -60,7 +65,7 @@ DelegateChooser {
                 }
             }
             SpinBox {
-                enabled: param != null
+                enabled: (param != null) && root.enabled
                 value: param
 
                 onValueModified: param = value
@@ -75,6 +80,7 @@ DelegateChooser {
             Layout.column: 2
             Layout.row: index
             text: param
+            enabled: root.enabled
 
             onTextChanged: param = text
         }
@@ -93,6 +99,7 @@ DelegateChooser {
                 id: filePathField
 
                 text: param
+                enabled: root.enabled
             }
 
             ToolButton {
@@ -101,6 +108,7 @@ DelegateChooser {
                 icon.source: "qrc:/DissolveIconsModule/documents.svg"
                 display: AbstractButton.iconOnly
                 onClicked: fileDialog.open()
+                enabled: root.enabled
 
                 ToolTip.text: "Select a file"
                 ToolTip.visible: hovered
@@ -117,14 +125,13 @@ DelegateChooser {
         }
     }
     DelegateChoice {
-        id: delegateRoot
+        id: vec3Delegate
         roleValue: "vector3"
 
         function createVector(xInput, yInput, zInput) {
             var x = Number(xInput);
             var y = Number(yInput);
             var z = Number(zInput);
-            console.log("Creating vector from ", x, ", ", y, ", ", z);
             return [x, y, z]
         }
 
@@ -144,7 +151,7 @@ DelegateChooser {
                     top: 10e9
                     decimals: 5
                 }
-                onAccepted: param = delegateRoot.createVector(xInput.text, yInput.text, zInput.text)
+                onAccepted: param = vec3Delegate.createVector(xInput.text, yInput.text, zInput.text)
                 onActiveFocusChanged: if (activeFocus) selectAll()
             }
 
@@ -157,7 +164,7 @@ DelegateChooser {
                     top: 10e9
                     decimals: 5
                 }
-                onAccepted: param = delegateRoot.createVector(xInput.text, yInput.text, zInput.text)
+                onAccepted: param = vec3Delegate.createVector(xInput.text, yInput.text, zInput.text)
                 onActiveFocusChanged: if (activeFocus) selectAll()
             }
 
@@ -170,11 +177,14 @@ DelegateChooser {
                     top: 10e9
                     decimals: 5
                 }
-                onAccepted: param = delegateRoot.createVector(xInput.text, yInput.text, zInput.text)
+                onAccepted: param = vec3Delegate.createVector(xInput.text, yInput.text, zInput.text)
                 onActiveFocusChanged: if (activeFocus) selectAll()
             }
         }
 
+    }
+    RangedVector3Delegate {
+        roleValue: "ranged vector3"
     }
     DelegateChoice {
         roleValue: "enum"
@@ -187,6 +197,7 @@ DelegateChooser {
             model: innerModel
             textRole: "display"
             valueRole: "display"
+            enabled: root.enabled
 
             onActivated: idx => param = idx
         }
@@ -197,6 +208,7 @@ DelegateChooser {
             Layout.column: 2
             Layout.row: index
             text: param
+            enabled: root.enabled
         }
     }
 }

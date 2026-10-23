@@ -14,6 +14,7 @@
 #include "nodes/outputs.h"
 #include <QAbstractListModel>
 #include <QQuickItem>
+#include <QThread>
 #include <functional>
 #include <qtmetamacros.h>
 #include <random>
@@ -26,9 +27,11 @@ class GraphEdgeModel;
 class GraphModel : public QObject
 {
     Q_OBJECT;
+
     // Read-only graph properties
-    Q_PROPERTY(QUrl statusIcon READ statusIcon NOTIFY graphRunComplete);
-    Q_PROPERTY(int nodeCount READ count NOTIFY graphChanged);
+    Q_PROPERTY(bool graphControlsEnabled READ graphControlsEnabled NOTIFY graphProgressChanged);
+    Q_PROPERTY(QUrl statusIcon READ statusIcon NOTIFY graphProgressChanged);
+    Q_PROPERTY(int nodeCount READ nNodes NOTIFY graphChanged);
     Q_PROPERTY(int edgeCount READ nEdges NOTIFY graphChanged);
     Q_PROPERTY(QString location READ location NOTIFY graphChanged);
     Q_PROPERTY(bool atRoot READ atRoot NOTIFY graphChanged);
@@ -51,15 +54,23 @@ class GraphModel : public QObject
     using NodeParameterEndPointsMap = std::map<const Node *, std::map<std::string, QQuickItem *>>;
     GraphModel();
 
+    // Enum to describe graph 'null' states not captures by NodeConstants::ProcessResult
+    // These signify that the graph is either in an initialised state (has not yet been run), or is currently in progress
+    enum GraphGlobalStates
+    {
+        Initialised,
+        InProgress
+    };
+
     public:
+    // Returns bool - true if the graph progress is complete, therefore enabling the graph controls in the GUI
+    bool graphControlsEnabled();
     // Returns a lambda to assign a default position to nodes of type input/output/loopbacks
     std::function<std::optional<double>(Node *)> &nodeXPositionInitialiser();
     // Returns a lambda to assign a default position to nodes of type input/output/loopbacks
     std::function<std::optional<double>(Node *)> &nodeYPositionInitialiser();
-    // Set the graph status
-    void setGraphStatus(NodeConstants::ProcessResult status);
     // Return the graph status
-    const std::optional<NodeConstants::ProcessResult> &graphStatus() const;
+    const std::variant<GraphGlobalStates, NodeConstants::ProcessResult> &graphStatus() const;
     // Access the actual nodes in the model
     Graph *graph();
     // Set the current graph being modelled
@@ -73,7 +84,7 @@ class GraphModel : public QObject
     // Returns the graph status icon
     QUrl statusIcon();
     // The total number of nodes in the graph
-    int count();
+    int nNodes();
     // The total number of edges in the graph
     int nEdges();
     // The path to the current graph
@@ -110,7 +121,7 @@ class GraphModel : public QObject
                                                                                       (nodeHeight * 4);
                                                                            }};
     // Graph status
-    std::optional<NodeConstants::ProcessResult> graphStatus_;
+    std::variant<GraphGlobalStates, NodeConstants::ProcessResult> graphStatus_{GraphGlobalStates::Initialised};
     // List of node names corresponding to the current graph's existing nodes, that will be reconstructed
     std::optional<std::vector<std::string>> reconstructibleNodes_;
     // Random number generator
@@ -179,10 +190,11 @@ class GraphModel : public QObject
 
     Q_SIGNALS:
     void graphChanged();
-    void graphInvalidated();
     void canvasDimensionsChanged();
+    void graphRunStarted();
     void graphRunComplete(NodeConstants::ProcessResult status, std::string runnerNode);
     void graphReconstructionComplete();
+    void graphProgressChanged();
 
     public Q_SLOTS:
     // Reset everything
