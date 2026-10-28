@@ -15,13 +15,14 @@ class NodeRegistry
     public:
     enum Category
     {
-        Action,
-        Data,
+        Analysis,
+        Correlation,
+        Evolution,
         Export,
         Graphs,
         Import,
         Math,
-        Other
+        Structure
     };
     // Return enum option info for Category
     static EnumOptions<Category> category();
