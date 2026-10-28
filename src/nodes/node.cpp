@@ -475,22 +475,10 @@ std::set<const Node *> Node::allAncestors() const
 }
 
 // Check if this node has a given ancestor node
-bool Node::hasAncestor(const Node *node) const
-{
-    if (allAncestors().contains(node))
-        return true;
-
-    return false;
-}
+bool Node::hasAncestor(const Node *node) const { return allAncestors().contains(node); }
 
 // Check if this node is an ancestor to a given node
-bool Node::isAncestor(const Node *node) const
-{
-    if (node->allAncestors().contains(this))
-        return true;
-
-    return false;
-}
+bool Node::isAncestor(const Node *node) const { return node->allAncestors().contains(this); }
 
 void Node::saveRestart(std::filesystem::path directory) const
 {
