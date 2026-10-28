@@ -24,7 +24,6 @@ Rectangle {
     }
     ToolTip.text: summary
     ToolTip.visible: errorIndicatorHover.hovered && (summary.length > 0)
-    ToolTip.delay: 500
 
     Image {
         id: indicatorImage

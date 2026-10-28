@@ -47,7 +47,6 @@ DelegateChoice {
             onAccepted: param = root.createRangedVector([minXInput.text, minYInput.text, minZInput.text], [xInput.text, yInput.text, zInput.text], [maxXInput.text, maxYInput.text, maxZInput.text], applyMinMaxCheckBox.checked)
             onActiveFocusChanged: if (activeFocus) selectAll()
             ToolTip.visible: hovered
-            ToolTip.delay: 500
             ToolTip.text: "X value"
         }
         TextField {
@@ -62,7 +61,6 @@ DelegateChoice {
             onAccepted: param = root.createRangedVector([minXInput.text, minYInput.text, minZInput.text], [xInput.text, yInput.text, zInput.text], [maxXInput.text, maxYInput.text, maxZInput.text], applyMinMaxCheckBox.checked)
             onActiveFocusChanged: if (activeFocus) selectAll()
             ToolTip.visible: hovered
-            ToolTip.delay: 500
             ToolTip.text: "Y value"
         }
         TextField {
@@ -77,7 +75,6 @@ DelegateChoice {
             onAccepted: param = root.createRangedVector([minXInput.text, minYInput.text, minZInput.text], [xInput.text, yInput.text, zInput.text], [maxXInput.text, maxYInput.text, maxZInput.text], applyMinMaxCheckBox.checked)
             onActiveFocusChanged: if (activeFocus) selectAll()
             ToolTip.visible: hovered
-            ToolTip.delay: 500
             ToolTip.text: "Z value"
         }
         CheckBox {
@@ -86,7 +83,6 @@ DelegateChoice {
             checked: false
             enabled: root.enabled
             ToolTip.visible: hovered
-            ToolTip.delay: 500
             ToolTip.text: "Apply min/max"
         }
         Button {
@@ -201,7 +197,6 @@ DelegateChoice {
                                         }
                                         onActiveFocusChanged: if (activeFocus) selectAll()
                                         ToolTip.visible: hovered
-                                        ToolTip.delay: 500
                                         ToolTip.text: "Minimum x"
                                     }
                                     TextField {
@@ -220,7 +215,6 @@ DelegateChoice {
                                         }
                                         onActiveFocusChanged: if (activeFocus) selectAll()
                                         ToolTip.visible: hovered
-                                        ToolTip.delay: 500
                                         ToolTip.text: "Minimum y"
                                     }
                                     TextField {
@@ -239,7 +233,6 @@ DelegateChoice {
                                         }
                                         onActiveFocusChanged: if (activeFocus) selectAll()
                                         ToolTip.visible: hovered
-                                        ToolTip.delay: 500
                                         ToolTip.text: "Minimum z"
                                     }
                                 }
@@ -290,7 +283,6 @@ DelegateChoice {
                                         }
                                         onActiveFocusChanged: if (activeFocus) selectAll()
                                         ToolTip.visible: hovered
-                                        ToolTip.delay: 500
                                         ToolTip.text: "Maximum x"
                                     }
                                     TextField {
@@ -309,7 +301,6 @@ DelegateChoice {
                                         }
                                         onActiveFocusChanged: if (activeFocus) selectAll()
                                         ToolTip.visible: hovered
-                                        ToolTip.delay: 500
                                         ToolTip.text: "Maximum y"
                                     }
                                     TextField {
@@ -328,7 +319,6 @@ DelegateChoice {
                                         }
                                         onActiveFocusChanged: if (activeFocus) selectAll()
                                         ToolTip.visible: hovered
-                                        ToolTip.delay: 500
                                         ToolTip.text: "Maximum z"
                                     }
                                 }
@@ -389,7 +379,6 @@ DelegateChoice {
                 editor.open()
             }
             ToolTip.visible: hovered
-            ToolTip.delay: 500
             ToolTip.text: "Edit x, y, and z ranges"
         }
     }

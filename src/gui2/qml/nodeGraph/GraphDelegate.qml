@@ -460,7 +460,6 @@ NodeBox {
                         id: inputMouseArea
                         anchors.fill: parent
                         hoverEnabled: true
-                        ToolTip.delay: 500
                         ToolTip.text: !(hasInnerGraph || isOutputsNode) ? "<i>Input:</i><br>" + inputText.info : "Double-click to rename this input"
                         ToolTip.visible: containsMouse && inputLabelRepeater.visible
                         onDoubleClicked: {
@@ -616,7 +615,6 @@ NodeBox {
                         hoverEnabled: true
                         ToolTip.text: !(hasInnerGraph || isInputsNode) ? "<i>Output:</i><br>" + outputText.info : "Double-click to rename this output"
                         ToolTip.visible: containsMouse && outputLabelRepeater.visible
-                        ToolTip.delay: 500
                         onDoubleClicked: {
                             // If edgeEditMode is false, double-clicking the output text performs an edge deletion
                             if (!rootGraphModel.edges.edgeEditMode)
@@ -788,7 +786,6 @@ NodeBox {
             hoverEnabled: true
             ToolTip.text: "View the internal graph"
             ToolTip.visible: hovered
-            ToolTip.delay: 500
 
             onClicked: descended(index)
         }
@@ -812,7 +809,6 @@ NodeBox {
                         hoverEnabled: true
                         ToolTip.text: "<i>Option:</i><br>" + optionText.info
                         ToolTip.visible: containsMouse
-                        ToolTip.delay: 500
                     }
                 }
             }
