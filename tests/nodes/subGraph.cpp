@@ -189,4 +189,12 @@ TEST_F(SubGraphTest, Flow)
     EXPECT_EQ(w_->getOutputValue<Number>("Result").asInteger(), 21);
 }
 
+TEST_F(SubGraphTest, FindType)
+{
+    createGraph();
+    EXPECT_EQ(root_.findType<Graph>().size(), 1);
+    ASSERT_EQ(root_.findType<AddNode>().size(), 4);
+    EXPECT_EQ(root_.findType<AddNode>()[0]->type(), "Add");
+}
+
 } // namespace UnitTest
