@@ -83,7 +83,6 @@ NodeBox {
                 onHoveredChanged: {
                     if (hovered) {
                         root.closeMessages();
-                        //root.messageStore.updateMessages();
 
                         const p = messagesMenuItem.mapToItem(
                             Overlay.overlay,
@@ -94,7 +93,6 @@ NodeBox {
                         messages.x = p.x
                         messages.y = p.y
 
-                        //root.messageStore.updateMessages();
                         messages.open();
                     }
                 }
@@ -112,7 +110,6 @@ NodeBox {
                 onHoveredChanged: {
                     if (hovered) {
                         root.closeMessages();
-                        //root.messageStore.updateMessages();
 
                         const p = warningsMenuItem.mapToItem(
                             Overlay.overlay,
@@ -123,7 +120,6 @@ NodeBox {
                         warnings.x = p.x
                         warnings.y = p.y
 
-                        //root.messageStore.updateMessages();
                         warnings.open();
                     }
                 }
@@ -139,7 +135,6 @@ NodeBox {
                 onHoveredChanged: {
                     if (hovered) {
                         root.closeMessages();
-                        //root.messageStore.updateMessages();
 
                         const p = errorsMenuItem.mapToItem(
                             Overlay.overlay,
@@ -150,7 +145,6 @@ NodeBox {
                         errors.x = p.x
                         errors.y = p.y
 
-                        //root.messageStore.updateMessages();
                         errors.open();
                     }
                 }

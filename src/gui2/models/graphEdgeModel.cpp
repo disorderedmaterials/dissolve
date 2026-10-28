@@ -38,7 +38,6 @@ bool GraphEdgeModel::remove(Edge &edge)
         return false;
     else
     {
-        const EdgeDefinition removedEdgeDefinition = edge.definition();
         std::size_t row = index - edges().begin();
         if (row >= edges().size())
             return false;
@@ -70,7 +69,6 @@ void GraphEdgeModel::removeConnected(std::string nodeName)
     {
         if (toRemove(*edgeIt))
         {
-            const EdgeDefinition removedEdgeDefinition = edgeIt->get()->definition();
             const auto row = std::distance(allEdges.begin(), edgeIt);
             beginRemoveRows(QModelIndex(), row, row);
             edgeIt = allEdges.erase(edgeIt);
