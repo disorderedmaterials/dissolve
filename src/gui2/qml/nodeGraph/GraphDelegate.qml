@@ -19,9 +19,9 @@ NodeBox {
     property double startX: x + width
     property string hint: ""
     property NodeMessages messageStore: NodeMessages {
-            graphModel: rootGraphModel
-            nodeName: name
-        }
+        graphModel: rootGraphModel
+        nodeName: name
+    }
 
     signal descended(int idx)
     signal edgeCreated(string srcNode, string srcOutput, string tgtNode, string tgtInput, DropArea creator)
@@ -85,14 +85,9 @@ NodeBox {
                         root.closeMessages();
                         //root.messageStore.updateMessages();
 
-                        const p = messagesMenuItem.mapToItem(
-                            Overlay.overlay,
-                            messagesMenuItem.width,
-                            0
-                        );
-
-                        messages.x = p.x
-                        messages.y = p.y
+                        const p = messagesMenuItem.mapToItem(Overlay.overlay, messagesMenuItem.width, 0);
+                        messages.x = p.x;
+                        messages.y = p.y;
 
                         //root.messageStore.updateMessages();
                         messages.open();
@@ -158,10 +153,9 @@ NodeBox {
         }
         */
     }
-    function closeMessages()
-    {
-        messages.close()
-        /*
+    function closeMessages() {
+        messages.close();
+    /*
         warnings.close()
         errors.close()
         */
@@ -182,14 +176,14 @@ NodeBox {
             HoverHandler {
                 onHoveredChanged: {
                     if (!hovered)
-                        messages.close()
+                        messages.close();
                 }
             }
 
             ColumnLayout {
                 anchors.fill: parent
                 spacing: 2
-                
+
                 Rectangle {
                     id: header
                     color: "white"
@@ -304,7 +298,7 @@ NodeBox {
         parent: Overlay.overlay
 
         padding: 4
-        
+
         HoverHandler {
             onHoveredChanged: {
                 if (!hovered)
@@ -367,24 +361,24 @@ NodeBox {
                 model: inputs
                 visible: !(isInputsNode)
 
-                onItemAdded: function(index, item) {
-                        var lastOfItems = index + 1 == model.rowCount();
-                        var reconstructingNodes = rootGraphModel.nodeReconstructionInProgress();
-                        var endPoints = rootGraphModel.parameterEndPoints;
+                onItemAdded: function (index, item) {
+                    var lastOfItems = index + 1 == model.rowCount();
+                    var reconstructingNodes = rootGraphModel.nodeReconstructionInProgress();
+                    var endPoints = rootGraphModel.parameterEndPoints;
 
-                        // If we are dealing with a node that has dynamic inputs (such as a graph node)
-                        // and we are not currently reconstructing the graph's existing connections, we handle the dynamic input creation
-                        if (hasProxyParameters && !reconstructingNodes) {
-                            // If this is the last item (the most recently connected input) render the deferred edge conection
-                            if (lastOfItems)
-                                rootGraphModel.addDeferredEndPoints();
+                    // If we are dealing with a node that has dynamic inputs (such as a graph node)
+                    // and we are not currently reconstructing the graph's existing connections, we handle the dynamic input creation
+                    if (hasProxyParameters && !reconstructingNodes) {
+                        // If this is the last item (the most recently connected input) render the deferred edge conection
+                        if (lastOfItems)
+                            rootGraphModel.addDeferredEndPoints();
 
-                            // Unless this is the first created input, update the target endpoint for this input since it will have changed with the QML.
-                            // If this input is not connected, don't do anything.
-                            if (model.rowCount() > 1 && rootGraphModel.hasConnections(item.nodeName, item.title))
-                                endPoints.replaceTarget(item.nodeName, item.title, item.childDropArea);
-                        }
-                        rootGraphModel.addInput(item.nodeName, item.title, item.x, item.y);
+                        // Unless this is the first created input, update the target endpoint for this input since it will have changed with the QML.
+                        // If this input is not connected, don't do anything.
+                        if (model.rowCount() > 1 && rootGraphModel.hasConnections(item.nodeName, item.title))
+                            endPoints.replaceTarget(item.nodeName, item.title, item.childDropArea);
+                    }
+                    rootGraphModel.addInput(item.nodeName, item.title, item.x, item.y);
                 }
 
                 Shape {
@@ -477,7 +471,6 @@ NodeBox {
                             // If edgeEditMode is true, double-clicking the input text performs input renaming (not applicable to all node types)
                             if (!((isOutputsNode || hasInnerGraph)))
                                 return;
-
                             renameInputPopup.open();
                         }
                         Popup {
@@ -494,16 +487,16 @@ NodeBox {
                                 renameInput.selectAll();
                             }
                             contentItem: ParameterTextInput {
-                                    id: renameInput
-                                    graphModel: rootGraphModel
-                                    parentNodeName: nodeName
-                                    parentLabel: inputText
-                                    paramType: 1
-                                    onRenameAccepted: {
-                                        renameInputPopup.close();
-                                        rootGraphModel.reload();
-                                    }
+                                id: renameInput
+                                graphModel: rootGraphModel
+                                parentNodeName: nodeName
+                                parentLabel: inputText
+                                paramType: 1
+                                onRenameAccepted: {
+                                    renameInputPopup.close();
+                                    rootGraphModel.reload();
                                 }
+                            }
                         }
                     }
                 }
@@ -523,24 +516,24 @@ NodeBox {
                 model: outputs
                 visible: !(isOutputsNode || isLoopBacksNode)
 
-                onItemAdded: function(index, item) {
-                        var lastOfItems = index + 1 == model.rowCount();
-                        var reconstructingNodes = rootGraphModel.nodeReconstructionInProgress();
-                        var endPoints = rootGraphModel.parameterEndPoints;
+                onItemAdded: function (index, item) {
+                    var lastOfItems = index + 1 == model.rowCount();
+                    var reconstructingNodes = rootGraphModel.nodeReconstructionInProgress();
+                    var endPoints = rootGraphModel.parameterEndPoints;
 
-                        // If we are dealing with a node that has dynamic outputs (such as a graph node)
-                        // and we are not currently reconstructing the graph's existing connections, we handle the dynamic output creation
-                        if (hasProxyParameters && !reconstructingNodes) {
-                            // If this is the last item (the most recently connected output) render the deferred edge conection
-                            if (lastOfItems)
-                                rootGraphModel.addDeferredEndPoints();
+                    // If we are dealing with a node that has dynamic outputs (such as a graph node)
+                    // and we are not currently reconstructing the graph's existing connections, we handle the dynamic output creation
+                    if (hasProxyParameters && !reconstructingNodes) {
+                        // If this is the last item (the most recently connected output) render the deferred edge conection
+                        if (lastOfItems)
+                            rootGraphModel.addDeferredEndPoints();
 
-                            // Unless this is the first created output, update the target endpoint for this output since it will have changed with the QML.
-                            // If this output is not connected, don't do anything.
-                            if (model.rowCount() > 1 && rootGraphModel.hasConnections(item.nodeName, item.title))
-                                endPoints.replaceSource(item.nodeName, item.title, item.childDropArea);
-                        }
-                        rootGraphModel.addOutput(item.nodeName, item.title, item.x + item.width / 2, item.y);
+                        // Unless this is the first created output, update the target endpoint for this output since it will have changed with the QML.
+                        // If this output is not connected, don't do anything.
+                        if (model.rowCount() > 1 && rootGraphModel.hasConnections(item.nodeName, item.title))
+                            endPoints.replaceSource(item.nodeName, item.title, item.childDropArea);
+                    }
+                    rootGraphModel.addOutput(item.nodeName, item.title, item.x + item.width / 2, item.y);
                 }
 
                 Shape {
@@ -585,7 +578,7 @@ NodeBox {
                         Component.onCompleted: root.rootGraphModel.mapOutputEndPoint(parent.nodeName, paramName, outputDropArea)
 
                         onDropped: function (event) {
-                                edgeCreated(parent.nodeName, parent.title, event.source.parent.nodeName, event.source.parent.title, outputDropArea);
+                            edgeCreated(parent.nodeName, parent.title, event.source.parent.nodeName, event.source.parent.title, outputDropArea);
                         }
                     }
                     MouseArea {
@@ -631,7 +624,6 @@ NodeBox {
                             // If edgeEditMode is true, double-clicking the output text performs output renaming (not applicable to all node types)
                             if (!((isInputsNode || hasInnerGraph)))
                                 return;
-
                             renameOutputPopup.open();
                         }
                         Popup {
@@ -648,13 +640,13 @@ NodeBox {
                                 renameOutput.selectAll();
                             }
                             contentItem: ParameterTextInput {
-                                    id: renameOutput
-                                    graphModel: rootGraphModel
-                                    parentNodeName: nodeName
-                                    parentLabel: outputText
-                                    paramType: 0
-                                    onRenameAccepted: renameOutputPopup.close()
-                                }
+                                id: renameOutput
+                                graphModel: rootGraphModel
+                                parentNodeName: nodeName
+                                parentLabel: outputText
+                                paramType: 0
+                                onRenameAccepted: renameOutputPopup.close()
+                            }
                         }
                     }
                 }
@@ -708,8 +700,8 @@ NodeBox {
                     enabled: parent.enabled
 
                     onDropped: function (event) {
-                            var paramName = inputRepeater.count + "_" + event.source.parent.title;
-                            edgeDeferred(event.source.parent.nodeName, event.source.parent.title, parent.nodeName, paramName, createInputDropArea);
+                        var paramName = inputRepeater.count + "_" + event.source.parent.title;
+                        edgeDeferred(event.source.parent.nodeName, event.source.parent.title, parent.nodeName, paramName, createInputDropArea);
                     }
                 }
                 MouseArea {
@@ -766,8 +758,8 @@ NodeBox {
                     enabled: parent.enabled
 
                     onDropped: function (event) {
-                            var paramName = outputRepeater.count + "_" + event.source.parent.title;
-                            edgeDeferred(event.source.parent.nodeName, event.source.parent.title, parent.nodeName, paramName, createOutputDropArea);
+                        var paramName = outputRepeater.count + "_" + event.source.parent.title;
+                        edgeDeferred(event.source.parent.nodeName, event.source.parent.title, parent.nodeName, paramName, createOutputDropArea);
                     }
                 }
                 MouseArea {

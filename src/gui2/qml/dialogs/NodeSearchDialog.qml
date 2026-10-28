@@ -34,7 +34,6 @@ Dialog {
     onAccepted: {
         if (nodeSearchField.text.length > 0)
             nodeRegistry.instantiateNode(initialLandingArea.x, initialLandingArea.y, root.selection);
-
         root.exitSearchDialog();
     }
     onRejected: root.exitSearchDialog()
@@ -46,16 +45,14 @@ Dialog {
     }
     contentItem: ColumnLayout {
         id: columnLayout
-    
+
         Rectangle {
             id: nodeSearchFieldArea
 
             Layout.fillWidth: true
             Layout.preferredHeight: nodeSearchField.implicitHeight
 
-            border.color: nodeSearchField.activeFocus && nodeSearchField.text.length > 0
-                            ? palette.highlight
-                            : palette.mid
+            border.color: nodeSearchField.activeFocus && nodeSearchField.text.length > 0 ? palette.highlight : palette.mid
 
             radius: 5
             border.width: 1
@@ -70,7 +67,7 @@ Dialog {
 
                 background: Item {}
             }
-        }        
+        }
 
         ScrollView {
             id: scrollArea
@@ -99,13 +96,12 @@ Dialog {
 
                     Component.onCompleted: {
                         if (!name || name.length === 0)
-                            console.error("Node has no name - this should not happen, please contact the Dissolve developer team.")
-
+                            console.error("Node has no name - this should not happen, please contact the Dissolve developer team.");
                         if (!description || description.length === 0)
-                            console.error("Node '%1' has no description - this should not happen, please contact the Dissolve developer team.".arg(name))
+                            console.error("Node '%1' has no description - this should not happen, please contact the Dissolve developer team.".arg(name));
                     }
                 }
-            }   
+            }
         }
     }
 }

@@ -67,7 +67,7 @@ GroupBox {
             from: 5
             to: 1
             duration: 500
-            easing.type: Easing.OutQuad   
+            easing.type: Easing.OutQuad
         }
     }
 
@@ -79,11 +79,11 @@ GroupBox {
 
         color: '#a9f0f4ff'
         radius: 4
-        
+
         border.width: root.dragActive ? 3 : 1
         border.color: root.dragActive ? "dodgerblue" : "grey"
 
-        RowLayout{
+        RowLayout {
             anchors.fill: parent
             anchors.leftMargin: 6
             anchors.rightMargin: 6
@@ -124,7 +124,7 @@ GroupBox {
                 property color resultColor: "black"
 
                 onAccepted: function (event) {
-                        renamed(nodeName, titleLabel.text, titleLabel);
+                    renamed(nodeName, titleLabel.text, titleLabel);
                 }
 
                 background: Rectangle {
@@ -166,23 +166,17 @@ GroupBox {
 
                     anchors.fill: parent
                     radius: 3
-                    color: deleteNodeButton.hovered 
-                        ? "white"
-                        : "transparent"
+                    color: deleteNodeButton.hovered ? "white" : "transparent"
 
-                    border.width: deleteNodeButton.hovered 
-                                ? 2 
-                                : 1
+                    border.width: deleteNodeButton.hovered ? 2 : 1
 
-                    border.color: deleteNodeButton.pressed
-                                ? "dodgerblue"
-                                : "grey"
+                    border.color: deleteNodeButton.pressed ? "dodgerblue" : "grey"
                 }
                 contentItem: Text {
                     id: cross
 
                     text: "x"
-                    color: parent.pressed ? "white": "red"
+                    color: parent.pressed ? "white" : "red"
                     font.pointSize: 11
                     font.bold: false
                     style: Text.Outline

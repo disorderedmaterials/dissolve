@@ -32,32 +32,32 @@ Pane {
                 model: nodeRegistry.categories()
 
                 delegate: Item {
-                        id: menuDelegateItem
-                        required property var display
-                        property Menu innerMenu: innerMenuComponent.createObject(parent)
+                    id: menuDelegateItem
+                    required property var display
+                    property Menu innerMenu: innerMenuComponent.createObject(parent)
 
-                        Component {
-                            id: innerMenuComponent
+                    Component {
+                        id: innerMenuComponent
 
-                            Menu {
-                                id: nodeCategoryMenu
+                        Menu {
+                            id: nodeCategoryMenu
 
-                                title: menuDelegateItem.display
+                            title: menuDelegateItem.display
 
-                                Repeater {
-                                    model: nodeRegistry.nodeNames(menuDelegateItem.display)
+                            Repeater {
+                                model: nodeRegistry.nodeNames(menuDelegateItem.display)
 
-                                    delegate: MenuItem {
-                                        required property var modelData
-                                        text: modelData.name
-                                        onClicked: graphRoot.rootGraphModel.emplace_back(ctxMenuCatcher.mousePos.x, ctxMenuCatcher.mousePos.y, modelData.name)
-                                        ToolTip.text: modelData.description
-                                        ToolTip.visible: hovered
-                                        ToolTip.delay: 500
-                                    }
+                                delegate: MenuItem {
+                                    required property var modelData
+                                    text: modelData.name
+                                    onClicked: graphRoot.rootGraphModel.emplace_back(ctxMenuCatcher.mousePos.x, ctxMenuCatcher.mousePos.y, modelData.name)
+                                    ToolTip.text: modelData.description
+                                    ToolTip.visible: hovered
+                                    ToolTip.delay: 500
                                 }
                             }
                         }
+                    }
                 }
                 onItemAdded: (index, item) => {
                     contextMenu.addMenu(item.innerMenu);
@@ -76,9 +76,9 @@ Pane {
             var node = item.targetDropArea.parentNodeBox;
             const originalTargetPos = Qt.point(node.x, node.y);
             node.x = originalTargetPos.x + 1;
-            Qt.callLater(function() {
-                    node.x = originalTargetPos.x
-                });
+            Qt.callLater(function () {
+                node.x = originalTargetPos.x;
+            });
         }
 
         delegate: Shape {
@@ -88,17 +88,15 @@ Pane {
             required property Item targetDropArea
 
             property point sourcePos: {
-                sourceDropArea.parentNodeBox.x
-                sourceDropArea.parentNodeBox.y
-
-                return sourceDropArea.mapToItem(graphRoot, Qt.point(0, 0))
+                sourceDropArea.parentNodeBox.x;
+                sourceDropArea.parentNodeBox.y;
+                return sourceDropArea.mapToItem(graphRoot, Qt.point(0, 0));
             }
 
             property point targetPos: {
-                targetDropArea.parentNodeBox.x
-                targetDropArea.parentNodeBox.y
-
-                return targetDropArea.mapToItem(graphRoot, Qt.point(0, 0))
+                targetDropArea.parentNodeBox.x;
+                targetDropArea.parentNodeBox.y;
+                return targetDropArea.mapToItem(graphRoot, Qt.point(0, 0));
             }
 
             z: -10
