@@ -10,34 +10,32 @@ Dialog {
     required property GraphModel graphModel
     property string startNode: input.text
 
+    height: implicitHeight
+    standardButtons: Dialog.Ok | Dialog.Cancel
+    width: implicitWidth
     x: dissolveWindow.width / 2
     y: dissolveWindow.height / 2
-
-    height: implicitHeight
-    width: implicitWidth
-
-    standardButtons: Dialog.Ok | Dialog.Cancel
 
     contentItem: Item {
         anchors.fill: parent
         focus: true
 
-        Keys.onReturnPressed: accept()
         Keys.onEnterPressed: accept()
+        Keys.onReturnPressed: accept()
 
         TextField {
             id: input
+
             anchors.fill: parent
             font.pixelSize: 14
             placeholderText: "Enter a node name to run graph from..."
-        }    
+        }
     }
 
     onAccepted: {
         if (graphModel.isValidNode(startNode))
-            graphModel.run(startNode)
-
-        root.close()
+            graphModel.run(startNode);
+        root.close();
     }
     onRejected: root.close()
 }

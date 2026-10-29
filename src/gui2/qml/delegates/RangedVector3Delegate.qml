@@ -13,8 +13,7 @@ DelegateChoice {
 
     function createRangedVector(min, value, max, applyRange) {
         var unRangedValue = [[], [Number(value[0]), Number(value[1]), Number(value[2])], []];
-        if (applyRange)
-        {
+        if (applyRange) {
             var hasMin = !(min[0] == "" && min[1] == "" && min[2] == "");
             var hasMax = !(max[0] == "" && max[1] == "" && max[2] == "");
             if (!(hasMin || hasMax))
@@ -31,85 +30,84 @@ DelegateChoice {
     Row {
         Layout.alignment: Qt.AlignRight
         Layout.column: 2
-        Layout.row: index
         Layout.fillWidth: true
+        Layout.row: index
         spacing: 2
 
         TextField {
             id: xInput
+
+            ToolTip.text: "X value"
+            ToolTip.visible: hovered
             text: Number(param[1][0]).toFixed(5)
             width: 30
+
             validator: DoubleValidator {
                 bottom: -10e9
-                top: 10e9
                 decimals: 5
+                top: 10e9
             }
+
             onAccepted: param = root.createRangedVector([minXInput.text, minYInput.text, minZInput.text], [xInput.text, yInput.text, zInput.text], [maxXInput.text, maxYInput.text, maxZInput.text], applyMinMaxCheckBox.checked)
-            onActiveFocusChanged: if (activeFocus) selectAll()
-            ToolTip.visible: hovered
-            ToolTip.text: "X value"
+            onActiveFocusChanged: if (activeFocus)
+                selectAll()
         }
         TextField {
             id: yInput
+
+            ToolTip.text: "Y value"
+            ToolTip.visible: hovered
             text: Number(param[1][1]).toFixed(5)
             width: 30
+
             validator: DoubleValidator {
                 bottom: -10e9
-                top: 10e9
                 decimals: 5
+                top: 10e9
             }
+
             onAccepted: param = root.createRangedVector([minXInput.text, minYInput.text, minZInput.text], [xInput.text, yInput.text, zInput.text], [maxXInput.text, maxYInput.text, maxZInput.text], applyMinMaxCheckBox.checked)
-            onActiveFocusChanged: if (activeFocus) selectAll()
-            ToolTip.visible: hovered
-            ToolTip.text: "Y value"
+            onActiveFocusChanged: if (activeFocus)
+                selectAll()
         }
         TextField {
             id: zInput
+
+            ToolTip.text: "Z value"
+            ToolTip.visible: hovered
             text: Number(param[1][2]).toFixed(5)
             width: 30
+
             validator: DoubleValidator {
                 bottom: -10e9
-                top: 10e9
                 decimals: 5
+                top: 10e9
             }
+
             onAccepted: param = root.createRangedVector([minXInput.text, minYInput.text, minZInput.text], [xInput.text, yInput.text, zInput.text], [maxXInput.text, maxYInput.text, maxZInput.text], applyMinMaxCheckBox.checked)
-            onActiveFocusChanged: if (activeFocus) selectAll()
-            ToolTip.visible: hovered
-            ToolTip.text: "Z value"
+            onActiveFocusChanged: if (activeFocus)
+                selectAll()
         }
         CheckBox {
             id: applyMinMaxCheckBox
+
             Layout.alignment: Qt.AlignRight
+            ToolTip.text: "Apply min/max"
+            ToolTip.visible: hovered
             checked: false
             enabled: root.enabled
-            ToolTip.visible: hovered
-            ToolTip.text: "Apply min/max"
         }
         Button {
             id: rangeEditButton
-            height: applyMinMaxCheckBox.height * 1.2
-            width: height
-            icon.source: "qrc:/DissolveIconsModule/wizard.svg"
+
             property Popup editor: Popup {
                 id: popup
-                width: 120
-                height: 180
-                parent: Overlay.overlay
-                padding: 2
-                closePolicy: Popup.NoAutoClose
-                property var minRejectAnimation: null
-                property var maxRejectAnimation: null
-                property var lastMin: ["", "", ""]
-                property var lastMax: ["", "", ""]
 
-                function verifyMinRange(min) {
-                    var hasMinVector3 = !(min[0] == "" || min[1] == "" || min[2] == "");
-                    var isEmpty = min[0] == "" && min[1] == "" && min[2] == "";
-                    if (hasMinVector3 || isEmpty)
-                        return true;
-                    minRejectAnimation.start();
-                    return false;
-                }
+                property var lastMax: ["", "", ""]
+                property var lastMin: ["", "", ""]
+                property var maxRejectAnimation: null
+                property var minRejectAnimation: null
+
                 function verifyMaxRange(max) {
                     var hasMaxVector3 = !(max[0] == "" || max[1] == "" || max[2] == "");
                     var isEmpty = max[0] == "" && max[1] == "" && max[2] == "";
@@ -118,6 +116,20 @@ DelegateChoice {
                     maxRejectAnimation.start();
                     return false;
                 }
+                function verifyMinRange(min) {
+                    var hasMinVector3 = !(min[0] == "" || min[1] == "" || min[2] == "");
+                    var isEmpty = min[0] == "" && min[1] == "" && min[2] == "";
+                    if (hasMinVector3 || isEmpty)
+                        return true;
+                    minRejectAnimation.start();
+                    return false;
+                }
+
+                closePolicy: Popup.NoAutoClose
+                height: 180
+                padding: 2
+                parent: Overlay.overlay
+                width: 120
 
                 ColumnLayout {
                     anchors.fill: parent
@@ -125,12 +137,13 @@ DelegateChoice {
 
                     Rectangle {
                         id: header
-                        color: "white"
-                        border.width: 1
+
                         border.color: "lightgrey"
+                        border.width: 1
+                        color: "white"
+                        height: 20
                         radius: 3
                         width: parent.width
-                        height: 20
 
                         RowLayout {
                             anchors.fill: parent
@@ -140,40 +153,41 @@ DelegateChoice {
 
                             Label {
                                 Layout.fillWidth: true
-                                text: qsTr("Range editor")
                                 color: "grey"
                                 font.bold: true
+                                text: qsTr("Range editor")
                             }
                         }
                     }
-
                     ColumnLayout {
-                        Layout.fillWidth: true
                         Layout.fillHeight: true
+                        Layout.fillWidth: true
                         spacing: 4
 
                         GroupBox {
                             id: minGroupBox
-                            title: qsTr("Lower bound")
-                            Layout.fillWidth: true
+
                             property color inputColor: applyMinMaxCheckBox.checked ? "transparent" : "lightblue"
+
+                            Layout.fillWidth: true
+                            title: qsTr("Lower bound")
 
                             SequentialAnimation {
                                 Component.onCompleted: popup.minRejectAnimation = this
+
                                 PropertyAnimation {
-                                    target: minGroupBox
-                                    property: "inputColor"
-                                    to: "red"
                                     duration: 150
+                                    property: "inputColor"
+                                    target: minGroupBox
+                                    to: "red"
                                 }
                                 PropertyAnimation {
-                                    target: minGroupBox
-                                    property: "inputColor"
-                                    to: "transparent"
                                     duration: 500
+                                    property: "inputColor"
+                                    target: minGroupBox
+                                    to: "transparent"
                                 }
                             }
-
                             ColumnLayout {
                                 anchors.fill: parent
 
@@ -183,83 +197,97 @@ DelegateChoice {
 
                                     TextField {
                                         id: minXInput
-                                        background: Rectangle {
-                                            color: minGroupBox.inputColor
-                                            border.width: 1
-                                        }
+
+                                        ToolTip.text: "Minimum x"
+                                        ToolTip.visible: hovered
+                                        enabled: applyMinMaxCheckBox.checked
                                         text: ""
                                         width: 30
-                                        enabled: applyMinMaxCheckBox.checked
+
+                                        background: Rectangle {
+                                            border.width: 1
+                                            color: minGroupBox.inputColor
+                                        }
                                         validator: DoubleValidator {
                                             bottom: -10e9
-                                            top: 10e9
                                             decimals: 5
+                                            top: 10e9
                                         }
-                                        onActiveFocusChanged: if (activeFocus) selectAll()
-                                        ToolTip.visible: hovered
-                                        ToolTip.text: "Minimum x"
+
+                                        onActiveFocusChanged: if (activeFocus)
+                                            selectAll()
                                     }
                                     TextField {
                                         id: minYInput
-                                        background: Rectangle {
-                                            color: minGroupBox.inputColor
-                                            border.width: 1
-                                        }
+
+                                        ToolTip.text: "Minimum y"
+                                        ToolTip.visible: hovered
+                                        enabled: applyMinMaxCheckBox.checked
                                         text: ""
                                         width: 30
-                                        enabled: applyMinMaxCheckBox.checked
+
+                                        background: Rectangle {
+                                            border.width: 1
+                                            color: minGroupBox.inputColor
+                                        }
                                         validator: DoubleValidator {
                                             bottom: -10e9
-                                            top: 10e9
                                             decimals: 5
+                                            top: 10e9
                                         }
-                                        onActiveFocusChanged: if (activeFocus) selectAll()
-                                        ToolTip.visible: hovered
-                                        ToolTip.text: "Minimum y"
+
+                                        onActiveFocusChanged: if (activeFocus)
+                                            selectAll()
                                     }
                                     TextField {
                                         id: minZInput
-                                        background: Rectangle {
-                                            color: minGroupBox.inputColor
-                                            border.width: 1
-                                        }
+
+                                        ToolTip.text: "Minimum z"
+                                        ToolTip.visible: hovered
+                                        enabled: applyMinMaxCheckBox.checked
                                         text: ""
                                         width: 30
-                                        enabled: applyMinMaxCheckBox.checked
+
+                                        background: Rectangle {
+                                            border.width: 1
+                                            color: minGroupBox.inputColor
+                                        }
                                         validator: DoubleValidator {
                                             bottom: -10e9
-                                            top: 10e9
                                             decimals: 5
+                                            top: 10e9
                                         }
-                                        onActiveFocusChanged: if (activeFocus) selectAll()
-                                        ToolTip.visible: hovered
-                                        ToolTip.text: "Minimum z"
+
+                                        onActiveFocusChanged: if (activeFocus)
+                                            selectAll()
                                     }
                                 }
                             }
                         }
                         GroupBox {
                             id: maxGroupBox
-                            title: qsTr("Upper bound")
-                            Layout.fillWidth: true
+
                             property color inputColor: applyMinMaxCheckBox.checked ? "transparent" : "lightblue"
+
+                            Layout.fillWidth: true
+                            title: qsTr("Upper bound")
 
                             SequentialAnimation {
                                 Component.onCompleted: popup.maxRejectAnimation = this
+
                                 PropertyAnimation {
-                                    target: maxGroupBox
-                                    property: "inputColor"
-                                    to: "red"
                                     duration: 150
+                                    property: "inputColor"
+                                    target: maxGroupBox
+                                    to: "red"
                                 }
                                 PropertyAnimation {
-                                    target: maxGroupBox
-                                    property: "inputColor"
-                                    to: "transparent"
                                     duration: 500
+                                    property: "inputColor"
+                                    target: maxGroupBox
+                                    to: "transparent"
                                 }
                             }
-
                             ColumnLayout {
                                 anchors.fill: parent
 
@@ -269,57 +297,69 @@ DelegateChoice {
 
                                     TextField {
                                         id: maxXInput
-                                        background: Rectangle {
-                                            color: maxGroupBox.inputColor
-                                            border.width: 1
-                                        }
+
+                                        ToolTip.text: "Maximum x"
+                                        ToolTip.visible: hovered
+                                        enabled: applyMinMaxCheckBox.checked
                                         text: ""
                                         width: 30
-                                        enabled: applyMinMaxCheckBox.checked
+
+                                        background: Rectangle {
+                                            border.width: 1
+                                            color: maxGroupBox.inputColor
+                                        }
                                         validator: DoubleValidator {
                                             bottom: -10e9
-                                            top: 10e9
                                             decimals: 5
+                                            top: 10e9
                                         }
-                                        onActiveFocusChanged: if (activeFocus) selectAll()
-                                        ToolTip.visible: hovered
-                                        ToolTip.text: "Maximum x"
+
+                                        onActiveFocusChanged: if (activeFocus)
+                                            selectAll()
                                     }
                                     TextField {
                                         id: maxYInput
-                                        background: Rectangle {
-                                            color: maxGroupBox.inputColor
-                                            border.width: 1
-                                        }
+
+                                        ToolTip.text: "Maximum y"
+                                        ToolTip.visible: hovered
+                                        enabled: applyMinMaxCheckBox.checked
                                         text: ""
                                         width: 30
-                                        enabled: applyMinMaxCheckBox.checked
+
+                                        background: Rectangle {
+                                            border.width: 1
+                                            color: maxGroupBox.inputColor
+                                        }
                                         validator: DoubleValidator {
                                             bottom: -10e9
-                                            top: 10e9
                                             decimals: 5
+                                            top: 10e9
                                         }
-                                        onActiveFocusChanged: if (activeFocus) selectAll()
-                                        ToolTip.visible: hovered
-                                        ToolTip.text: "Maximum y"
+
+                                        onActiveFocusChanged: if (activeFocus)
+                                            selectAll()
                                     }
                                     TextField {
                                         id: maxZInput
-                                        background: Rectangle {
-                                            color: maxGroupBox.inputColor
-                                            border.width: 1
-                                        }
+
+                                        ToolTip.text: "Maximum z"
+                                        ToolTip.visible: hovered
+                                        enabled: applyMinMaxCheckBox.checked
                                         text: ""
                                         width: 30
-                                        enabled: applyMinMaxCheckBox.checked
+
+                                        background: Rectangle {
+                                            border.width: 1
+                                            color: maxGroupBox.inputColor
+                                        }
                                         validator: DoubleValidator {
                                             bottom: -10e9
-                                            top: 10e9
                                             decimals: 5
+                                            top: 10e9
                                         }
-                                        onActiveFocusChanged: if (activeFocus) selectAll()
-                                        ToolTip.visible: hovered
-                                        ToolTip.text: "Maximum z"
+
+                                        onActiveFocusChanged: if (activeFocus)
+                                            selectAll()
                                     }
                                 }
                             }
@@ -334,14 +374,14 @@ DelegateChoice {
                         Item {
                             Layout.fillWidth: true
                         }
-
                         Button {
-                            text: qsTr("Apply")
                             enabled: applyMinMaxCheckBox.checked
+                            text: qsTr("Apply")
+
                             onClicked: {
                                 const min = [minXInput.text, minYInput.text, minZInput.text];
                                 const max = [maxXInput.text, maxYInput.text, maxZInput.text];
-                                if (popup.verifyMinRange(min) && popup.verifyMaxRange(max) ) {
+                                if (popup.verifyMinRange(min) && popup.verifyMaxRange(max)) {
                                     param = root.createRangedVector(min, [xInput.text, yInput.text, zInput.text], max, applyMinMaxCheckBox.checked);
                                     popup.lastMin = min;
                                     popup.lastMax = max;
@@ -351,6 +391,7 @@ DelegateChoice {
                         }
                         Button {
                             text: qsTr("Cancel")
+
                             onClicked: {
                                 if (!popup.verifyMinRange([minXInput.text, minYInput.text, minZInput.text])) {
                                     minXInput.text = popup.lastMin[0];
@@ -368,18 +409,19 @@ DelegateChoice {
                     }
                 }
             }
-            onClicked: {
-                const p = rangeEditButton.mapToItem(
-                    Overlay.overlay,
-                    rangeEditButton.width,
-                    0
-                );
-                editor.x = p.x
-                editor.y = p.y
-                editor.open()
-            }
-            ToolTip.visible: hovered
+
             ToolTip.text: "Edit x, y, and z ranges"
+            ToolTip.visible: hovered
+            height: applyMinMaxCheckBox.height * 1.2
+            icon.source: "qrc:/DissolveIconsModule/wizard.svg"
+            width: height
+
+            onClicked: {
+                const p = rangeEditButton.mapToItem(Overlay.overlay, rangeEditButton.width, 0);
+                editor.x = p.x;
+                editor.y = p.y;
+                editor.open();
+            }
         }
     }
 }

@@ -6,30 +6,29 @@ import "../Dissolve"
 Rectangle {
     id: root
 
-    required property string summary
     required property var imageSource
+    required property string summary
 
-    width: 25
+    ToolTip.text: summary
+    ToolTip.visible: errorIndicatorHover.hovered && (summary.length > 0)
+    anchors.right: parent.right
+    anchors.rightMargin: -20
+    anchors.top: parent.top
+    anchors.topMargin: -60
+    border.width: 3
     height: width
     radius: width / 2
-    border.width: 3
-
-    anchors.top: parent.top
-    anchors.right: parent.right
-    anchors.topMargin: -60
-    anchors.rightMargin: -20
+    width: 25
 
     HoverHandler {
         id: errorIndicatorHover
-    }
-    ToolTip.text: summary
-    ToolTip.visible: errorIndicatorHover.hovered && (summary.length > 0)
 
+    }
     Image {
         id: indicatorImage
 
         anchors.fill: parent
-        source: root.imageSource
         fillMode: Image.PreserveAspectFit
+        source: root.imageSource
     }
 }
