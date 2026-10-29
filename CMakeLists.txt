@@ -334,6 +334,7 @@ if(GUI)
       nodeGraph_moduleplugin
       periodicTable_moduleplugin
       delegates_moduleplugin
+      configuration_viewerplugin
   )
 
   # Main Dissolve GUI
