@@ -420,5 +420,11 @@ ApplicationWindow {
                 }
             }
         }
+        Item {
+            id: configurationTab;
+            Text {
+                text: "Draw Configuration"
+            }
+        }
     }
 }
