@@ -520,8 +520,8 @@ bool GraphModel::renameOutput(QString nodeName, QString currentName, QString new
         if (!model.values().at(currentName.toStdString())->setName(newName.toStdString()))
             return false;
 
-        // Remove the current name from the input endpoints map
-        if (curveOutputEndPoints_.find(graph) != curveInputEndPoints_.end())
+        // Remove the current name from the output endpoints map
+        if (curveOutputEndPoints_.find(graph) != curveOutputEndPoints_.end())
             curveOutputEndPoints_[graph].erase(currentName.toStdString());
 
         // Rename the input entry within the node parameter map

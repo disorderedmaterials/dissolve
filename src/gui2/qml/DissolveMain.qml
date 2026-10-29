@@ -19,26 +19,113 @@ import "../../Dissolve"
 ApplicationWindow {
     id: dissolveWindow
 
+    property Dialog quickRunDialog: null
     property vector3d scale: Qt.vector3d(Math.min(graphView.width / 2.5, graphView.height / 2.5), Math.min(graphView.width / 2.5, graphView.height / 2.5), 200)
     property ToolBar toolBar: null
 
     height: Screen.height
-    width: Screen.width
     title: "Dissolve"
     visible: true
+    width: Screen.width
 
-    GraphModel {
-        id: graphModel
+    header: Column {
+        /*
+         * ToolBar
+         */
+        ToolBar {
+            id: toolBar
 
-        graph: dissolve.graph
-        Component.onCompleted: dissolveWindow.quickRunDialog = quickRunDialogComponent.createObject(dissolveWindow, {graphModel : graphModel})
-    }
+            Component.onCompleted: dissolveWindow.toolBar = toolBar
 
-    property Dialog quickRunDialog: null
-    Component {
-        id: quickRunDialogComponent
+            RowLayout {
+                anchors.fill: parent
+                spacing: 6
 
-        QuickRunDialog {
+                ToolButton {
+                    ToolTip.text: "Go up one level to the parent graph"
+                    ToolTip.visible: hovered
+                    enabled: !graphModel.atRoot
+                    hoverEnabled: true
+                    icon.color: graphModel.atRoot ? "grey" : "transparent"
+                    icon.source: "qrc:/DissolveIconsModule/arrowUp.svg"
+
+                    onClicked: graphModel.upLevel()
+                }
+                ToolButton {
+                    id: edgeEditModeToolButton
+
+                    ToolTip.text: enabled ? (graphModel.edges.edgeEditMode ? "Edges can be added" : "Selected edges can be deleted") : "Edges cannot be changed while graph runnning"
+                    ToolTip.visible: hovered
+                    enabled: graphModel.graphControlsEnabled
+                    padding: 4
+
+                    contentItem: RowLayout {
+                        spacing: 2
+
+                        Label {
+                            Layout.alignment: Qt.AlignVCenter
+                            text: "Edge mode: "
+                        }
+                        Label {
+                            Layout.alignment: Qt.AlignVCenter
+                            color: graphModel.edges.edgeEditMode ? "green" : "red"
+                            font.bold: true
+                            text: graphModel.edges.edgeEditMode ? "ADD" : "DELETE"
+                        }
+                    }
+
+                    onClicked: graphModel.edges.toggleEdgeEditMode()
+                }
+                ToolButton {
+                    id: graphStatusToolButton
+
+                    property var iconPath: graphModel.statusIcon
+
+                    padding: 4
+
+                    contentItem: RowLayout {
+                        spacing: 2
+
+                        Label {
+                            Layout.alignment: Qt.AlignVCenter
+                            text: "Graph status"
+                        }
+                        Image {
+                            Layout.alignment: Qt.AlignVCenter
+                            Layout.preferredHeight: 20
+                            Layout.preferredWidth: 20
+                            fillMode: Image.PreserveAspectFit
+                            source: graphStatusToolButton.iconPath
+                            sourceSize.height: 20
+                            sourceSize.width: 20
+                        }
+                    }
+                }
+            }
+        }
+
+        /*
+         * TabBar
+         */
+        TabBar {
+            id: tabBar
+
+            currentIndex: 2
+            width: parent.width
+
+            // DEFAULT TABS
+            TabButton {
+                text: "Messages"
+                width: implicitWidth
+            }
+            TabButton {
+                text: "Pair Potentials"
+                width: implicitWidth
+            }
+            TabButton {
+                text: "Graph"
+                width: implicitWidth
+            }
         }
     }
 
@@ -58,89 +145,84 @@ ApplicationWindow {
             title: "&File"
 
             MenuItem {
-                text: "&New project"
-
-                ToolTip.visible: hovered
                 ToolTip.delay: Application.styleHints.mousePressAndHoldInterval
                 ToolTip.text: "Create a new Dissolve project"
+                ToolTip.visible: hovered
+                text: "&New project"
             }
             MenuItem {
+                ToolTip.delay: Application.styleHints.mousePressAndHoldInterval
+                ToolTip.text: "Load an existing Dissolve graph from a TOML file"
+                ToolTip.visible: hovered
+
                 action: Action {
-                    text: "&Open project from TOML"
                     shortcut: StandardKey.Open
+                    text: "&Open project from TOML"
+
                     onTriggered: openDialog.open()
                 }
 
                 FileDialog {
                     id: openDialog
+
                     fileMode: FileDialog.OpenFile
-                    onAccepted: dissolve.file = selectedFile
                     nameFilters: ["Input file (*.toml)", "All files (*)"]
+
+                    onAccepted: dissolve.file = selectedFile
                 }
-
-
-                ToolTip.visible: hovered
-                ToolTip.delay: Application.styleHints.mousePressAndHoldInterval
-                ToolTip.text: "Load an existing Dissolve graph from a TOML file"
             }
             MenuItem {
                 action: Action {
-                    text: "&Save"
                     shortcut: StandardKey.Save
+                    text: "&Save"
+
                     onTriggered: {
-                        if (dissolve.file == "")
-                        {
-                            saveDialog.open()
-                        }
-                        else
-                        {
-                            dissolve.save()
+                        if (dissolve.file == "") {
+                            saveDialog.open();
+                        } else {
+                            dissolve.save();
                         }
                     }
                 }
             }
             MenuItem {
-                action: Action {
-                    text: "&Save As..."
-                    shortcut: StandardKey.SaveAs
-                    onTriggered: saveDialog.open()
-                }
-
-
-                ToolTip.visible: hovered
                 ToolTip.delay: Application.styleHints.mousePressAndHoldInterval
                 ToolTip.text: "Save the current Dissolve graph to a new TOML file"
+                ToolTip.visible: hovered
+
+                action: Action {
+                    shortcut: StandardKey.SaveAs
+                    text: "&Save As..."
+
+                    onTriggered: saveDialog.open()
+                }
 
                 FileDialog {
                     id: saveDialog
 
-                    fileMode: FileDialog.SaveFile
                     defaultSuffix: "toml"
-
+                    fileMode: FileDialog.SaveFile
                     nameFilters: ["Input file (*.toml)", "All files (*)"]
 
                     onAccepted: dissolve.saveAs(selectedFile)
                 }
             }
-
-            MenuSeparator {}
-
+            MenuSeparator {
+            }
             MenuItem {
                 text: "Load Restart Point..."
             }
             MenuItem {
                 text: "Save Restart Point..."
             }
-
-            MenuSeparator {}
-            
+            MenuSeparator {
+            }
             MenuItem {
                 //shortcut: "Ctrl+X"
                 text: "Close project"
             }
-            
-            MenuSeparator {}
-
+            MenuSeparator {
+            }
             MenuItem {
                 //shortcut: "Ctrl+Q"
                 text: "&Quit Dissolve"
@@ -158,35 +240,33 @@ ApplicationWindow {
             title: "&Graph"
 
             DissolveMenuItem {
+                iconPath: "qrc:/DissolveIconsModule/play.svg"
+
                 dissolveAction: Action {
-                    text: "&Run"
                     shortcut: "Ctrl+Enter"
+                    text: "&Run"
+
                     onTriggered: dissolveWindow.quickRunDialog.open()
                 }
-                iconPath: "qrc:/DissolveIconsModule/play.svg"
             }
-
-            MenuSeparator{}
-
+            MenuSeparator {
+            }
             MenuItem {
-                //shortcut: "Ctrl+A"
-                text: "&Add Node"
-
-                ToolTip.visible: hovered
                 ToolTip.delay: Application.styleHints.mousePressAndHoldInterval
                 ToolTip.text: "Search the Node registry by node name, and add the selection to the graph"
 
                 //onTriggered: dissolveWindow.nodeSearchDialog.open()
-            }
-
-            MenuSeparator{}
-
-            MenuItem {
-                text: "&EPSR"
-
                 ToolTip.visible: hovered
+                //shortcut: "Ctrl+A"
+                text: "&Add Node"
+            }
+            MenuSeparator {
+            }
+            MenuItem {
                 ToolTip.delay: Application.styleHints.mousePressAndHoldInterval
                 ToolTip.text: "Open the EPSR Manager"
+                ToolTip.visible: hovered
+                text: "&EPSR"
             }
         }
 
@@ -199,106 +279,28 @@ ApplicationWindow {
             title: "&View"
 
             MenuItem {
-                //shortcut: "Ctrl+N"
-                text: "&Nodes"
-
-                ToolTip.visible: hovered
                 ToolTip.delay: Application.styleHints.mousePressAndHoldInterval
                 ToolTip.text: "View all available Nodes"
+                ToolTip.visible: hovered
+                //shortcut: "Ctrl+N"
+                text: "&Nodes"
             }
         }
     }
 
-    header: Column {
-        /*
-         * ToolBar
-         */
-        ToolBar {
-            id: toolBar
+    GraphModel {
+        id: graphModel
 
-            Component.onCompleted: dissolveWindow.toolBar = toolBar
+        graph: dissolve.graph
 
-            RowLayout {
-                anchors.fill: parent
-                spacing: 6
+        Component.onCompleted: dissolveWindow.quickRunDialog = quickRunDialogComponent.createObject(dissolveWindow, {
+            graphModel: graphModel
+        })
+    }
+    Component {
+        id: quickRunDialogComponent
 
-                ToolButton {
-                    enabled: !graphModel.atRoot
-                    icon.color: graphModel.atRoot ? "grey" : "transparent"
-                    icon.source: "qrc:/DissolveIconsModule/arrowUp.svg"
-                    hoverEnabled: true
-                    onClicked: graphModel.upLevel()
-
-                    ToolTip.text: "Go up one level to the parent graph"
-                    ToolTip.visible: hovered
-                }
-                ToolButton {
-                    id: edgeEditModeToolButton
-                    padding: 4
-                    contentItem: RowLayout {
-                            spacing: 2
-                            Label {
-                                Layout.alignment: Qt.AlignVCenter
-                                text: "Edge mode: "
-                            }
-                            Label {
-                                Layout.alignment: Qt.AlignVCenter
-                                text: graphModel.edges.edgeEditMode ? "ADD" : "DELETE"
-                                color: graphModel.edges.edgeEditMode ? "green" : "red"
-                                font.bold: true
-                            }
-                        }
-                    enabled: graphModel.graphControlsEnabled
-                    onClicked: graphModel.edges.toggleEdgeEditMode()
-                    ToolTip.text: enabled ? (graphModel.edges.edgeEditMode ? "Edges can be added" : "Selected edges can be deleted") : "Edges cannot be changed while graph runnning"
-                    ToolTip.visible: hovered
-                }
-                ToolButton {
-                    id: graphStatusToolButton
-                    property var iconPath: graphModel.statusIcon
-                    padding: 4
-                    contentItem: RowLayout {
-                            spacing: 2
-                            Label {
-                                Layout.alignment: Qt.AlignVCenter
-                                text: "Graph status"
-                            }
-                            Image {
-                                source: graphStatusToolButton.iconPath
-                                sourceSize.width: 20
-                                sourceSize.height: 20
-                                fillMode: Image.PreserveAspectFit
-                                Layout.preferredWidth: 20
-                                Layout.preferredHeight: 20
-                                Layout.alignment: Qt.AlignVCenter
-                            }
-                        }
-                }
-            }
-        }
-
-        /*
-         * TabBar
-         */
-        TabBar {
-            id: tabBar
-
-            width: parent.width
-            currentIndex: 2
-
-            // DEFAULT TABS
-            TabButton {
-                text: "Messages"
-                width: implicitWidth
-            }
-            TabButton {
-                text: "Pair Potentials"
-                width: implicitWidth
-            }
-            TabButton {
-                text: "Graph"
-                width: implicitWidth
-            }
+        QuickRunDialog {
         }
     }
 
@@ -309,7 +311,7 @@ ApplicationWindow {
     StackLayout {
         id: applicationTabStack
 
-        anchors.fill:parent
+        anchors.fill: parent
         currentIndex: tabBar.currentIndex
         width: parent.width
 
@@ -363,35 +365,41 @@ ApplicationWindow {
                 parameterEndPointsModel: graphModel.parameterEndPoints
                 rootGraphModel: graphModel
 
+                Component.onCompleted: {
+                    graphModel.canvasDimensions = Qt.size(graph.width, graph.height);
+                }
+
                 Rectangle {
                     id: graphInfoArea
-                    color: "transparent"
+
                     border.color: "black"
                     border.width: 2
-                    radius: 1
+                    color: "transparent"
                     height: dissolveWindow.toolBar
+                    radius: 1
                     width: locationPath.width
                     y: graphModel.canvasDimensions.height - 180
 
                     ColumnLayout {
                         Label {
                             id: locationPath
+
+                            padding: 2
                             text: "Location: " + "<b>%1</b>".arg(graphModel.location)
-                            padding: 2
                         }
                         Label {
+                            padding: 2
                             text: "Nodes: " + "<b>%1</b>".arg(graphModel.nodeCount - 2) // Ignore two (inputs and outputs)
-                            padding: 2
                         }
                         Label {
-                            text: "Edges: " +  "<b>%1</b>".arg(graphModel.edgeCount)
                             padding: 2
+                            text: "Edges: " + "<b>%1</b>".arg(graphModel.edgeCount)
                         }
                     }
                 }
-
                 Repeater {
                     id: graphDelegateRepeater
+
                     model: graph.nodeModel
 
                     delegate: Component {
@@ -409,10 +417,6 @@ ApplicationWindow {
                             }
                         }
                     }
-                }
-
-                Component.onCompleted: {
-                    graphModel.canvasDimensions = Qt.size(graph.width, graph.height)
                 }
             }
         }

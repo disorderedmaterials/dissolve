@@ -6,21 +6,24 @@ import "../Dissolve"
 
 TextInput {
     id: root
+
     required property GraphModel graphModel
-    required property string parentNodeName
-    required property Text parentLabel
     required property int paramType
+    required property Text parentLabel
+    required property string parentNodeName
     property color renameStatusColor: "transparent"
-    selectByMouse: true
-    font: parentLabel.font
-    color: parentLabel.color
-    text: parentLabel.text
-    horizontalAlignment: parentLabel.horizontalAlignment
-    verticalAlignment: parentLabel.verticalAlignment
-    onAccepted: finaliseEditing()
 
-    signal renameAccepted()
+    signal renameAccepted
 
+    function finaliseEditing() {
+        const currentParameterName = parentLabel.text;
+        const newParameterName = root.text;
+        if (!rename(parentNodeName, currentParameterName, newParameterName)) {
+            rejectAnimation.start();
+            return;
+        }
+        renameAccepted();
+    }
     function rename(parentNodeName, currentParameterName, newParameterName) {
         if (root.paramType == 1)
             return root.graphModel.renameInput(parentNodeName, currentParameterName, newParameterName);
@@ -28,21 +31,20 @@ TextInput {
             return root.graphModel.renameOutput(parentNodeName, currentParameterName, newParameterName);
     }
 
-    function finaliseEditing() {
-        const currentParameterName = parentLabel.text
-        const newParameterName = root.text
-        if (!rename(parentNodeName, currentParameterName, newParameterName)) {
-            rejectAnimation.start();
-            return;
-        }
-        renameAccepted();
-    }
+    color: parentLabel.color
+    font: parentLabel.font
+    horizontalAlignment: parentLabel.horizontalAlignment
+    selectByMouse: true
+    text: parentLabel.text
+    verticalAlignment: parentLabel.verticalAlignment
+
+    onAccepted: finaliseEditing()
 
     Rectangle {
         anchors.fill: parent
-        color: "white"
-        border.width: 2
         border.color: parent.renameStatusColor
+        border.width: 2
+        color: "white"
         z: -1
     }
     /*
@@ -55,16 +57,16 @@ TextInput {
         id: rejectAnimation
 
         PropertyAnimation {
-            target: root
-            property: "renameStatusColor"
-            to: "red"
             duration: 150
+            property: "renameStatusColor"
+            target: root
+            to: "red"
         }
         PropertyAnimation {
-            target: root
-            property: "renameStatusColor"
-            to: "transparent"
             duration: 500
+            property: "renameStatusColor"
+            target: root
+            to: "transparent"
         }
     }
 }
