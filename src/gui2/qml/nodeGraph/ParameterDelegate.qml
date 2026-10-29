@@ -41,7 +41,13 @@ DelegateChooser {
                 top: 10e9
                 decimals: 5
             }
-            onActiveFocusChanged: { if (activeFocus) { selectAll(); } else {param = Number(text); }}
+            onActiveFocusChanged: {
+                if (activeFocus) {
+                    selectAll();
+                } else {
+                    param = Number(text);
+                }
+            }
         }
     }
     DelegateChoice {
@@ -131,7 +137,7 @@ DelegateChooser {
             var x = Number(xInput);
             var y = Number(yInput);
             var z = Number(zInput);
-            return [x, y, z]
+            return [x, y, z];
         }
 
         Row {
@@ -151,7 +157,8 @@ DelegateChooser {
                     decimals: 5
                 }
                 onAccepted: param = vec3Delegate.createVector(xInput.text, yInput.text, zInput.text)
-                onActiveFocusChanged: if (activeFocus) selectAll()
+                onActiveFocusChanged: if (activeFocus)
+                    selectAll()
             }
 
             TextField {
@@ -164,7 +171,8 @@ DelegateChooser {
                     decimals: 5
                 }
                 onAccepted: param = vec3Delegate.createVector(xInput.text, yInput.text, zInput.text)
-                onActiveFocusChanged: if (activeFocus) selectAll()
+                onActiveFocusChanged: if (activeFocus)
+                    selectAll()
             }
 
             TextField {
@@ -177,10 +185,10 @@ DelegateChooser {
                     decimals: 5
                 }
                 onAccepted: param = vec3Delegate.createVector(xInput.text, yInput.text, zInput.text)
-                onActiveFocusChanged: if (activeFocus) selectAll()
+                onActiveFocusChanged: if (activeFocus)
+                    selectAll()
             }
         }
-
     }
     RangedVector3Delegate {
         roleValue: "ranged vector3"

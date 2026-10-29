@@ -43,7 +43,6 @@ Dialog {
                     }
                     ElementComboBox {
                         id: elementField
-
                     }
                     Text {
                         text: "X"
@@ -51,8 +50,7 @@ Dialog {
                     TextField {
                         id: xField
 
-                        validator: DoubleValidator {
-                        }
+                        validator: DoubleValidator {}
                     }
                     Text {
                         text: "Y"
@@ -60,8 +58,7 @@ Dialog {
                     TextField {
                         id: yField
 
-                        validator: DoubleValidator {
-                        }
+                        validator: DoubleValidator {}
                     }
                     Text {
                         text: "Z"
@@ -69,8 +66,7 @@ Dialog {
                     TextField {
                         id: zField
 
-                        validator: DoubleValidator {
-                        }
+                        validator: DoubleValidator {}
                     }
                     Text {
                         text: "Charge"
@@ -78,8 +74,7 @@ Dialog {
                     TextField {
                         id: chargeField
 
-                        validator: DoubleValidator {
-                        }
+                        validator: DoubleValidator {}
                     }
                     Button {
                         enabled: xField.text != "" && yField.text != "" && zField.text != "" && chargeField.text != ""
@@ -135,8 +130,7 @@ Dialog {
                         TextField {
                             id: bondI
 
-                            validator: IntValidator {
-                            }
+                            validator: IntValidator {}
                         }
                         Text {
                             text: "J"
@@ -144,8 +138,7 @@ Dialog {
                         TextField {
                             id: bondJ
 
-                            validator: IntValidator {
-                            }
+                            validator: IntValidator {}
                         }
                         Button {
                             enabled: bondI.text != "" && bondJ.text != ""
@@ -194,8 +187,7 @@ Dialog {
                         TextField {
                             id: angleI
 
-                            validator: IntValidator {
-                            }
+                            validator: IntValidator {}
                         }
                         Text {
                             text: "J"
@@ -203,8 +195,7 @@ Dialog {
                         TextField {
                             id: angleJ
 
-                            validator: IntValidator {
-                            }
+                            validator: IntValidator {}
                         }
                         Text {
                             text: "K"
@@ -212,8 +203,7 @@ Dialog {
                         TextField {
                             id: angleK
 
-                            validator: IntValidator {
-                            }
+                            validator: IntValidator {}
                         }
                         Button {
                             enabled: angleI.text != "" && angleJ.text != "" && angleK.text != ""
@@ -262,8 +252,7 @@ Dialog {
                         TextField {
                             id: torsionI
 
-                            validator: IntValidator {
-                            }
+                            validator: IntValidator {}
                         }
                         Text {
                             text: "J"
@@ -271,8 +260,7 @@ Dialog {
                         TextField {
                             id: torsionJ
 
-                            validator: IntValidator {
-                            }
+                            validator: IntValidator {}
                         }
                         Text {
                             text: "K"
@@ -280,8 +268,7 @@ Dialog {
                         TextField {
                             id: torsionK
 
-                            validator: IntValidator {
-                            }
+                            validator: IntValidator {}
                         }
                         Text {
                             text: "L"
@@ -289,8 +276,7 @@ Dialog {
                         TextField {
                             id: torsionL
 
-                            validator: IntValidator {
-                            }
+                            validator: IntValidator {}
                         }
                         Button {
                             enabled: torsionI.text != "" && torsionJ.text != "" && torsionK.text != "" && torsionL.text != ""
@@ -339,8 +325,7 @@ Dialog {
                         TextField {
                             id: improperI
 
-                            validator: IntValidator {
-                            }
+                            validator: IntValidator {}
                         }
                         Text {
                             text: "J"
@@ -348,8 +333,7 @@ Dialog {
                         TextField {
                             id: improperJ
 
-                            validator: IntValidator {
-                            }
+                            validator: IntValidator {}
                         }
                         Text {
                             text: "K"
@@ -357,8 +341,7 @@ Dialog {
                         TextField {
                             id: improperK
 
-                            validator: IntValidator {
-                            }
+                            validator: IntValidator {}
                         }
                         Text {
                             text: "L"
@@ -366,8 +349,7 @@ Dialog {
                         TextField {
                             id: improperL
 
-                            validator: IntValidator {
-                            }
+                            validator: IntValidator {}
                         }
                         Button {
                             enabled: improperI.text != "" && improperJ.text != "" && improperK.text != "" && improperL.text != ""

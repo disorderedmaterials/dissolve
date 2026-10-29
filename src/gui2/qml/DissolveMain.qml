@@ -31,15 +31,16 @@ ApplicationWindow {
         id: graphModel
 
         graph: dissolve.graph
-        Component.onCompleted: dissolveWindow.quickRunDialog = quickRunDialogComponent.createObject(dissolveWindow, {graphModel : graphModel})
+        Component.onCompleted: dissolveWindow.quickRunDialog = quickRunDialogComponent.createObject(dissolveWindow, {
+            graphModel: graphModel
+        })
     }
 
     property Dialog quickRunDialog: null
     Component {
         id: quickRunDialogComponent
 
-        QuickRunDialog {
-        }
+        QuickRunDialog {}
     }
 
     /*
@@ -78,7 +79,6 @@ ApplicationWindow {
                     nameFilters: ["Input file (*.toml)", "All files (*)"]
                 }
 
-
                 ToolTip.visible: hovered
                 ToolTip.delay: Application.styleHints.mousePressAndHoldInterval
                 ToolTip.text: "Load an existing Dissolve graph from a TOML file"
@@ -88,13 +88,10 @@ ApplicationWindow {
                     text: "&Save"
                     shortcut: StandardKey.Save
                     onTriggered: {
-                        if (dissolve.file == "")
-                        {
-                            saveDialog.open()
-                        }
-                        else
-                        {
-                            dissolve.save()
+                        if (dissolve.file == "") {
+                            saveDialog.open();
+                        } else {
+                            dissolve.save();
                         }
                     }
                 }
@@ -105,7 +102,6 @@ ApplicationWindow {
                     shortcut: StandardKey.SaveAs
                     onTriggered: saveDialog.open()
                 }
-
 
                 ToolTip.visible: hovered
                 ToolTip.delay: Application.styleHints.mousePressAndHoldInterval
@@ -133,12 +129,12 @@ ApplicationWindow {
             }
 
             MenuSeparator {}
-            
+
             MenuItem {
                 //shortcut: "Ctrl+X"
                 text: "Close project"
             }
-            
+
             MenuSeparator {}
 
             MenuItem {
@@ -166,7 +162,7 @@ ApplicationWindow {
                 iconPath: "qrc:/DissolveIconsModule/play.svg"
             }
 
-            MenuSeparator{}
+            MenuSeparator {}
 
             MenuItem {
                 //shortcut: "Ctrl+A"
@@ -179,7 +175,7 @@ ApplicationWindow {
                 //onTriggered: dissolveWindow.nodeSearchDialog.open()
             }
 
-            MenuSeparator{}
+            MenuSeparator {}
 
             MenuItem {
                 text: "&EPSR"
@@ -236,18 +232,18 @@ ApplicationWindow {
                     id: edgeEditModeToolButton
                     padding: 4
                     contentItem: RowLayout {
-                            spacing: 2
-                            Label {
-                                Layout.alignment: Qt.AlignVCenter
-                                text: "Edge mode: "
-                            }
-                            Label {
-                                Layout.alignment: Qt.AlignVCenter
-                                text: graphModel.edges.edgeEditMode ? "ADD" : "DELETE"
-                                color: graphModel.edges.edgeEditMode ? "green" : "red"
-                                font.bold: true
-                            }
+                        spacing: 2
+                        Label {
+                            Layout.alignment: Qt.AlignVCenter
+                            text: "Edge mode: "
                         }
+                        Label {
+                            Layout.alignment: Qt.AlignVCenter
+                            text: graphModel.edges.edgeEditMode ? "ADD" : "DELETE"
+                            color: graphModel.edges.edgeEditMode ? "green" : "red"
+                            font.bold: true
+                        }
+                    }
                     enabled: graphModel.graphControlsEnabled
                     onClicked: graphModel.edges.toggleEdgeEditMode()
                     ToolTip.text: enabled ? (graphModel.edges.edgeEditMode ? "Edges can be added" : "Selected edges can be deleted") : "Edges cannot be changed while graph runnning"
@@ -258,21 +254,21 @@ ApplicationWindow {
                     property var iconPath: graphModel.statusIcon
                     padding: 4
                     contentItem: RowLayout {
-                            spacing: 2
-                            Label {
-                                Layout.alignment: Qt.AlignVCenter
-                                text: "Graph status"
-                            }
-                            Image {
-                                source: graphStatusToolButton.iconPath
-                                sourceSize.width: 20
-                                sourceSize.height: 20
-                                fillMode: Image.PreserveAspectFit
-                                Layout.preferredWidth: 20
-                                Layout.preferredHeight: 20
-                                Layout.alignment: Qt.AlignVCenter
-                            }
+                        spacing: 2
+                        Label {
+                            Layout.alignment: Qt.AlignVCenter
+                            text: "Graph status"
                         }
+                        Image {
+                            source: graphStatusToolButton.iconPath
+                            sourceSize.width: 20
+                            sourceSize.height: 20
+                            fillMode: Image.PreserveAspectFit
+                            Layout.preferredWidth: 20
+                            Layout.preferredHeight: 20
+                            Layout.alignment: Qt.AlignVCenter
+                        }
+                    }
                 }
             }
         }
@@ -309,7 +305,7 @@ ApplicationWindow {
     StackLayout {
         id: applicationTabStack
 
-        anchors.fill:parent
+        anchors.fill: parent
         currentIndex: tabBar.currentIndex
         width: parent.width
 
@@ -384,7 +380,7 @@ ApplicationWindow {
                             padding: 2
                         }
                         Label {
-                            text: "Edges: " +  "<b>%1</b>".arg(graphModel.edgeCount)
+                            text: "Edges: " + "<b>%1</b>".arg(graphModel.edgeCount)
                             padding: 2
                         }
                     }
@@ -412,7 +408,7 @@ ApplicationWindow {
                 }
 
                 Component.onCompleted: {
-                    graphModel.canvasDimensions = Qt.size(graph.width, graph.height)
+                    graphModel.canvasDimensions = Qt.size(graph.width, graph.height);
                 }
             }
         }

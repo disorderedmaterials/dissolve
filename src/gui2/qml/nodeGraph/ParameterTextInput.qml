@@ -19,7 +19,7 @@ TextInput {
     verticalAlignment: parentLabel.verticalAlignment
     onAccepted: finaliseEditing()
 
-    signal renameAccepted()
+    signal renameAccepted
 
     function rename(parentNodeName, currentParameterName, newParameterName) {
         if (root.paramType == 1)
@@ -29,8 +29,8 @@ TextInput {
     }
 
     function finaliseEditing() {
-        const currentParameterName = parentLabel.text
-        const newParameterName = root.text
+        const currentParameterName = parentLabel.text;
+        const newParameterName = root.text;
         if (!rename(parentNodeName, currentParameterName, newParameterName)) {
             rejectAnimation.start();
             return;

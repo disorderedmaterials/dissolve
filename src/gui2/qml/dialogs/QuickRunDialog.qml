@@ -30,14 +30,13 @@ Dialog {
             anchors.fill: parent
             font.pixelSize: 14
             placeholderText: "Enter a node name to run graph from..."
-        }    
+        }
     }
 
     onAccepted: {
         if (graphModel.isValidNode(startNode))
-            graphModel.run(startNode)
-
-        root.close()
+            graphModel.run(startNode);
+        root.close();
     }
     onRejected: root.close()
 }

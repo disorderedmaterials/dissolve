@@ -13,8 +13,7 @@ DelegateChoice {
 
     function createRangedVector(min, value, max, applyRange) {
         var unRangedValue = [[], [Number(value[0]), Number(value[1]), Number(value[2])], []];
-        if (applyRange)
-        {
+        if (applyRange) {
             var hasMin = !(min[0] == "" && min[1] == "" && min[2] == "");
             var hasMax = !(max[0] == "" && max[1] == "" && max[2] == "");
             if (!(hasMin || hasMax))
@@ -45,7 +44,8 @@ DelegateChoice {
                 decimals: 5
             }
             onAccepted: param = root.createRangedVector([minXInput.text, minYInput.text, minZInput.text], [xInput.text, yInput.text, zInput.text], [maxXInput.text, maxYInput.text, maxZInput.text], applyMinMaxCheckBox.checked)
-            onActiveFocusChanged: if (activeFocus) selectAll()
+            onActiveFocusChanged: if (activeFocus)
+                selectAll()
             ToolTip.visible: hovered
             ToolTip.text: "X value"
         }
@@ -59,7 +59,8 @@ DelegateChoice {
                 decimals: 5
             }
             onAccepted: param = root.createRangedVector([minXInput.text, minYInput.text, minZInput.text], [xInput.text, yInput.text, zInput.text], [maxXInput.text, maxYInput.text, maxZInput.text], applyMinMaxCheckBox.checked)
-            onActiveFocusChanged: if (activeFocus) selectAll()
+            onActiveFocusChanged: if (activeFocus)
+                selectAll()
             ToolTip.visible: hovered
             ToolTip.text: "Y value"
         }
@@ -73,7 +74,8 @@ DelegateChoice {
                 decimals: 5
             }
             onAccepted: param = root.createRangedVector([minXInput.text, minYInput.text, minZInput.text], [xInput.text, yInput.text, zInput.text], [maxXInput.text, maxYInput.text, maxZInput.text], applyMinMaxCheckBox.checked)
-            onActiveFocusChanged: if (activeFocus) selectAll()
+            onActiveFocusChanged: if (activeFocus)
+                selectAll()
             ToolTip.visible: hovered
             ToolTip.text: "Z value"
         }
@@ -195,7 +197,8 @@ DelegateChoice {
                                             top: 10e9
                                             decimals: 5
                                         }
-                                        onActiveFocusChanged: if (activeFocus) selectAll()
+                                        onActiveFocusChanged: if (activeFocus)
+                                            selectAll()
                                         ToolTip.visible: hovered
                                         ToolTip.text: "Minimum x"
                                     }
@@ -213,7 +216,8 @@ DelegateChoice {
                                             top: 10e9
                                             decimals: 5
                                         }
-                                        onActiveFocusChanged: if (activeFocus) selectAll()
+                                        onActiveFocusChanged: if (activeFocus)
+                                            selectAll()
                                         ToolTip.visible: hovered
                                         ToolTip.text: "Minimum y"
                                     }
@@ -231,7 +235,8 @@ DelegateChoice {
                                             top: 10e9
                                             decimals: 5
                                         }
-                                        onActiveFocusChanged: if (activeFocus) selectAll()
+                                        onActiveFocusChanged: if (activeFocus)
+                                            selectAll()
                                         ToolTip.visible: hovered
                                         ToolTip.text: "Minimum z"
                                     }
@@ -281,7 +286,8 @@ DelegateChoice {
                                             top: 10e9
                                             decimals: 5
                                         }
-                                        onActiveFocusChanged: if (activeFocus) selectAll()
+                                        onActiveFocusChanged: if (activeFocus)
+                                            selectAll()
                                         ToolTip.visible: hovered
                                         ToolTip.text: "Maximum x"
                                     }
@@ -299,7 +305,8 @@ DelegateChoice {
                                             top: 10e9
                                             decimals: 5
                                         }
-                                        onActiveFocusChanged: if (activeFocus) selectAll()
+                                        onActiveFocusChanged: if (activeFocus)
+                                            selectAll()
                                         ToolTip.visible: hovered
                                         ToolTip.text: "Maximum y"
                                     }
@@ -317,7 +324,8 @@ DelegateChoice {
                                             top: 10e9
                                             decimals: 5
                                         }
-                                        onActiveFocusChanged: if (activeFocus) selectAll()
+                                        onActiveFocusChanged: if (activeFocus)
+                                            selectAll()
                                         ToolTip.visible: hovered
                                         ToolTip.text: "Maximum z"
                                     }
@@ -341,7 +349,7 @@ DelegateChoice {
                             onClicked: {
                                 const min = [minXInput.text, minYInput.text, minZInput.text];
                                 const max = [maxXInput.text, maxYInput.text, maxZInput.text];
-                                if (popup.verifyMinRange(min) && popup.verifyMaxRange(max) ) {
+                                if (popup.verifyMinRange(min) && popup.verifyMaxRange(max)) {
                                     param = root.createRangedVector(min, [xInput.text, yInput.text, zInput.text], max, applyMinMaxCheckBox.checked);
                                     popup.lastMin = min;
                                     popup.lastMax = max;
@@ -369,14 +377,10 @@ DelegateChoice {
                 }
             }
             onClicked: {
-                const p = rangeEditButton.mapToItem(
-                    Overlay.overlay,
-                    rangeEditButton.width,
-                    0
-                );
-                editor.x = p.x
-                editor.y = p.y
-                editor.open()
+                const p = rangeEditButton.mapToItem(Overlay.overlay, rangeEditButton.width, 0);
+                editor.x = p.x;
+                editor.y = p.y;
+                editor.open();
             }
             ToolTip.visible: hovered
             ToolTip.text: "Edit x, y, and z ranges"
