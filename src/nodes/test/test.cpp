@@ -1,7 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
+#define _USE_MATH_DEFINES
 #include "nodes/test/test.h"
+#include <cmath>
 
 TestNode::TestNode(Graph *parentGraph) : Node(parentGraph)
 {
@@ -23,6 +25,12 @@ TestNode::TestNode(Graph *parentGraph) : Node(parentGraph)
     addOutput("NumberVector", "A vector of numbers", numberVector_);
     addOutput("OptionalNumber", "An optional number", optionalNumber_);
     addOutput("Variant", "A variant", variant_);
+    addOutput("Sine", "A test sine data series", sineData_);
+    addOutput("Cosine", "A test cosine data series", cosineData_);
+
+    // Fill out some test data at construction time
+    makeSine();
+    makeCosine();
 }
 
 /*
@@ -40,6 +48,34 @@ const std::optional<Configuration> &TestNode::optionalConfiguration() const { re
 
 // Return the variant
 TestNode::TestVariant TestNode::variant() { return variant_; }
+
+//
+void TestNode::makeSine(double phi)
+{
+    // Append sine data
+    auto dx = M_PI / 4;
+    const auto nPoints = 9;
+    for (int i = 0; i < 9; i++)
+    {
+        auto x = i * dx;
+        auto arg = x + phi;
+        sineData_.addPoint(x, sin(arg));
+    }
+}
+
+//
+void TestNode::makeCosine(double phi)
+{
+    // Append cosine data
+    auto dx = M_PI / 4;
+    const auto nPoints = 9;
+    for (int i = 0; i < 9; i++)
+    {
+        auto x = i * dx;
+        auto arg = x + phi;
+        cosineData_.addPoint(x, cos(arg));
+    }
+}
 
 /*
  * Processing
@@ -60,6 +96,11 @@ NodeConstants::ProcessResult TestNode::process()
     // Standard dynamic outputs
     messageParts_.clear();
     messageParts_.insert(messageParts_.end(), message_.begin(), message_.end());
+
+    // Data plotting
+    iteration_++;
+    makeSine(iteration_ * (M_PI / 4));
+    makeCosine(iteration_ * (M_PI / 4));
 
     /*
      * Dynamic outputs

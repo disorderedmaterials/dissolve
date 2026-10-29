@@ -76,6 +76,14 @@ ParameterEndPointsModel *GraphModel::parameterEndPoints() { return &parameterEnd
 // Access the GraphNodeModel
 GraphNodeModel *GraphModel::nodes() { return &nodes_; }
 
+//
+NodeWrapper &GraphModel::wrappedNode(std::string_view nodeName)
+{
+    auto it = std::find_if(wrapped_.begin(), wrapped_.end(),
+                           [nodeName](const auto &nodeWrapper) { return nodeWrapper.node()->name() == nodeName; });
+    return wrapped_[std::distance(wrapped_.begin(), it)];
+}
+
 // Returns the graph status icon
 QUrl GraphModel::statusIcon()
 {

@@ -6,9 +6,11 @@ import Qt.labs.qmlmodels
 import Dissolve
 import DissolveControlsModule
 import DissolveIconsModule
+import DissolvePlottingModule
 import "../Dissolve"
 import "../DissolveControlsModule"
 import "../DissolveIconsModule"
+import "../DissolvePlottingModule"
 
 NodeBox {
     id: root
@@ -26,14 +28,6 @@ NodeBox {
     signal descended(int idx)
     signal edgeCreated(string srcNode, string srcOutput, string tgtNode, string tgtInput, DropArea creator)
     signal edgeDeferred(string srcNode, string srcOutput, string tgtNode, string tgtInput, DropArea creator)
-
-    function closeMessages() {
-        messages.close();
-    /*
-        warnings.close()
-        errors.close()
-        */
-    }
 
     coords: Qt.point(x, y)
     height: nodeColumnLayout.implicitHeight + label.height + padding
@@ -70,261 +64,263 @@ NodeBox {
     Menu {
         id: nodePopupMenu
 
-        DissolveMenuItem {
-            iconPath: "qrc:/DissolveIconsModule/play.svg"
+        MenuItem {
+            icon.source: "qrc:/DissolveIconsModule/play.svg"
+            text: "Run"
 
-            dissolveAction: Action {
-                shortcut: "Ctrl+Enter"
-                text: "&Run"
-
-                onTriggered: rootGraphModel.run(nodeName)
-            }
+            onTriggered: rootGraphModel.run(nodeName)
         }
         MenuSeparator {
         }
         MenuItem {
             id: messagesMenuItem
 
+            readonly property Popup messagesPopup: Popup {
+                id: messages
+
+                readonly property bool hovered: messagesPopupHoverHandler.hovered
+                readonly property MenuItem menuItem: messagesMenuItem
+
+                height: 250
+                padding: 4
+                parent: Overlay.overlay
+                width: 300
+
+                HoverHandler {
+                    id: messagesPopupHoverHandler
+
+                    onHoveredChanged: {
+                        if (hovered)
+                            messages.menuItem.sharedHoverTimer.stop();
+                        else
+                            messages.menuItem.sharedHoverTimer.restart();
+                    }
+                }
+                Item {
+                    anchors.fill: parent
+
+                    ColumnLayout {
+                        anchors.fill: parent
+                        spacing: 2
+
+                        Rectangle {
+                            id: header
+
+                            border.color: "lightgrey"
+                            border.width: 1
+                            color: "white"
+                            height: 20
+                            radius: 3
+                            width: parent.width
+
+                            RowLayout {
+                                anchors.fill: parent
+                                anchors.leftMargin: 3
+                                anchors.rightMargin: 6
+                                spacing: 2
+
+                                Label {
+                                    Layout.fillWidth: true
+                                    color: "grey"
+                                    font.bold: true
+                                    text: qsTr("Message history")
+                                }
+                            }
+                        }
+                        ScrollView {
+                            id: messagesScrollView
+
+                            Layout.fillHeight: true
+                            Layout.fillWidth: true
+                            ScrollBar.horizontal.policy: ScrollBar.AsNeeded
+                            ScrollBar.vertical.policy: ScrollBar.AsNeeded
+
+                            ListView {
+                                model: root.messageStore.model
+
+                                delegate: ItemDelegate {
+                                    id: messageDelegate
+
+                                    hoverEnabled: true
+
+                                    background: Rectangle {
+                                        color: messageDelegate.hovered ? "#444444" : "transparent"
+                                    }
+                                    contentItem: Text {
+                                        id: messageText
+
+                                        color: messageDelegate.hovered ? statusColor : "grey"
+                                        elide: Text.ElideRight
+                                        font.bold: messageDelegate.hovered
+                                        text: message
+                                        verticalAlignment: Text.AlignVCenter
+                                        wrapMode: Text.NoWrap
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            readonly property Timer sharedHoverTimer: Timer {
+                readonly property Popup popup: messagesMenuItem.messagesPopup
+
+                interval: 150
+                repeat: false
+
+                onTriggered: {
+                    const noHover = !messagesMenuItem.hovered && !popup.hovered;
+                    if (noHover)
+                        popup.close();
+                }
+            }
+
+            hoverEnabled: true
+            icon.source: "qrc:/DissolveIconsModule/messages.svg"
             text: "Messages"
 
             HoverHandler {
-                id: messagesHoverHandler
+                readonly property Popup popup: messagesMenuItem.messagesPopup
 
                 onHoveredChanged: {
                     if (hovered) {
-                        root.closeMessages();
+                        messagesMenuItem.sharedHoverTimer.stop();
                         const p = messagesMenuItem.mapToItem(Overlay.overlay, messagesMenuItem.width, 0);
-                        messages.x = p.x;
-                        messages.y = p.y;
-                        messages.open();
-                    }
+                        popup.x = p.x;
+                        popup.y = p.y;
+                        popup.open();
+                    } else
+                        messagesMenuItem.sharedHoverTimer.restart();
                 }
             }
         }
-        // TODO: Could use a SortFilterProxyModel to generate these later on
-        /*
-        MenuItem {
-            id: warningsMenuItem
-            text: "Warnings"
-
-            HoverHandler {
-                id: warningsHoverHandler
-
-                onHoveredChanged: {
-                    if (hovered) {
-                        root.closeMessages();
-
-                        const p = warningsMenuItem.mapToItem(
-                            Overlay.overlay,
-                            warningsMenuItem.width,
-                            0
-                        );
-
-                        warnings.x = p.x
-                        warnings.y = p.y
-
-                        warnings.open();
-                    }
-                }
-            }
+        MenuSeparator {
         }
         MenuItem {
-            id: errorsMenuItem
-            text: "Errors"
+            id: outputMenuItem
 
-            HoverHandler {
-                id: errorsHoverHandler
+            readonly property Menu outputMenu: Menu {
+                Repeater {
+                    model: renderables
 
-                onHoveredChanged: {
-                    if (hovered) {
-                        root.closeMessages();
+                    // TODO: Potential requirement for a proxy model to filter out empty renderable datasets
 
-                        const p = errorsMenuItem.mapToItem(
-                            Overlay.overlay,
-                            errorsMenuItem.width,
-                            0
-                        );
+                    delegate: MenuItem {
+                        id: renderableItem
 
-                        errors.x = p.x
-                        errors.y = p.y
+                        required property string key
 
-                        errors.open();
-                    }
-                }
-            }
-        }
-        */
-    }
-    Popup {
-        id: messages
+                        // This will need to be dynamic for different plot dimensionalities
+                        readonly property Popup plotPopup: Popup {
+                            id: plotContainer
 
-        height: 250
-        padding: 4
-        parent: Overlay.overlay
-        width: 300
+                            readonly property var canvasDimensions: {
+                                "dx": 430,
+                                "dy": 300
+                            }
+                            readonly property double headerHeight: 20
+                            readonly property bool hovered: plotContainerHoverHandler.hovered
 
-        Item {
-            anchors.fill: parent
+                            height: 1.5 * canvasDimensions["dy"]
+                            width: 1.5 * canvasDimensions["dx"]
 
-            HoverHandler {
-                onHoveredChanged: {
-                    if (!hovered)
-                        messages.close();
-                }
-            }
-            ColumnLayout {
-                anchors.fill: parent
-                spacing: 2
+                            contentItem: Item {
+                                ColumnLayout {
+                                    anchors.fill: parent
+                                    spacing: 0
 
-                Rectangle {
-                    id: header
+                                    Rectangle {
+                                        id: header
 
-                    border.color: "lightgrey"
-                    border.width: 1
-                    color: "white"
-                    height: 20
-                    radius: 3
-                    width: parent.width
+                                        Layout.preferredHeight: plotContainer.headerHeight
+                                        Layout.preferredWidth: parent.width
+                                        border.color: "lightgrey"
+                                        border.width: 1
+                                        color: "white"
+                                        radius: 3
 
-                    RowLayout {
-                        anchors.fill: parent
-                        anchors.leftMargin: 3
-                        anchors.rightMargin: 6
-                        spacing: 2
+                                        RowLayout {
+                                            anchors.fill: parent
+                                            anchors.leftMargin: 3
+                                            anchors.rightMargin: 6
+                                            spacing: 2
 
-                        Label {
-                            Layout.fillWidth: true
-                            color: "grey"
-                            font.bold: true
-                            text: qsTr("Message history")
+                                            Label {
+                                                Layout.fillWidth: true
+                                                color: "grey"
+                                                font.bold: true
+                                                text: qsTr("Plot1D")
+                                            }
+                                        }
+                                    }
+                                    Plot1DContext {
+                                        Layout.fillHeight: true
+                                        Layout.fillWidth: true
+                                        canvasDimensions: plotContainer.canvasDimensions
+                                        plotModel: renderableData
+                                        title: key
+                                    }
+                                }
+                            }
+
+                            HoverHandler {
+                                id: plotContainerHoverHandler
+
+                                onHoveredChanged: {
+                                    if (hovered)
+                                        renderableItem.sharedHoverTimer.stop();
+                                    else
+                                        renderableItem.sharedHoverTimer.restart();
+                                }
+                            }
                         }
-                    }
-                }
-                ScrollView {
-                    id: messagesScrollView
+                        required property var renderableData
+                        readonly property Timer sharedHoverTimer: Timer {
+                            readonly property Popup popup: renderableItem.plotPopup
 
-                    Layout.fillHeight: true
-                    Layout.fillWidth: true
-                    ScrollBar.horizontal.policy: ScrollBar.AsNeeded
-                    ScrollBar.vertical.policy: ScrollBar.AsNeeded
+                            interval: 150
+                            repeat: false
 
-                    ListView {
-                        model: root.messageStore.model
-
-                        delegate: ItemDelegate {
-                            id: messageDelegate
-
-                            hoverEnabled: true
-
-                            background: Rectangle {
-                                color: messageDelegate.hovered ? "#444444" : "transparent"
+                            onTriggered: {
+                                const noHover = !renderableItem.hovered && !popup.hovered;
+                                if (noHover)
+                                    popup.close();
                             }
-                            contentItem: Text {
-                                id: messageText
+                        }
 
-                                color: messageDelegate.hovered ? statusColor : "grey"
-                                elide: Text.ElideRight
-                                font.bold: messageDelegate.hovered
-                                text: message
-                                verticalAlignment: Text.AlignVCenter
-                                wrapMode: Text.NoWrap
-                            }
+                        hoverEnabled: true
+                        text: key
+
+                        onHoveredChanged: {
+                            if (hovered) {
+                                renderableItem.sharedHoverTimer.stop();
+                                const p = renderableItem.mapToItem(renderableItem, renderableItem.width, 0);
+                                plotPopup.x = p.x;
+                                plotPopup.y = p.y;
+                                plotPopup.open();
+                            } else
+                                renderableItem.sharedHoverTimer.restart();
                         }
                     }
                 }
             }
-        }
-    }
-    /*
-    Popup {
-        id: warnings
 
-        width: 300
-        height: 250
+            enabled: !renderables.empty()
+            icon.source: "qrc:/DissolveIconsModule/output.svg"
+            text: "Output (" + renderables.rowCount() + ")"
 
-        parent: Overlay.overlay
-
-        padding: 4
-
-        HoverHandler {
-            onHoveredChanged: {
-                if (!hovered)
-                    warnings.close()
-            }
-        }
-        ScrollView {
-            id: warningsScrollView
-
-            anchors.fill: parent
-
-            ListView {
-                model: root.messageStore.warningListModel
-
-                delegate: ItemDelegate {
-                    id: messageDelegate
-                    width: warningsScrollView.width
-
-                    hoverEnabled: true
-
-                    contentItem: Text {
-                        text: message
-                        color: "orange"
-                        font.bold: messageDelegate.hovered
-                        elide: Text.ElideRight
-                        verticalAlignment: Text.AlignVCenter
-                    }
-                    background: Rectangle {
-                        color: messageDelegate.hovered ? "#444444" : "transparent"
+            HoverHandler {
+                onHoveredChanged: {
+                    if (hovered) {
+                        const p = parent.mapToItem(parent, parent.width, 0);
+                        parent.outputMenu.x = p.x;
+                        parent.outputMenu.y = p.y;
+                        parent.outputMenu.open();
                     }
                 }
             }
         }
     }
-    Popup {
-        id: errors
-
-        width: 300
-        height: 250
-
-        parent: Overlay.overlay
-
-        padding: 4
-
-        HoverHandler {
-            onHoveredChanged: {
-                if (!hovered)
-                    errors.close()
-            }
-        }
-        ScrollView {
-            id: errorsScrollView
-
-            anchors.fill: parent
-
-            ListView {
-                model: root.messageStore.errorListModel
-
-                delegate: ItemDelegate {
-                    id: messageDelegate
-                    width: errorsScrollView.width
-
-                    hoverEnabled: true
-
-                    contentItem: Text {
-                        text: message
-                        color: "red"
-                        font.bold: messageDelegate.hovered
-                        elide: Text.ElideRight
-                        verticalAlignment: Text.AlignVCenter
-                    }
-                    background: Rectangle {
-                        color: messageDelegate.hovered ? "#444444" : "transparent"
-                    }
-                }
-            }
-        }
-    }
-    */
     TapHandler {
         id: tapHandler
 
@@ -335,10 +331,6 @@ NodeBox {
     ColumnLayout {
         id: nodeColumnLayout
 
-        /*
-        anchors.left: header.left
-        anchors.right: header.right
-        */
         anchors.leftMargin: 8
         anchors.rightMargin: 8
         spacing: 8
