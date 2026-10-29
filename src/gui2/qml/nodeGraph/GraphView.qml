@@ -18,12 +18,12 @@ Pane {
     MouseArea {
         id: ctxMenuCatcher
 
+        property point mousePos: Qt.point(ctxMenuCatcher.mouseX, ctxMenuCatcher.mouseY)
+
         acceptedButtons: Qt.RightButton
         anchors.fill: parent
 
         onClicked: contextMenu.popup()
-
-        property point mousePos: Qt.point(ctxMenuCatcher.mouseX, ctxMenuCatcher.mouseY)
 
         Menu {
             id: contextMenu
@@ -33,6 +33,7 @@ Pane {
 
                 delegate: Item {
                     id: menuDelegateItem
+
                     required property var display
                     property Menu innerMenu: innerMenuComponent.createObject(parent)
 
@@ -49,15 +50,18 @@ Pane {
 
                                 delegate: MenuItem {
                                     required property var modelData
-                                    text: modelData.name
-                                    onClicked: graphRoot.rootGraphModel.emplace_back(ctxMenuCatcher.mousePos.x, ctxMenuCatcher.mousePos.y, modelData.name)
+
                                     ToolTip.text: modelData.description
                                     ToolTip.visible: hovered
+                                    text: modelData.name
+
+                                    onClicked: graphRoot.rootGraphModel.emplace_back(ctxMenuCatcher.mousePos.x, ctxMenuCatcher.mousePos.y, modelData.name)
                                 }
                             }
                         }
                     }
                 }
+
                 onItemAdded: (index, item) => {
                     contextMenu.addMenu(item.innerMenu);
                 }
@@ -71,27 +75,16 @@ Pane {
     Repeater {
         model: graphRoot.parameterEndPointsModel
 
-        onItemAdded: function (index, item) {
-            var node = item.targetDropArea.parentNodeBox;
-            const originalTargetPos = Qt.point(node.x, node.y);
-            node.x = originalTargetPos.x + 1;
-            Qt.callLater(function () {
-                node.x = originalTargetPos.x;
-            });
-        }
-
         delegate: Shape {
             id: edgeShape
 
             required property Item sourceDropArea
-            required property Item targetDropArea
-
             property point sourcePos: {
                 sourceDropArea.parentNodeBox.x;
                 sourceDropArea.parentNodeBox.y;
                 return sourceDropArea.mapToItem(graphRoot, Qt.point(0, 0));
             }
-
+            required property Item targetDropArea
             property point targetPos: {
                 targetDropArea.parentNodeBox.x;
                 targetDropArea.parentNodeBox.y;
@@ -111,6 +104,7 @@ Pane {
 
                 PathCubic {
                     id: edgeLine
+
                     control1X: edgeShape.sourcePos.x + curveOffset
                     control1Y: edgeShape.sourcePos.y
                     control2X: edgeShape.targetPos.x - graphRoot.curveOffset
@@ -119,6 +113,15 @@ Pane {
                     y: edgeShape.targetPos.y
                 }
             }
+        }
+
+        onItemAdded: function (index, item) {
+            var node = item.targetDropArea.parentNodeBox;
+            const originalTargetPos = Qt.point(node.x, node.y);
+            node.x = originalTargetPos.x + 1;
+            Qt.callLater(function () {
+                node.x = originalTargetPos.x;
+            });
         }
     }
 

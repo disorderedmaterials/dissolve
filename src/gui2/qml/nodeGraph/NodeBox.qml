@@ -6,103 +6,77 @@ import Qt.labs.qmlmodels
 GroupBox {
     id: root
 
-    default property alias content: contentArea.data
-    property bool isMoving: dragHandler.active
     property double baseY: header.height
-    property string image
-    property string nodeName
+    default property alias content: contentArea.data
     property point coords
     property bool dragActive: false
-    property bool headerHovered: false
     property int headerHeight: 32
-    property bool isInputsNode: false
-    property bool isOutputsNode: false
-    property bool isLoopBacksNode: false
+    property bool headerHovered: false
+    property string image
     property bool isAnyIONode: false
-
-    topPadding: headerHeight + padding
-    padding: 8
+    property bool isInputsNode: false
+    property bool isLoopBacksNode: false
+    property bool isMoving: dragHandler.active
+    property bool isOutputsNode: false
+    property string nodeName
 
     signal deleted
     signal renamed(string currentNodeName, string newNodeName, var label)
 
     implicitWidth: 250
-
+    padding: 8
     scale: headerHovered ? 1.05 : 1.0
-
-    Behavior on scale {
-        NumberAnimation {
-            duration: 150
-            easing.type: Easing.OutQuad
-        }
-    }
+    topPadding: headerHeight + padding
 
     background: Rectangle {
         id: creationPulsedBorder
 
         anchors.fill: parent
-        color: "transparent"
         border.color: "black"
         border.width: 1
+        color: "transparent"
         radius: 4
         z: -1
 
         Component.onCompleted: creationPulsedAnimation.start()
     }
+    contentItem: Item {
+        id: contentArea
 
-    SequentialAnimation {
-        id: creationPulsedAnimation
-
-        NumberAnimation {
-            target: creationPulsedBorder
-            property: "border.width"
-            from: 1
-            to: 5
-            duration: 300
-            easing.type: Easing.OutQuad
-        }
-        NumberAnimation {
-            target: creationPulsedBorder
-            property: "border.width"
-            from: 5
-            to: 1
-            duration: 500
-            easing.type: Easing.OutQuad
+        anchors {
+            bottom: parent.bottom
+            left: parent.left
+            margins: 8
+            right: parent.right
+            top: header.bottom
         }
     }
-
     label: Rectangle {
         id: header
 
-        implicitHeight: root.headerHeight
-        width: root.width
-
-        color: '#a9f0f4ff'
-        radius: 4
-
-        border.width: root.dragActive ? 3 : 1
         border.color: root.dragActive ? "dodgerblue" : "grey"
+        border.width: root.dragActive ? 3 : 1
+        color: '#a9f0f4ff'
+        implicitHeight: root.headerHeight
+        radius: 4
+        width: root.width
 
         RowLayout {
             anchors.fill: parent
             anchors.leftMargin: 6
             anchors.rightMargin: 6
-
             spacing: 6
 
             Rectangle {
                 id: iconFrame
 
-                Layout.preferredWidth: titleLabel.height
                 Layout.preferredHeight: titleLabel.height
-
-                radius: 3
-                color: "transparent"
-
-                border.width: 1
+                Layout.preferredWidth: titleLabel.height
                 border.color: "grey"
-
+                border.width: 1
                 clip: true
+                color: "transparent"
+                radius: 3
 
                 Image {
                     clip: true
@@ -115,23 +89,24 @@ GroupBox {
             TextField {
                 id: titleLabel
 
-                Layout.fillWidth: true
-                font.pixelSize: 14
-                text: root.nodeName
-                color: "black"
-                enabled: !(isInputsNode || isOutputsNode || isLoopBacksNode)
                 property var rejectAnimation: null
                 property color resultColor: "black"
 
-                onAccepted: function (event) {
-                    renamed(nodeName, titleLabel.text, titleLabel);
-                }
+                Layout.fillWidth: true
+                color: "black"
+                enabled: !(isInputsNode || isOutputsNode || isLoopBacksNode)
+                font.pixelSize: 14
+                text: root.nodeName
 
                 background: Rectangle {
-                    color: "transparent"
-                    border.width: 1
                     border.color: titleLabel.resultColor
+                    border.width: 1
+                    color: "transparent"
                     radius: 3
+                }
+
+                onAccepted: function (event) {
+                    renamed(nodeName, titleLabel.text, titleLabel);
                 }
 
                 SequentialAnimation {
@@ -140,16 +115,16 @@ GroupBox {
                     Component.onCompleted: titleLabel.rejectAnimation = rejectAnimation
 
                     PropertyAnimation {
-                        target: titleLabel
-                        property: "resultColor"
-                        to: "red"
                         duration: 150
+                        property: "resultColor"
+                        target: titleLabel
+                        to: "red"
                     }
                     PropertyAnimation {
-                        target: titleLabel
-                        property: "resultColor"
-                        to: "black"
                         duration: 500
+                        property: "resultColor"
+                        target: titleLabel
+                        to: "black"
                     }
                 }
             }
@@ -158,32 +133,30 @@ GroupBox {
 
                 implicitHeight: titleLabel.height
                 implicitWidth: deleteNodeButton.implicitHeight
-
                 visible: !(isInputsNode || isOutputsNode || isLoopBacksNode)
 
                 background: Rectangle {
                     id: deleteNodeButtonRectangle
 
                     anchors.fill: parent
-                    radius: 3
-                    color: deleteNodeButton.hovered ? "white" : "transparent"
-
-                    border.width: deleteNodeButton.hovered ? 2 : 1
-
                     border.color: deleteNodeButton.pressed ? "dodgerblue" : "grey"
+                    border.width: deleteNodeButton.hovered ? 2 : 1
+                    color: deleteNodeButton.hovered ? "white" : "transparent"
+                    radius: 3
                 }
                 contentItem: Text {
                     id: cross
 
-                    text: "x"
                     color: parent.pressed ? "white" : "red"
-                    font.pointSize: 11
                     font.bold: false
+                    font.pointSize: 11
+                    horizontalAlignment: Text.AlignHCenter
                     style: Text.Outline
                     styleColor: "black"
-                    horizontalAlignment: Text.AlignHCenter
+                    text: "x"
                     verticalAlignment: Text.AlignVCenter
                 }
+
                 onClicked: root.deleted()
             }
         }
@@ -198,30 +171,46 @@ GroupBox {
         */
         HoverHandler {
             id: hoverHandler
+
             target: root
 
             onHoveredChanged: root.headerHovered = hovered
         }
         DragHandler {
             id: dragHandler
+
             target: root
 
+            onActiveChanged: root.dragActive = active
             xAxis.onActiveValueChanged: delta => posX += delta
             yAxis.onActiveValueChanged: delta => posY += delta
-
-            onActiveChanged: root.dragActive = active
+        }
+    }
+    Behavior on scale {
+        NumberAnimation {
+            duration: 150
+            easing.type: Easing.OutQuad
         }
     }
 
-    contentItem: Item {
-        id: contentArea
+    SequentialAnimation {
+        id: creationPulsedAnimation
 
-        anchors {
-            left: parent.left
-            right: parent.right
-            top: header.bottom
-            bottom: parent.bottom
-            margins: 8
+        NumberAnimation {
+            duration: 300
+            easing.type: Easing.OutQuad
+            from: 1
+            property: "border.width"
+            target: creationPulsedBorder
+            to: 5
+        }
+        NumberAnimation {
+            duration: 500
+            easing.type: Easing.OutQuad
+            from: 5
+            property: "border.width"
+            target: creationPulsedBorder
+            to: 1
         }
     }
 }

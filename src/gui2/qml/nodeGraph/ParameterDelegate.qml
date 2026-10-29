@@ -13,9 +13,9 @@ import "../Dissolve"
 DelegateChooser {
     id: root
 
-    role: "type"
-
     property bool enabled: true
+
+    role: "type"
 
     DelegateChoice {
         roleValue: "bool"
@@ -36,11 +36,13 @@ DelegateChooser {
         TextField {
             text: Number(param).toFixed(5)
             width: 30
+
             validator: DoubleValidator {
                 bottom: -10e9
-                top: 10e9
                 decimals: 5
+                top: 10e9
             }
+
             onActiveFocusChanged: {
                 if (activeFocus) {
                     selectAll();
@@ -85,8 +87,8 @@ DelegateChooser {
             Layout.alignment: Qt.AlignRight
             Layout.column: 2
             Layout.row: index
-            text: param
             enabled: root.enabled
+            text: param
 
             onTextChanged: param = text
         }
@@ -97,41 +99,39 @@ DelegateChooser {
         Row {
             Layout.alignment: Qt.AlignRight
             Layout.column: 2
-            Layout.row: index
             Layout.fillWidth: true
+            Layout.row: index
             spacing: 0
 
             TextField {
                 id: filePathField
 
-                text: param
                 enabled: root.enabled
+                text: param
             }
-
             ToolButton {
                 id: filePickerButton
 
-                icon.source: "qrc:/DissolveIconsModule/documents.svg"
-                display: AbstractButton.iconOnly
-                onClicked: fileDialog.open()
-                enabled: root.enabled
-
                 ToolTip.text: "Select a file"
                 ToolTip.visible: hovered
-            }
+                display: AbstractButton.iconOnly
+                enabled: root.enabled
+                icon.source: "qrc:/DissolveIconsModule/documents.svg"
 
+                onClicked: fileDialog.open()
+            }
             FileDialog {
                 id: fileDialog
 
-                title: "Choose a file..."
                 fileMode: FileDialog.OpenFile
+                title: "Choose a file..."
+
                 onAccepted: param = Utility.urlToLocalFile(selectedFile)
             }
         }
     }
     DelegateChoice {
         id: vec3Delegate
-        roleValue: "vector3"
 
         function createVector(xInput, yInput, zInput) {
             var x = Number(xInput);
@@ -140,50 +140,59 @@ DelegateChooser {
             return [x, y, z];
         }
 
+        roleValue: "vector3"
+
         Row {
             Layout.alignment: Qt.AlignRight
             Layout.column: 2
-            Layout.row: index
             Layout.fillWidth: true
+            Layout.row: index
             spacing: 2
 
             TextField {
                 id: xInput
+
                 text: Number(param[0]).toFixed(5)
                 width: 30
+
                 validator: DoubleValidator {
                     bottom: -10e9
-                    top: 10e9
                     decimals: 5
+                    top: 10e9
                 }
+
                 onAccepted: param = vec3Delegate.createVector(xInput.text, yInput.text, zInput.text)
                 onActiveFocusChanged: if (activeFocus)
                     selectAll()
             }
-
             TextField {
                 id: yInput
+
                 text: Number(param[1]).toFixed(5)
                 width: 30
+
                 validator: DoubleValidator {
                     bottom: -10e9
-                    top: 10e9
                     decimals: 5
+                    top: 10e9
                 }
+
                 onAccepted: param = vec3Delegate.createVector(xInput.text, yInput.text, zInput.text)
                 onActiveFocusChanged: if (activeFocus)
                     selectAll()
             }
-
             TextField {
                 id: zInput
+
                 text: Number(param[2]).toFixed(5)
                 width: 30
+
                 validator: DoubleValidator {
                     bottom: -10e9
-                    top: 10e9
                     decimals: 5
+                    top: 10e9
                 }
+
                 onAccepted: param = vec3Delegate.createVector(xInput.text, yInput.text, zInput.text)
                 onActiveFocusChanged: if (activeFocus)
                     selectAll()
@@ -201,10 +210,10 @@ DelegateChooser {
             Layout.column: 2
             Layout.row: index
             currentIndex: param
+            enabled: root.enabled
             model: innerModel
             textRole: "display"
             valueRole: "display"
-            enabled: root.enabled
 
             onActivated: idx => param = idx
         }
@@ -214,8 +223,8 @@ DelegateChooser {
             Layout.alignment: Qt.AlignRight
             Layout.column: 2
             Layout.row: index
-            text: param
             enabled: root.enabled
+            text: param
         }
     }
 }

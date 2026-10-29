@@ -15,20 +15,17 @@ MenuItem {
 
         Rectangle {
             id: iconFrame
-            visible: root.iconPath ? true : false
 
             readonly property var sideLength: menuItemRowLayout.height
 
-            Layout.preferredWidth: sideLength
             Layout.preferredHeight: sideLength
-
-            radius: 3
-            color: "transparent"
-
-            border.width: 1
+            Layout.preferredWidth: sideLength
             border.color: "grey"
-
+            border.width: 1
             clip: true
+            color: "transparent"
+            radius: 3
+            visible: root.iconPath ? true : false
 
             Image {
                 clip: true
@@ -40,10 +37,11 @@ MenuItem {
         }
         Text {
             id: titleText
-            text: root.dissolveAction.text.replace("&", "")
-            Layout.fillWidth: true
+
             Layout.alignment: Qt.AlignVCenter
+            Layout.fillWidth: true
             elide: Text.ElideRight
+            text: root.dissolveAction.text.replace("&", "")
         }
     }
 }

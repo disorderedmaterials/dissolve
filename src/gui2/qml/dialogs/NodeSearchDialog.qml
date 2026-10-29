@@ -8,17 +8,13 @@ import "../Dissolve"
 Dialog {
     id: root
 
-    height: 400
-    width: 500
-
-    modal: true
-    closePolicy: Popup.NoAutoClose
-    title: "Add Node"
-
-    standardButtons: Dialog.Ok | Dialog.Cancel
-
     required property var initialLandingArea
     property var selection: ""
+
+    function exitSearchDialog() {
+        root.resetSearch();
+        root.close();
+    }
     function finaliseSelection(nodeName: string, reset: bool) {
         root.selection = nodeName;
         if (reset == true)
@@ -27,22 +23,14 @@ Dialog {
     function resetSearch() {
         nodeSearchField.text = "";
     }
-    function exitSearchDialog() {
-        root.resetSearch();
-        root.close();
-    }
-    onAccepted: {
-        if (nodeSearchField.text.length > 0)
-            nodeRegistry.instantiateNode(initialLandingArea.x, initialLandingArea.y, root.selection);
-        root.exitSearchDialog();
-    }
-    onRejected: root.exitSearchDialog()
 
-    NodeRegistrySortFilterModel {
-        id: searchFilterModel
-        sourceModel: nodeRegistry
-        searchText: nodeSearchField.text
-    }
+    closePolicy: Popup.NoAutoClose
+    height: 400
+    modal: true
+    standardButtons: Dialog.Ok | Dialog.Cancel
+    title: "Add Node"
+    width: 500
+
     contentItem: ColumnLayout {
         id: columnLayout
 
@@ -51,33 +39,32 @@ Dialog {
 
             Layout.fillWidth: true
             Layout.preferredHeight: nodeSearchField.implicitHeight
-
             border.color: nodeSearchField.activeFocus && nodeSearchField.text.length > 0 ? palette.highlight : palette.mid
-
-            radius: 5
             border.width: 1
             clip: true
+            radius: 5
 
             TextField {
                 id: nodeSearchField
+
                 anchors.fill: parent
                 height: contentHeight
                 placeholderText: qsTr("Node name...")
                 placeholderTextColor: "grey"
 
-                background: Item {}
+                background: Item {
+                }
             }
         }
-
         ScrollView {
             id: scrollArea
 
-            Layout.fillWidth: true
             Layout.fillHeight: true
+            Layout.fillWidth: true
 
             background: Rectangle {
-                color: palette.base
                 border.color: palette.mid
+                color: palette.base
                 radius: 4
             }
 
@@ -87,9 +74,8 @@ Dialog {
                 readonly property var parentDialog: root
 
                 anchors.fill: parent
-                opacity: 10
-
                 model: searchFilterModel
+                opacity: 10
 
                 delegate: NodeDisplayDelegate {
                     parentListView: searchResultsListView
@@ -103,5 +89,19 @@ Dialog {
                 }
             }
         }
+    }
+
+    onAccepted: {
+        if (nodeSearchField.text.length > 0)
+            nodeRegistry.instantiateNode(initialLandingArea.x, initialLandingArea.y, root.selection);
+        root.exitSearchDialog();
+    }
+    onRejected: root.exitSearchDialog()
+
+    NodeRegistrySortFilterModel {
+        id: searchFilterModel
+
+        searchText: nodeSearchField.text
+        sourceModel: nodeRegistry
     }
 }

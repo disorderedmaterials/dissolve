@@ -13,68 +13,78 @@ import "../DissolveIconsModule"
 NodeBox {
     id: root
 
-    property variant rootGraphModel
     property double endX: x
-    property double midY: y + height / 2
-    property double startX: x + width
     property string hint: ""
     property NodeMessages messageStore: NodeMessages {
         graphModel: rootGraphModel
         nodeName: name
     }
+    property double midY: y + height / 2
+    property variant rootGraphModel
+    property double startX: x + width
 
     signal descended(int idx)
     signal edgeCreated(string srcNode, string srcOutput, string tgtNode, string tgtInput, DropArea creator)
     signal edgeDeferred(string srcNode, string srcOutput, string tgtNode, string tgtInput, DropArea creator)
 
+    function closeMessages() {
+        messages.close();
+    /*
+        warnings.close()
+        errors.close()
+        */
+    }
+
+    coords: Qt.point(x, y)
+    height: nodeColumnLayout.implicitHeight + label.height + padding
+    image: icon
+    isAnyIONode: isInputsNode || isOutputsNode || isLoopBacksNode
+    isInputsNode: nodeName == "Inputs"
+    isLoopBacksNode: nodeName == "LoopBacks"
+    isOutputsNode: nodeName == "Outputs"
+    nodeName: name
+
+    // Ensure that we only display this box for valid node items
+    visible: (icon != null) && !(isRootNode && (isInputsNode || isOutputsNode))
+    width: 250
+    x: posX
+    y: posY
+
+    Component.onCompleted: {
+        if (rootGraphModel.nodeReconstructionInProgress())
+            rootGraphModel.reconstructed(nodeName);
+    }
+    onDeleted: rootGraphModel.deleteNode(index)
     onRenamed: function (currentName, newName, label) {
         if (!rootGraphModel.renameNode(currentName, newName)) {
             label.text = currentName;
             label.rejectAnimation.start();
         }
     }
-    onDeleted: rootGraphModel.deleteNode(index)
-
-    Component.onCompleted: {
-        if (rootGraphModel.nodeReconstructionInProgress())
-            rootGraphModel.reconstructed(nodeName);
-    }
-
-    image: icon
-    nodeName: name
-    coords: Qt.point(x, y)
-
-    height: nodeColumnLayout.implicitHeight + label.height + padding
-    width: 250
-
-    // Ensure that we only display this box for valid node items
-    visible: (icon != null) && !(isRootNode && (isInputsNode || isOutputsNode))
-    x: posX
-    y: posY
-    isInputsNode: nodeName == "Inputs"
-    isOutputsNode: nodeName == "Outputs"
-    isLoopBacksNode: nodeName == "LoopBacks"
-    isAnyIONode: isInputsNode || isOutputsNode || isLoopBacksNode
 
     NodeStatusIndicator {
+        imageSource: messageStore.indicatorImage
         opacity: messageStore.indicatorOpacity
         summary: messageStore.indicatorSummary
-        imageSource: messageStore.indicatorImage
     }
     Menu {
         id: nodePopupMenu
 
         DissolveMenuItem {
+            iconPath: "qrc:/DissolveIconsModule/play.svg"
+
             dissolveAction: Action {
-                text: "&Run"
                 shortcut: "Ctrl+Enter"
+                text: "&Run"
+
                 onTriggered: rootGraphModel.run(nodeName)
             }
-            iconPath: "qrc:/DissolveIconsModule/play.svg"
         }
-        MenuSeparator {}
+        MenuSeparator {
+        }
         MenuItem {
             id: messagesMenuItem
+
             text: "Messages"
 
             HoverHandler {
@@ -145,22 +155,13 @@ NodeBox {
         }
         */
     }
-    function closeMessages() {
-        messages.close();
-    /*
-        warnings.close()
-        errors.close()
-        */
-    }
     Popup {
         id: messages
 
-        width: 300
         height: 250
-
-        parent: Overlay.overlay
-
         padding: 4
+        parent: Overlay.overlay
+        width: 300
 
         Item {
             anchors.fill: parent
@@ -171,19 +172,19 @@ NodeBox {
                         messages.close();
                 }
             }
-
             ColumnLayout {
                 anchors.fill: parent
                 spacing: 2
 
                 Rectangle {
                     id: header
-                    color: "white"
-                    border.width: 1
+
                     border.color: "lightgrey"
+                    border.width: 1
+                    color: "white"
+                    height: 20
                     radius: 3
                     width: parent.width
-                    height: 20
 
                     RowLayout {
                         anchors.fill: parent
@@ -193,19 +194,17 @@ NodeBox {
 
                         Label {
                             Layout.fillWidth: true
-                            text: qsTr("Message history")
                             color: "grey"
                             font.bold: true
+                            text: qsTr("Message history")
                         }
                     }
                 }
-
                 ScrollView {
                     id: messagesScrollView
 
-                    Layout.fillWidth: true
                     Layout.fillHeight: true
-
+                    Layout.fillWidth: true
                     ScrollBar.horizontal.policy: ScrollBar.AsNeeded
                     ScrollBar.vertical.policy: ScrollBar.AsNeeded
 
@@ -217,18 +216,18 @@ NodeBox {
 
                             hoverEnabled: true
 
+                            background: Rectangle {
+                                color: messageDelegate.hovered ? "#444444" : "transparent"
+                            }
                             contentItem: Text {
                                 id: messageText
 
-                                text: message
                                 color: messageDelegate.hovered ? statusColor : "grey"
-                                font.bold: messageDelegate.hovered
                                 elide: Text.ElideRight
-                                wrapMode: Text.NoWrap
+                                font.bold: messageDelegate.hovered
+                                text: message
                                 verticalAlignment: Text.AlignVCenter
-                            }
-                            background: Rectangle {
-                                color: messageDelegate.hovered ? "#444444" : "transparent"
+                                wrapMode: Text.NoWrap
                             }
                         }
                     }
@@ -328,11 +327,11 @@ NodeBox {
     */
     TapHandler {
         id: tapHandler
+
         acceptedButtons: Qt.RightButton
 
         onTapped: nodePopupMenu.popup(point.position.x, point.position.y)
     }
-
     ColumnLayout {
         id: nodeColumnLayout
 
@@ -375,16 +374,17 @@ NodeBox {
 
                 Shape {
                     id: inputShape
+
+                    readonly property alias childDropArea: inputDropArea
                     property string nodeName: root.nodeName
                     property string title: name
-                    readonly property alias childDropArea: inputDropArea
 
                     Layout.alignment: Qt.AlignLeft
                     Layout.column: 0
                     Layout.row: index
                     height: 20
-                    width: 20
                     visible: inputRepeater.visible
+                    width: 20
 
                     ShapePath {
                         fillColor: "black"
@@ -406,15 +406,16 @@ NodeBox {
                     }
                     DropArea {
                         id: inputDropArea
-                        readonly property var parentNodeBox: root
+
+                        property bool locked: false
                         property string nodeName: parent.nodeName
                         property string paramName: parent.title
-                        property bool locked: false
+                        readonly property var parentNodeBox: root
+
                         anchors.fill: parent
                         enabled: !locked && root.rootGraphModel.graphControlsEnabled && root.rootGraphModel.edges.edgeEditMode && inputRepeater.visible
 
                         Component.onCompleted: root.rootGraphModel.mapInputEndPoint(parent.nodeName, paramName, inputDropArea)
-
                         onDropped: function (event) {
                             inputDropArea.locked = true;
                             edgeCreated(event.source.parent.nodeName, event.source.parent.title, parent.nodeName, paramName, inputDropArea);
@@ -438,22 +439,26 @@ NodeBox {
 
                 Text {
                     id: inputText
+
                     property string info: description
+
                     Layout.alignment: Qt.AlignLeft
                     Layout.column: 1
                     Layout.row: index
                     font.pointSize: 10
                     height: 10
                     text: name
-                    wrapMode: Text.Wrap
                     visible: inputLabelRepeater.visible
+                    wrapMode: Text.Wrap
 
                     MouseArea {
                         id: inputMouseArea
-                        anchors.fill: parent
-                        hoverEnabled: true
+
                         ToolTip.text: !(hasInnerGraph || isOutputsNode) ? "<i>Input:</i><br>" + inputText.info : "Double-click to rename this input"
                         ToolTip.visible: containsMouse && inputLabelRepeater.visible
+                        anchors.fill: parent
+                        hoverEnabled: true
+
                         onDoubleClicked: {
                             // If edgeEditMode is false, double-clicking the input text performs an edge deletion
                             if (!rootGraphModel.edges.edgeEditMode)
@@ -464,29 +469,33 @@ NodeBox {
                                 return;
                             renameInputPopup.open();
                         }
+
                         Popup {
                             id: renameInputPopup
 
-                            x: -5
-                            y: -5
-                            width: inputText.width + 10
                             height: inputText.height + 10
                             padding: 0
+                            width: inputText.width + 10
+                            x: -5
+                            y: -5
 
-                            onOpened: {
-                                renameInput.forceActiveFocus();
-                                renameInput.selectAll();
-                            }
                             contentItem: ParameterTextInput {
                                 id: renameInput
+
                                 graphModel: rootGraphModel
-                                parentNodeName: nodeName
-                                parentLabel: inputText
                                 paramType: 1
+                                parentLabel: inputText
+                                parentNodeName: nodeName
+
                                 onRenameAccepted: {
                                     renameInputPopup.close();
                                     rootGraphModel.reload();
                                 }
+                            }
+
+                            onOpened: {
+                                renameInput.forceActiveFocus();
+                                renameInput.selectAll();
                             }
                         }
                     }
@@ -529,16 +538,17 @@ NodeBox {
 
                 Shape {
                     id: outputShape
+
+                    readonly property alias childDropArea: outputDropArea
                     property string nodeName: root.nodeName
                     property string title: name
-                    readonly property alias childDropArea: outputDropArea
 
                     Layout.alignment: Qt.AlignRight
                     Layout.column: 4
                     Layout.row: index
                     height: 20
-                    width: 20
                     visible: outputRepeater.visible
+                    width: 20
 
                     ShapePath {
                         fillColor: "black"
@@ -560,14 +570,15 @@ NodeBox {
                     }
                     DropArea {
                         id: outputDropArea
-                        readonly property var parentNodeBox: root
+
                         property string nodeName: parent.nodeName
                         property string paramName: parent.title
+                        readonly property var parentNodeBox: root
+
                         anchors.fill: parent
                         enabled: root.rootGraphModel.edges.edgeEditMode && outputRepeater.visible
 
                         Component.onCompleted: root.rootGraphModel.mapOutputEndPoint(parent.nodeName, paramName, outputDropArea)
-
                         onDropped: function (event) {
                             edgeCreated(parent.nodeName, parent.title, event.source.parent.nodeName, event.source.parent.title, outputDropArea);
                         }
@@ -590,22 +601,26 @@ NodeBox {
 
                 Text {
                     id: outputText
+
                     property string info: description
+
                     Layout.alignment: Qt.AlignRight
                     Layout.column: 3
                     Layout.row: index
                     anchors.margins: 4
                     font.pointSize: 10
                     text: name
-                    wrapMode: Text.Wrap
                     visible: outputLabelRepeater.visible
+                    wrapMode: Text.Wrap
 
                     MouseArea {
                         id: outputMouseArea
-                        anchors.fill: parent
-                        hoverEnabled: true
+
                         ToolTip.text: !(hasInnerGraph || isInputsNode) ? "<i>Output:</i><br>" + outputText.info : "Double-click to rename this output"
                         ToolTip.visible: containsMouse && outputLabelRepeater.visible
+                        anchors.fill: parent
+                        hoverEnabled: true
+
                         onDoubleClicked: {
                             // If edgeEditMode is false, double-clicking the output text performs an edge deletion
                             if (!rootGraphModel.edges.edgeEditMode)
@@ -616,26 +631,30 @@ NodeBox {
                                 return;
                             renameOutputPopup.open();
                         }
+
                         Popup {
                             id: renameOutputPopup
 
-                            x: -5
-                            y: -5
-                            width: outputText.width + 10
                             height: outputText.height + 10
                             padding: 0
+                            width: outputText.width + 10
+                            x: -5
+                            y: -5
+
+                            contentItem: ParameterTextInput {
+                                id: renameOutput
+
+                                graphModel: rootGraphModel
+                                paramType: 0
+                                parentLabel: outputText
+                                parentNodeName: nodeName
+
+                                onRenameAccepted: renameOutputPopup.close()
+                            }
 
                             onOpened: {
                                 renameOutput.forceActiveFocus();
                                 renameOutput.selectAll();
-                            }
-                            contentItem: ParameterTextInput {
-                                id: renameOutput
-                                graphModel: rootGraphModel
-                                parentNodeName: nodeName
-                                parentLabel: outputText
-                                paramType: 0
-                                onRenameAccepted: renameOutputPopup.close()
                             }
                         }
                     }
@@ -643,49 +662,53 @@ NodeBox {
             }
         }
         RowLayout {
-            width: parent.width
             spacing: 2
+            width: parent.width
 
             Rectangle {
                 id: createInputRectangle
+
                 property bool enabled: root.rootGraphModel.edges.edgeEditMode && !isInputsNode
                 property string nodeName: root.nodeName
-                visible: hasProxyParameters
-                color: "transparent"
-                Layout.preferredWidth: 120
+
                 Layout.fillWidth: true
-                height: 30
+                Layout.preferredWidth: 120
                 border.color: createInputMouseArea.containsMouse ? "lightgrey" : "transparent"
                 border.width: enabled ? 4 : 0
+                color: "transparent"
+                height: 30
+                visible: hasProxyParameters
 
                 RowLayout {
                     anchors.fill: parent
 
                     Text {
-                        padding: 4
-                        rightPadding: 0
                         color: createInputRectangle.enabled ? "black" : "grey"
-                        text: "+"
                         font.bold: true
                         font.pixelSize: 16
+                        padding: 4
+                        rightPadding: 0
+                        text: "+"
                     }
                     Text {
-                        padding: 4
-                        leftPadding: 0
                         color: createInputRectangle.enabled ? "black" : "grey"
                         font.italic: true
+                        leftPadding: 0
+                        padding: 4
                         text: "Drop input"
                     }
                     ToolTip {
+                        delay: 500
                         text: "Drag and drop a source here to create a new input and edge"
                         visible: createInputMouseArea.containsMouse && createInputRectangle.enabled && (!createInputMouseArea.drag.active)
-                        delay: 500
                     }
                 }
                 DropArea {
                     id: createInputDropArea
+
                     readonly property int connectionType: 1
                     readonly property var parentNodeBox: root
+
                     anchors.fill: parent
                     enabled: parent.enabled
 
@@ -696,54 +719,59 @@ NodeBox {
                 }
                 MouseArea {
                     id: createInputMouseArea
-                    anchors.fill: parent
-                    hoverEnabled: true
+
                     Drag.active: drag.active
                     Drag.dragType: Drag.Automatic
                     Drag.proposedAction: Qt.LinkAction
+                    anchors.fill: parent
                     drag.target: this
+                    hoverEnabled: true
                 }
             }
             Rectangle {
                 id: createOutputRectangle
+
                 property bool enabled: root.rootGraphModel.edges.edgeEditMode && !(isOutputsNode || isLoopBacksNode)
                 property string nodeName: root.nodeName
-                visible: hasProxyParameters
-                color: "transparent"
-                Layout.preferredWidth: 120
+
                 Layout.fillWidth: true
-                height: 30
+                Layout.preferredWidth: 120
                 border.color: createOutputMouseArea.containsMouse ? "lightgrey" : "transparent"
                 border.width: enabled ? 4 : 0
+                color: "transparent"
+                height: 30
+                visible: hasProxyParameters
 
                 RowLayout {
                     anchors.fill: parent
 
                     Text {
-                        padding: 4
-                        rightPadding: 0
                         color: createOutputRectangle.enabled ? "black" : "grey"
-                        text: "+"
                         font.bold: true
                         font.pixelSize: 16
+                        padding: 4
+                        rightPadding: 0
+                        text: "+"
                     }
                     Text {
-                        padding: 4
-                        leftPadding: 0
                         color: createOutputRectangle.enabled ? "black" : "grey"
                         font.italic: true
+                        leftPadding: 0
+                        padding: 4
                         text: "Drag output"
                     }
                     ToolTip {
+                        delay: 500
                         text: "Drag from here to a target input to create a new output and edge"
                         visible: createOutputMouseArea.containsMouse && createOutputRectangle.enabled && (!createOutputMouseArea.drag.active)
-                        delay: 500
                     }
                 }
                 DropArea {
                     id: createOutputDropArea
+
                     readonly property int connectionType: 0
                     readonly property var parentNodeBox: root
+
                     anchors.fill: parent
                     enabled: parent.enabled
 
@@ -754,12 +782,13 @@ NodeBox {
                 }
                 MouseArea {
                     id: createOutputMouseArea
-                    anchors.fill: parent
-                    hoverEnabled: true
+
                     Drag.active: drag.active
                     Drag.dragType: Drag.Automatic
                     Drag.proposedAction: Qt.LinkAction
+                    anchors.fill: parent
                     drag.target: this
+                    hoverEnabled: true
                 }
             }
         }
@@ -769,13 +798,13 @@ NodeBox {
             width: parent.width
         }
         Button {
-            //Layout.fillWidth: true
-            width: 200
-            text: "View"
-            visible: hasInnerGraph
-            hoverEnabled: true
             ToolTip.text: "View the internal graph"
             ToolTip.visible: hovered
+            hoverEnabled: true
+            text: "View"
+            visible: hasInnerGraph
+            //Layout.fillWidth: true
+            width: 200
 
             onClicked: descended(index)
         }
@@ -787,7 +816,9 @@ NodeBox {
 
                 Text {
                     id: optionText
+
                     property string info: description
+
                     Layout.alignment: Qt.AlignLeft
                     Layout.column: 0
                     Layout.row: index
@@ -795,10 +826,11 @@ NodeBox {
 
                     MouseArea {
                         id: optionMouseArea
-                        anchors.fill: parent
-                        hoverEnabled: true
+
                         ToolTip.text: "<i>Option:</i><br>" + optionText.info
                         ToolTip.visible: containsMouse
+                        anchors.fill: parent
+                        hoverEnabled: true
                     }
                 }
             }
