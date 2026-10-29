@@ -53,7 +53,6 @@ Pane {
                                         onClicked: graphRoot.rootGraphModel.emplace_back(ctxMenuCatcher.mousePos.x, ctxMenuCatcher.mousePos.y, modelData.name)
                                         ToolTip.text: modelData.description
                                         ToolTip.visible: hovered
-                                        ToolTip.delay: 500
                                     }
                                 }
                             }

@@ -231,7 +231,6 @@ ApplicationWindow {
 
                     ToolTip.text: "Go up one level to the parent graph"
                     ToolTip.visible: hovered
-                    ToolTip.delay: 500
                 }
                 ToolButton {
                     id: edgeEditModeToolButton
@@ -249,10 +248,10 @@ ApplicationWindow {
                                 font.bold: true
                             }
                         }
+                    enabled: graphModel.graphControlsEnabled
                     onClicked: graphModel.edges.toggleEdgeEditMode()
-                    ToolTip.text: (graphModel.edges.edgeEditMode ? "Edges can be added" : "Selected edges can be deleted")
+                    ToolTip.text: enabled ? (graphModel.edges.edgeEditMode ? "Edges can be added" : "Selected edges can be deleted") : "Edges cannot be changed while graph runnning"
                     ToolTip.visible: hovered
-                    ToolTip.delay: 500
                 }
                 ToolButton {
                     id: graphStatusToolButton

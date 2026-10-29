@@ -54,14 +54,12 @@ NodeBox {
     isInputsNode: nodeName == "Inputs"
     isOutputsNode: nodeName == "Outputs"
     isLoopBacksNode: nodeName == "LoopBacks"
+    isAnyIONode: isInputsNode || isOutputsNode || isLoopBacksNode
 
     NodeStatusIndicator {
         opacity: messageStore.indicatorOpacity
-        border.color: messageStore.indicatorColor
-        iconColor: messageStore.indicatorColor
-        iconText: messageStore.indicatorText
-        visible: (version < 0) ? messageStore.hasAlerts : messageStore.indicatorVisible
         summary: messageStore.indicatorSummary
+        imageSource: messageStore.indicatorImage
     }
     Menu {
         id: nodePopupMenu
@@ -85,7 +83,6 @@ NodeBox {
                 onHoveredChanged: {
                     if (hovered) {
                         root.closeMessages();
-                        root.messageStore.updateMessages();
 
                         const p = messagesMenuItem.mapToItem(
                             Overlay.overlay,
@@ -96,7 +93,6 @@ NodeBox {
                         messages.x = p.x
                         messages.y = p.y
 
-                        root.messageStore.updateMessages();
                         messages.open();
                     }
                 }
@@ -114,7 +110,6 @@ NodeBox {
                 onHoveredChanged: {
                     if (hovered) {
                         root.closeMessages();
-                        root.messageStore.updateMessages();
 
                         const p = warningsMenuItem.mapToItem(
                             Overlay.overlay,
@@ -125,7 +120,6 @@ NodeBox {
                         warnings.x = p.x
                         warnings.y = p.y
 
-                        root.messageStore.updateMessages();
                         warnings.open();
                     }
                 }
@@ -141,7 +135,6 @@ NodeBox {
                 onHoveredChanged: {
                     if (hovered) {
                         root.closeMessages();
-                        root.messageStore.updateMessages();
 
                         const p = errorsMenuItem.mapToItem(
                             Overlay.overlay,
@@ -152,7 +145,6 @@ NodeBox {
                         errors.x = p.x
                         errors.y = p.y
 
-                        root.messageStore.updateMessages();
                         errors.open();
                     }
                 }
@@ -187,40 +179,70 @@ NodeBox {
                         messages.close()
                 }
             }
-            ScrollView {
-                id: messagesScrollView
 
+            ColumnLayout {
                 anchors.fill: parent
+                spacing: 2
+                
+                Rectangle {
+                    id: header
+                    color: "white"
+                    border.width: 1
+                    border.color: "lightgrey"
+                    radius: 3
+                    width: parent.width
+                    height: 20
 
-                ScrollBar.horizontal.policy: ScrollBar.AsNeeded
-                ScrollBar.vertical.policy: ScrollBar.AsNeeded
+                    RowLayout {
+                        anchors.fill: parent
+                        anchors.leftMargin: 3
+                        anchors.rightMargin: 6
+                        spacing: 2
 
-                ListView {
-                    model: root.messageStore.model
-
-                    delegate: ItemDelegate {
-                        id: messageDelegate
-
-                        hoverEnabled: true
-
-                        contentItem: Text {
-                            id: messageText
-
-                            text: message
-                            color: messageDelegate.hovered ? statusColor : "grey"
-                            font.bold: messageDelegate.hovered
-                            elide: Text.ElideRight
-                            wrapMode: Text.NoWrap
-                            verticalAlignment: Text.AlignVCenter
+                        Label {
+                            Layout.fillWidth: true
+                            text: qsTr("Message history")
+                            color: "grey"
+                            font.bold: true
                         }
-                        background: Rectangle {
-                            color: messageDelegate.hovered ? "#444444" : "transparent"
+                    }
+                }
+
+                ScrollView {
+                    id: messagesScrollView
+
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+
+                    ScrollBar.horizontal.policy: ScrollBar.AsNeeded
+                    ScrollBar.vertical.policy: ScrollBar.AsNeeded
+
+                    ListView {
+                        model: root.messageStore.model
+
+                        delegate: ItemDelegate {
+                            id: messageDelegate
+
+                            hoverEnabled: true
+
+                            contentItem: Text {
+                                id: messageText
+
+                                text: message
+                                color: messageDelegate.hovered ? statusColor : "grey"
+                                font.bold: messageDelegate.hovered
+                                elide: Text.ElideRight
+                                wrapMode: Text.NoWrap
+                                verticalAlignment: Text.AlignVCenter
+                            }
+                            background: Rectangle {
+                                color: messageDelegate.hovered ? "#444444" : "transparent"
+                            }
                         }
                     }
                 }
             }
         }
-
     }
     /*
     Popup {
@@ -397,7 +419,7 @@ NodeBox {
                         property string paramName: parent.title
                         property bool locked: false
                         anchors.fill: parent
-                        enabled: !locked && root.rootGraphModel.edges.edgeEditMode && inputRepeater.visible
+                        enabled: !locked && root.rootGraphModel.graphControlsEnabled && root.rootGraphModel.edges.edgeEditMode && inputRepeater.visible
 
                         Component.onCompleted: root.rootGraphModel.mapInputEndPoint(parent.nodeName, paramName, inputDropArea)
 
@@ -438,7 +460,6 @@ NodeBox {
                         id: inputMouseArea
                         anchors.fill: parent
                         hoverEnabled: true
-                        ToolTip.delay: 500
                         ToolTip.text: !(hasInnerGraph || isOutputsNode) ? "<i>Input:</i><br>" + inputText.info : "Double-click to rename this input"
                         ToolTip.visible: containsMouse && inputLabelRepeater.visible
                         onDoubleClicked: {
@@ -594,7 +615,6 @@ NodeBox {
                         hoverEnabled: true
                         ToolTip.text: !(hasInnerGraph || isInputsNode) ? "<i>Output:</i><br>" + outputText.info : "Double-click to rename this output"
                         ToolTip.visible: containsMouse && outputLabelRepeater.visible
-                        ToolTip.delay: 500
                         onDoubleClicked: {
                             // If edgeEditMode is false, double-clicking the output text performs an edge deletion
                             if (!rootGraphModel.edges.edgeEditMode)
@@ -766,7 +786,6 @@ NodeBox {
             hoverEnabled: true
             ToolTip.text: "View the internal graph"
             ToolTip.visible: hovered
-            ToolTip.delay: 500
 
             onClicked: descended(index)
         }
@@ -790,7 +809,6 @@ NodeBox {
                         hoverEnabled: true
                         ToolTip.text: "<i>Option:</i><br>" + optionText.info
                         ToolTip.visible: containsMouse
-                        ToolTip.delay: 500
                     }
                 }
             }
@@ -807,6 +825,7 @@ NodeBox {
                 model: options
 
                 delegate: ParameterDelegate {
+                    enabled: rootGraphModel.graphControlsEnabled
                 }
             }
         }

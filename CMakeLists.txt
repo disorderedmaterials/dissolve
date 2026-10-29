@@ -328,7 +328,12 @@ if(GUI)
       # QtQuick plotting library
       QuickPlotplugin
       # Icons (.svg)
-      icons_moduleplugin dialogs_moduleplugin controls_moduleplugin nodeGraph_moduleplugin periodicTable_moduleplugin
+      icons_moduleplugin
+      dialogs_moduleplugin
+      controls_moduleplugin
+      nodeGraph_moduleplugin
+      periodicTable_moduleplugin
+      delegates_moduleplugin
   )
 
   # Main Dissolve GUI

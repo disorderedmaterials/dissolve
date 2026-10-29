@@ -2,9 +2,11 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "nodeMessages.h"
-#include <chrono>
-#include <format>
-#include <string>
+#include <QTimer>
+
+// Default tuple representing properties of the node status indicator delegate
+const NodeMessages::IndicatorProperties NodeMessages::defaultIndicatorProperties_ = {
+    QUrl("qrc:/DissolveIconsModule/recent.svg"), 0.8, ""};
 
 NodeMessages::NodeMessages()
 {
@@ -12,73 +14,81 @@ NodeMessages::NodeMessages()
         flags_.setFlag(NodeMessages::Default);
 }
 
-//
-bool NodeMessages::hasAlerts()
+// Returns the source node pointer
+Node *NodeMessages::sourceNode() { return graphModel_->graph()->findNode(nodeName_.toStdString()); }
+
+// Returns bool - true if this node has any alerts (errors or warnings) associated with it
+bool NodeMessages::hasAlerts() { return flags_.isSet(NodeMessages::Error) || flags_.isSet(NodeMessages::Warn); }
+
+// Set indicator properties based on the current node status flags
+void NodeMessages::setIndicatorProperties()
 {
-    auto hasAlerts = flags_.isSet(NodeMessages::Error) || flags_.isSet(NodeMessages::Warn);
-    return hasAlerts;
+    // Check node object is valid, default for now if not
+    if (!ready_ || !sourceNode())
+    {
+        indicatorProperties_ = defaultIndicatorProperties_;
+        return;
+    }
+    // Check for errors
+    if (flags_.isSet(NodeMessages::Error))
+    {
+        indicatorProperties_ = {QUrl("qrc:/DissolveIconsModule/false.svg"), 0.8,
+                                "There are errors associated with this node. Check the logs."};
+        return;
+    }
+    // Check for warnings
+    if (flags_.isSet(NodeMessages::Warn))
+    {
+        indicatorProperties_ = {QUrl("qrc:/DissolveIconsModule/warn.svg"), 0.8,
+                                "There are warnings associated with this node. Check the logs."};
+        return;
+    }
+    // Check for invalid node
+    if (flags_.isSet(NodeMessages::Invalid))
+    {
+        indicatorProperties_ = {QUrl("qrc:/DissolveIconsModule/warn.svg"), 0.8, "The node is not up to date."};
+        return;
+    }
+    // Check if node is currently running
+    if (flags_.isSet(NodeMessages::Running))
+    {
+        indicatorProperties_ = {QUrl("qrc:/DissolveIconsModule/waiting.svg"), 0.8, "The node is currently running."};
+        return;
+    }
+    // Check for success
+    if (flags_.isSet(NodeMessages::Success))
+    {
+        indicatorProperties_ = {QUrl("qrc:/DissolveIconsModule/true.svg"), 0.8, "The node ran successfully."};
+        return;
+    }
+    // Check for standby
+    if (flags_.isSet(NodeMessages::Standby))
+    {
+        indicatorProperties_ = {QUrl("qrc:/DissolveIconsModule/recent.svg"), 0.2, "The node is waiting to run"};
+        return;
+    }
+    indicatorProperties_ = defaultIndicatorProperties_;
 }
 
-// Returns bool - true if the indicator should be visible (false if Default state)
-bool NodeMessages::indicatorVisible()
-{
-    auto isDefaultState = flags_.isSetOrNone(NodeMessages::Default);
-    return !isDefaultState;
-}
+// Returns the indicator image path depending on the current notification state of the node
+QUrl NodeMessages::indicatorImage() { return std::get<QUrl>(indicatorProperties_); }
 
 // Returns the indicator opacity (essentially 'greys out' the indicator if the graph has been invalidated)
-double NodeMessages::indicatorOpacity() { return flags_.isSet(NodeMessages::Standby) ? 0.2 : 0.8; }
+double NodeMessages::indicatorOpacity() { return std::get<double>(indicatorProperties_); }
 
 // Returns the indicator status summary
-QString NodeMessages::indicatorSummary()
-{
-    if (flags_.isSet(NodeMessages::Error))
-        return "There are errors associated with this node. Check the logs.";
-    else if (flags_.isSet(NodeMessages::Warn))
-        return "There are warnings associated with this node. Check the logs.";
-    else if (flags_.isSet(NodeMessages::Success))
-        return "Node ran successfully.";
-    else if (flags_.isSet(NodeMessages::Standby))
-        return "Graph has recent changes - node's inputs or outputs may be invalid.";
-    return "";
-}
-
-// Returns the indicator icon text
-QString NodeMessages::indicatorText()
-{
-    if (flags_.isSet(NodeMessages::Error))
-        return "!";
-    else if (flags_.isSet(NodeMessages::Warn))
-        return "!";
-    else if (flags_.isSet(NodeMessages::Success))
-        return QStringLiteral("\u2713");
-    else if (flags_.isSet(NodeMessages::Standby))
-        return QStringLiteral("\u2713");
-    return "";
-}
-
-// Returns the indicator icon color
-QColor NodeMessages::indicatorColor()
-{
-    if (flags_.isSet(NodeMessages::Error))
-        return QColor("red");
-    else if (flags_.isSet(NodeMessages::Warn))
-        return QColor("orange");
-    else if (flags_.isSet(NodeMessages::Success))
-        return QColor("green");
-    else if (flags_.isSet(NodeMessages::Standby))
-        return QColor("grey");
-    return QColor("transparent");
-}
+QString NodeMessages::indicatorSummary() { return std::get<QString>(indicatorProperties_); }
 
 // Reset flags
 void NodeMessages::resetFlags()
 {
-    flags_.removeFlag(NodeMessages::Default);
+    flags_.removeFlag(NodeMessages::Invalid);
     flags_.removeFlag(NodeMessages::Standby);
+    flags_.removeFlag(NodeMessages::Running);
     flags_.removeFlag(NodeMessages::Error);
     flags_.removeFlag(NodeMessages::Warn);
     flags_.removeFlag(NodeMessages::Success);
+    flags_.setFlag(NodeMessages::Default);
 }
 
 // Flags for the node status
@@ -91,36 +101,92 @@ const NodeMessageModel *NodeMessages::model() { return &model_; }
 void NodeMessages::setGraphModel(GraphModel *graphModel)
 {
     graphModel_ = graphModel;
-    QObject::connect(graphModel_, &GraphModel::graphReconstructionComplete, this, &NodeMessages::updateMessages);
+    QObject::connect(graphModel_, &GraphModel::graphReconstructionComplete, this, &NodeMessages::peekNode);
+    QObject::connect(graphModel_, &GraphModel::graphRunStarted, this,
+                     [this](const auto &runnerNode)
+                     {
+                         // Check that source node is not null (else, return early)
+                         if (!sourceNode())
+                             return;
+
+                         // If source node is already up to date, no updates to messages as the node will not run
+                         if (sourceNode()->isUpToDate())
+                             return;
+
+                         // If the node is unconnected, no updates to messages as the node will not run
+                         if (sourceNode()->inputEdges().empty() && sourceNode()->outputEdges().empty())
+                             return;
+
+                         // Check if the node has any connections whatsoever to the runner node
+                         if (!sourceNode()->hasAncestor(runnerNode) && !sourceNode()->isAncestor(runnerNode))
+                             return;
+
+                         // Clear the outdated messages
+                         latestMessages_.clear();
+
+                         // Reset the node messages to default state for the start of a new graph run
+                         resetFlags();
+                         flags_.setFlag(NodeMessages::Standby);
+
+                         // Start the timer to peek the node progress at 250 ms intervals
+                         if (!peekTimer_)
+                             peekTimer_ = new QTimer(this);
+                         QObject::connect(peekTimer_, &QTimer::timeout, this, &NodeMessages::peekNode);
+                         peekTimer_->start(250);
+                     });
     QObject::connect(graphModel_, &GraphModel::graphRunComplete, this,
                      [this]()
                      {
-                         resetFlags();
-                         updateMessages();
-                     });
-    QObject::connect(graphModel_, &GraphModel::graphInvalidated, this,
-                     [this]()
-                     {
-                         if (hasAlerts())
+                         // Check that source node is not null (else, return early)
+                         if (!sourceNode())
                              return;
 
-                         // Place node on standby since graph's connections have changed since last successful run
-                         resetFlags();
-                         flags_.setFlag(NodeMessages::Standby);
-                         Q_EMIT messagesUpdated();
+                         // Stop the timer and reset it
+                         if (peekTimer_)
+                         {
+                             peekTimer_->stop();
+                             peekTimer_ = nullptr;
+                         }
+
+                         // If no changes to node during graph run, return
+                         if (completionStatus_->has_value() &&
+                             completionStatus_->value() == NodeConstants::ProcessResult::Unchanged)
+                             return;
+
+                         peekNode();
                      });
+    QObject::connect(graphModel_, &GraphModel::graphChanged, this,
+                     [this]()
+                     {
+                         // Check that source node is not null (else, return early)
+                         if (!sourceNode())
+                             return;
+
+                         // If node is up to date or has not been run yet, don't alter notification status
+                         if (sourceNode()->isUpToDate() ||
+                             (sourceNode()->versionIndex() < 0 && !completionStatus_->has_value()))
+                             return;
+
+                         // Mark node as invalid since graph's connections have changed and it is no longer up to date
+                         resetFlags();
+                         flags_.setFlag(NodeMessages::Invalid);
+                         peekNode();
+                     });
+    ready_ = true;
 }
 
 // Return the graph model
 GraphModel *NodeMessages::graphModel() { return graphModel_; }
 
-// Set the node name
-void NodeMessages::setNodeName(QString nodeName)
+// Match the node name and completion status with the source node
+void NodeMessages::matchSourceNode(QString nodeName)
 {
     nodeName_ = nodeName;
-    auto sourceNode = graphModel_->graph()->findNode(nodeName_.toStdString());
-    if (sourceNode)
-        messageStore_ = &sourceNode->messages();
+    if (sourceNode())
+    {
+        nodeLocalMessageStore_ = &sourceNode()->messages();
+        completionStatus_ = &sourceNode()->completionStatus();
+    }
 }
 
 // Return the node name
@@ -132,80 +198,116 @@ void NodeMessages::setParent(QQuickItem *parent) { parent_ = parent; }
 // Set the parent node
 QQuickItem *NodeMessages::parent() { return parent_; }
 
-// Update all
+// 'Peeks' at the node's progress while the graph is running, updating the messages and signalling that the update is complete
+void NodeMessages::peekNode()
+{
+    // Update messages if graph is running
+    const auto graphStatus = graphModel_->graphStatus();
+    if (!(std::holds_alternative<GraphModel::GraphGlobalStates>(graphStatus) &&
+          std::get<GraphModel::GraphGlobalStates>(graphStatus) == GraphModel::GraphGlobalStates::Initialised))
+        updateMessages();
+    setIndicatorProperties();
+    Q_EMIT peeked();
+}
+
+// Update all - get latest messages and set node status flags
 void NodeMessages::updateMessages()
 {
-    if (!graphModel_->graph()->findNode(nodeName_.toStdString()))
+    // Get current graph global status
+    const auto graphProcessFinished = std::holds_alternative<NodeConstants::ProcessResult>(graphModel_->graphStatus());
+
+    // Check that source node is not null (else, return early)
+    if (!sourceNode())
         return;
 
-    Node::MessageStore messages;
-    for (const auto &[level, msg] : *messageStore_)
-        messages.emplace_back(level, msg);
+    // Get current node status
+    const auto sourceNodeProcessStarted = completionStatus_->has_value();
 
-    // Check overall status of graph run
-    const auto graphStatus = graphModel_->graphStatus();
-    const auto lineBreak = std::string("###---LAST-RUN-@-") +
-                           std::format("{:%Y/%m/%d--%H:%M}", std::chrono::system_clock::now()) + std::string(" ------###");
-    if (graphStatus.has_value())
-        switch (graphStatus.value())
+    // Reset all flags at the beginning of the update
+    resetFlags();
+
+    // If the node is waiting to run, there should be no messages to log, so skip the rest
+    if (sourceNodeProcessStarted)
+    {
+        // Append the latest messages that have not already been logged
+        for (int i = 0; i < nodeLocalMessageStore_->size(); ++i)
         {
-            case NodeConstants::ProcessResult::Success:
-            {
-                messages.emplace_back(Node::MessageStatus::Info, "Graph run completed successfully");
-                messages.emplace_back(Node::MessageStatus::Info, lineBreak);
-                break;
-            }
-            case NodeConstants::ProcessResult::Unchanged:
-            {
-                messages.emplace_back(Node::MessageStatus::Info, "Graph run completed without any changes");
-                messages.emplace_back(Node::MessageStatus::Info, lineBreak);
+            if (i < latestMessageIndex_)
+                continue;
 
-                break;
-            }
-            case NodeConstants::ProcessResult::Failed:
+            const auto &[level, msg] = nodeLocalMessageStore_->at(i);
+            latestMessages_.emplace_back(level, msg);
+            latestMessageIndex_ = i + 1;
+        }
+
+        // Check overall status of graph run - log graph summary if graph process result (i.e. that of the runner node) is
+        // available
+        if (graphProcessFinished)
+        {
+            if (latestMessages_.empty())
+                latestMessages_.emplace_back(Node::MessageStatus::Info, "No messages to display");
+            switch (std::get<NodeConstants::ProcessResult>(graphModel_->graphStatus()))
             {
-                messages.emplace_back(Node::MessageStatus::Info, "Graph run completed unsuccessfully");
-                messages.emplace_back(Node::MessageStatus::Info, lineBreak);
-                break;
+                case NodeConstants::ProcessResult::Success:
+                {
+                    latestMessages_.emplace_back(Node::MessageStatus::Info, "Graph run completed successfully");
+                    latestMessages_.emplace_back(Node::MessageStatus::Info, lineBreak_());
+                    break;
+                }
+                case NodeConstants::ProcessResult::Unchanged:
+                {
+                    latestMessages_.emplace_back(Node::MessageStatus::Info, "Graph run completed without any changes");
+                    latestMessages_.emplace_back(Node::MessageStatus::Info, lineBreak_());
+                    break;
+                }
+                case NodeConstants::ProcessResult::Failed:
+                {
+                    latestMessages_.emplace_back(Node::MessageStatus::Info, "Graph run completed unsuccessfully");
+                    latestMessages_.emplace_back(Node::MessageStatus::Info, lineBreak_());
+                    break;
+                }
+                default:
+                    break;
             }
         }
 
-    auto hasNone = messages.empty();
-    auto hasWarnings =
-        std::any_of(messages.begin(), messages.end(), [](const auto &pair) { return pair.first == Node::MessageStatus::Warn; });
-    auto hasErrors = std::any_of(messages.begin(), messages.end(),
-                                 [](const auto &pair) { return pair.first == Node::MessageStatus::Error; });
-
-    // Check for messages
-    if (hasNone)
-        messages.emplace_back(Node::MessageStatus::Info, "No messages to display");
-    else
-    {
-        // Check for warnings
-        if (hasWarnings)
+        // Check for node warnings in its messages
+        if (std::any_of(latestMessages_.begin(), latestMessages_.end(),
+                        [](const auto &pair) { return pair.first == Node::MessageStatus::Warn; }))
             flags_.setFlag(NodeMessages::Warn);
 
-        // Check for errors
-        if (hasErrors)
+        // Check for node errors, both in the returned node process result, and in its messages
+        if (*completionStatus_ == NodeConstants::ProcessResult::Failed ||
+            std::any_of(latestMessages_.begin(), latestMessages_.end(),
+                        [](const auto &pair) { return pair.first == Node::MessageStatus::Error; }))
             flags_.setFlag(NodeMessages::Error);
 
-        // Check for success
-        if (!(flags_.isSet(NodeMessages::Error) && flags_.isSet(NodeMessages::Warn)))
-            flags_.setFlag(NodeMessages::Success);
+        // Check for alerts
+        if (!(flags_.isSet(NodeMessages::Error) || flags_.isSet(NodeMessages::Warn)))
+        {
+            if (completionStatus_->value() == NodeConstants::ProcessResult::Success)
+                flags_.setFlag(NodeMessages::Success);
+            else
+                flags_.setFlag(NodeMessages::Running);
+        }
 
-        flags_.removeFlag(NodeMessages::Default);
+        // Pass the latest messages to the list model
+        model_.setMessages(latestMessages_);
     }
+    else
+    {
+        if (graphProcessFinished)
+            return;
 
-    model_.setMessages(messages);
-
-    Q_EMIT messagesUpdated();
+        flags_.setFlag(NodeMessages::Standby);
+    }
 }
 
 // Return the message list
 Node::MessageStore &NodeMessageModel::messageList() { return messages_; }
 
 // Set the message list
-void NodeMessageModel::setMessages(Node::MessageStore messages)
+void NodeMessageModel::setMessages(const Node::MessageStore &messages)
 {
     beginResetModel();
     messages_ = messages;
@@ -233,8 +335,8 @@ QVariant NodeMessageModel::data(const QModelIndex &index, int role) const
         {
             if (status == Node::MessageStatus::Info)
                 return QColor("white");
-            if (status == Node::MessageStatus::Info)
-                return QColor("warning");
+            if (status == Node::MessageStatus::Warn)
+                return QColor("orange");
             if (status == Node::MessageStatus::Error)
                 return QColor("red");
             return QColor{};
