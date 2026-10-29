@@ -424,7 +424,29 @@ ApplicationWindow {
         }
         Item {
             id: configurationTab;
-            DissolveConfigurationViewer {}
+            DissolveConfigurationViewer {
+                scale: 100.0
+                atomModel: ListModel {
+                    ListElement {
+                        rx: 1.0
+                        ry: 0.0
+                        rz: 1.0
+                        element: "H"
+                    }
+                    ListElement {
+                        rx: -1.0
+                        ry: 0.0
+                        rz: 1.0
+                        element: "H"
+                    }
+                    ListElement {
+                        rx: 0.0
+                        ry: 0.0
+                        rz: 0.0
+                        element: "O"
+                    }
+                }
+            }
         }
     }
 }

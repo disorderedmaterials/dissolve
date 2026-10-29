@@ -5,7 +5,10 @@ import QtQuick3D
 import QtQuick3D.Helpers
 
 View3D {
-    id: graphView
+    id: configurationView
+
+    required property variant atomModel;
+    required property real scale;
 
     anchors.bottom: parent.bottom
     anchors.left: parent.left
@@ -46,14 +49,25 @@ View3D {
         eulerRotation.y: 270
     }
 
-    Model {
-        //! [3dcube]
-        id: cube
-        source: "#Cube"
-        materials: PrincipledMaterial {
-            baseColor: "red"
+    Repeater3D {
+        id: atomRepeater
+        model: configurationView.atomModel
+        delegate: Model {
+            required property string element
+            required property real rx
+            required property real ry
+            required property real rz
+            //! [3dcube]
+            id: sphere
+            source: "#Sphere"
+            materials: PrincipledMaterial {
+                baseColor: element == "O" ? "red" : "blue"
+            }
+            x: configurationView.scale * rx
+            y: configurationView.scale * ry
+            z: configurationView.scale * rz
+            eulerRotation.y: 90
+            //! [3dcube]
         }
-        eulerRotation.y: 90
-        //! [3dcube]
     }
 }
