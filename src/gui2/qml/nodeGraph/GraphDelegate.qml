@@ -27,14 +27,6 @@ NodeBox {
     signal edgeCreated(string srcNode, string srcOutput, string tgtNode, string tgtInput, DropArea creator)
     signal edgeDeferred(string srcNode, string srcOutput, string tgtNode, string tgtInput, DropArea creator)
 
-    function closeMessages() {
-        messages.close();
-    /*
-        warnings.close()
-        errors.close()
-        */
-    }
-
     coords: Qt.point(x, y)
     height: nodeColumnLayout.implicitHeight + label.height + padding
     image: icon
@@ -85,246 +77,118 @@ NodeBox {
         MenuItem {
             id: messagesMenuItem
 
+            readonly property Popup messagesPopup: Popup {
+                id: messages
+
+                height: 250
+                padding: 4
+                parent: Overlay.overlay
+                width: 300
+
+                Item {
+                    anchors.fill: parent
+
+                    HoverHandler {
+                        onHoveredChanged: {
+                            if (!hovered)
+                                messages.close();
+                        }
+                    }
+                    ColumnLayout {
+                        anchors.fill: parent
+                        spacing: 2
+
+                        Rectangle {
+                            id: header
+
+                            border.color: "lightgrey"
+                            border.width: 1
+                            color: "white"
+                            height: 20
+                            radius: 3
+                            width: parent.width
+
+                            RowLayout {
+                                anchors.fill: parent
+                                anchors.leftMargin: 3
+                                anchors.rightMargin: 6
+                                spacing: 2
+
+                                Label {
+                                    Layout.fillWidth: true
+                                    color: "grey"
+                                    font.bold: true
+                                    text: qsTr("Message history")
+                                }
+                            }
+                        }
+                        ScrollView {
+                            id: messagesScrollView
+
+                            Layout.fillHeight: true
+                            Layout.fillWidth: true
+                            ScrollBar.horizontal.policy: ScrollBar.AsNeeded
+                            ScrollBar.vertical.policy: ScrollBar.AsNeeded
+
+                            ListView {
+                                model: root.messageStore.model
+
+                                delegate: ItemDelegate {
+                                    id: messageDelegate
+
+                                    hoverEnabled: true
+
+                                    background: Rectangle {
+                                        color: messageDelegate.hovered ? "#444444" : "transparent"
+                                    }
+                                    contentItem: Text {
+                                        id: messageText
+
+                                        color: messageDelegate.hovered ? statusColor : "grey"
+                                        elide: Text.ElideRight
+                                        font.bold: messageDelegate.hovered
+                                        text: message
+                                        verticalAlignment: Text.AlignVCenter
+                                        wrapMode: Text.NoWrap
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
             text: "Messages"
 
             HoverHandler {
                 id: messagesHoverHandler
 
+                readonly property Popup popup: messagesMenuItem.messagesPopup
+
                 onHoveredChanged: {
                     if (hovered) {
-                        root.closeMessages();
                         const p = messagesMenuItem.mapToItem(Overlay.overlay, messagesMenuItem.width, 0);
-                        messages.x = p.x;
-                        messages.y = p.y;
-                        messages.open();
+                        popup.x = p.x;
+                        popup.y = p.y;
+                        popup.open();
                     }
                 }
             }
         }
-        // TODO: Could use a SortFilterProxyModel to generate these later on
-        /*
-        MenuItem {
-            id: warningsMenuItem
-            text: "Warnings"
-
-            HoverHandler {
-                id: warningsHoverHandler
-
-                onHoveredChanged: {
-                    if (hovered) {
-                        root.closeMessages();
-
-                        const p = warningsMenuItem.mapToItem(
-                            Overlay.overlay,
-                            warningsMenuItem.width,
-                            0
-                        );
-
-                        warnings.x = p.x
-                        warnings.y = p.y
-
-                        warnings.open();
-                    }
-                }
-            }
+        MenuSeparator {
         }
-        MenuItem {
-            id: errorsMenuItem
-            text: "Errors"
+        DissolveMenuItem {
+            id: outputMenu
 
-            HoverHandler {
-                id: errorsHoverHandler
+            enabled: !root.renderables.empty()
+            iconPath: "qrc:/DissolveIconsModule/output.svg"
 
-                onHoveredChanged: {
-                    if (hovered) {
-                        root.closeMessages();
-
-                        const p = errorsMenuItem.mapToItem(
-                            Overlay.overlay,
-                            errorsMenuItem.width,
-                            0
-                        );
-
-                        errors.x = p.x
-                        errors.y = p.y
-
-                        errors.open();
-                    }
-                }
-            }
-        }
-        */
-    }
-    Popup {
-        id: messages
-
-        height: 250
-        padding: 4
-        parent: Overlay.overlay
-        width: 300
-
-        Item {
-            anchors.fill: parent
-
-            HoverHandler {
-                onHoveredChanged: {
-                    if (!hovered)
-                        messages.close();
-                }
-            }
-            ColumnLayout {
-                anchors.fill: parent
-                spacing: 2
-
-                Rectangle {
-                    id: header
-
-                    border.color: "lightgrey"
-                    border.width: 1
-                    color: "white"
-                    height: 20
-                    radius: 3
-                    width: parent.width
-
-                    RowLayout {
-                        anchors.fill: parent
-                        anchors.leftMargin: 3
-                        anchors.rightMargin: 6
-                        spacing: 2
-
-                        Label {
-                            Layout.fillWidth: true
-                            color: "grey"
-                            font.bold: true
-                            text: qsTr("Message history")
-                        }
-                    }
-                }
-                ScrollView {
-                    id: messagesScrollView
-
-                    Layout.fillHeight: true
-                    Layout.fillWidth: true
-                    ScrollBar.horizontal.policy: ScrollBar.AsNeeded
-                    ScrollBar.vertical.policy: ScrollBar.AsNeeded
-
-                    ListView {
-                        model: root.messageStore.model
-
-                        delegate: ItemDelegate {
-                            id: messageDelegate
-
-                            hoverEnabled: true
-
-                            background: Rectangle {
-                                color: messageDelegate.hovered ? "#444444" : "transparent"
-                            }
-                            contentItem: Text {
-                                id: messageText
-
-                                color: messageDelegate.hovered ? statusColor : "grey"
-                                elide: Text.ElideRight
-                                font.bold: messageDelegate.hovered
-                                text: message
-                                verticalAlignment: Text.AlignVCenter
-                                wrapMode: Text.NoWrap
-                            }
-                        }
-                    }
-                }
+            dissolveAction: Action {
+                shortcut: "Ctrl+O"
+                text: "&Output"
             }
         }
     }
-    /*
-    Popup {
-        id: warnings
-
-        width: 300
-        height: 250
-
-        parent: Overlay.overlay
-
-        padding: 4
-
-        HoverHandler {
-            onHoveredChanged: {
-                if (!hovered)
-                    warnings.close()
-            }
-        }
-        ScrollView {
-            id: warningsScrollView
-
-            anchors.fill: parent
-
-            ListView {
-                model: root.messageStore.warningListModel
-
-                delegate: ItemDelegate {
-                    id: messageDelegate
-                    width: warningsScrollView.width
-
-                    hoverEnabled: true
-
-                    contentItem: Text {
-                        text: message
-                        color: "orange"
-                        font.bold: messageDelegate.hovered
-                        elide: Text.ElideRight
-                        verticalAlignment: Text.AlignVCenter
-                    }
-                    background: Rectangle {
-                        color: messageDelegate.hovered ? "#444444" : "transparent"
-                    }
-                }
-            }
-        }
-    }
-    Popup {
-        id: errors
-
-        width: 300
-        height: 250
-
-        parent: Overlay.overlay
-
-        padding: 4
-
-        HoverHandler {
-            onHoveredChanged: {
-                if (!hovered)
-                    errors.close()
-            }
-        }
-        ScrollView {
-            id: errorsScrollView
-
-            anchors.fill: parent
-
-            ListView {
-                model: root.messageStore.errorListModel
-
-                delegate: ItemDelegate {
-                    id: messageDelegate
-                    width: errorsScrollView.width
-
-                    hoverEnabled: true
-
-                    contentItem: Text {
-                        text: message
-                        color: "red"
-                        font.bold: messageDelegate.hovered
-                        elide: Text.ElideRight
-                        verticalAlignment: Text.AlignVCenter
-                    }
-                    background: Rectangle {
-                        color: messageDelegate.hovered ? "#444444" : "transparent"
-                    }
-                }
-            }
-        }
-    }
-    */
     TapHandler {
         id: tapHandler
 

@@ -81,6 +81,8 @@ class GraphModel : public QObject
     GraphEdgeModel *edges();
     // The model for the nodes in the graph
     GraphNodeModel *nodes();
+    //
+    NodeWrapper &wrappedNode(std::string_view nodeName);
     // Returns the graph status icon
     QUrl statusIcon();
     // The total number of nodes in the graph

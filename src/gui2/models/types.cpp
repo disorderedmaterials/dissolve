@@ -27,4 +27,5 @@ void Types::registerDissolveQmlTypes()
     qmlRegisterType<SimpleForcefieldModel>(PROJECT, 1, 0, "SimpleForcefieldModel");
     qmlRegisterType<NodeRegistrySortFilterModel>(PROJECT, 1, 0, "NodeRegistrySortFilterModel");
     qmlRegisterType<NodeMessages>(PROJECT, 1, 0, "NodeMessages");
+    qmlRegisterType<RenderableModel>(PROJECT, 1, 0, "RenderableModel");
 }
