@@ -78,22 +78,35 @@ template <typename T> NodeProducer makeDerivedNode()
 
 // Static Singletons
 const std::map<NodeRegistry::Category, ProducerMap> NodeRegistry::categoricalProducers_{
-    {Action,
+    {Analysis,
+     {{"Angle", makeDerivedNode<AngleNode>()},
+      {"AverageMolecule", makeDerivedNode<AverageMoleculeNode>()},
+      {"AxisAngle", makeDerivedNode<AxisAngleNode>()},
+      {"DAngle", makeDerivedNode<DAngleNode>()},
+      {"HistogramCN", makeDerivedNode<HistogramCNNode>()},
+      {"IntraAngle", makeDerivedNode<IntraAngleNode>()},
+      {"IntraDistance", makeDerivedNode<IntraDistanceNode>()},
+      {"ModifierOSites", makeDerivedNode<ModifierOSitesNode>()},
+      {"MoleculeTorsion", makeDerivedNode<MoleculeTorsionNode>()},
+      {"QSpecies", makeDerivedNode<QSpeciesNode>()},
+      {"SDF", makeDerivedNode<SDFNode>()},
+      {"SiteRDF", makeDerivedNode<SiteRDFNode>()},
+      {"VoxelDensity", makeDerivedNode<VoxelDensityNode>()}}},
+    {Correlation,
+     {
+         {"Bragg", makeDerivedNode<BraggNode>()},
+         {"GR", makeDerivedNode<GRNode>()},
+         {"NeutronSQ", makeDerivedNode<NeutronSQNode>()},
+         {"SQ", makeDerivedNode<SQNode>()},
+         {"XRaySQ", makeDerivedNode<XRaySQNode>()},
+     }},
+    {Evolution,
      {
          {"AtomicMC", makeDerivedNode<AtomicMCNode>()},
-         {"GR", makeDerivedNode<GRNode>()},
-         {"InsertRandom", makeDerivedNode<InsertRandomNode>()},
-         {"Instantiate", makeDerivedNode<InstantiateNode>()},
+         {"IntraMC", makeDerivedNode<IntraMCNode>()},
+         {"MC", makeDerivedNode<MCNode>()},
          {"MD", makeDerivedNode<MDNode>()},
-         {"SQ", makeDerivedNode<SQNode>()},
      }},
-    {Data,
-     {{"AtomicSpecies", makeDerivedNode<AtomicSpeciesNode>()},
-      {"Configuration", makeDerivedNode<ConfigurationNode>()},
-      {"Forcefield", makeDerivedNode<ForcefieldNode>()},
-      {"Species", makeDerivedNode<SpeciesNode>()}}
-
-    },
     {Export,
      {{"ExportBlockData", makeDerivedNode<ExportBlockDataNode>()},
       {"ExportData", makeDerivedNode<ExportDataNode>()},
@@ -124,34 +137,18 @@ const std::map<NodeRegistry::Category, ProducerMap> NodeRegistry::categoricalPro
       {"Subtract", makeDerivedNode<SubtractNode>()},
       {"Vector3Assemble", makeDerivedNode<Vector3AssembleNode>()},
       {"Vector3Decompose", makeDerivedNode<Vector3DecomposeNode>()}}},
-    {Other,
-     {{"Angle", makeDerivedNode<AngleNode>()},
-      {"AxisAngle", makeDerivedNode<AxisAngleNode>()},
-      {"AverageMolecule", makeDerivedNode<AverageMoleculeNode>()},
-      {"Bragg", makeDerivedNode<BraggNode>()},
+    {Structure,
+     {{"AtomicSpecies", makeDerivedNode<AtomicSpeciesNode>()},
       {"CalculateBonding", makeDerivedNode<CalculateBondingNode>()},
       {"ClearBonding", makeDerivedNode<ClearBondingNode>()},
-      {"DAngle", makeDerivedNode<DAngleNode>()},
+      {"Configuration", makeDerivedNode<ConfigurationNode>()},
       {"DetectMolecules", makeDerivedNode<DetectMoleculesNode>()},
-      {"Energy", makeDerivedNode<EnergyNode>()},
-      {"EPSR", makeDerivedNode<EPSRNode>()},
-      {"HistogramCN", makeDerivedNode<HistogramCNNode>()},
-      {"IntraAngle", makeDerivedNode<IntraAngleNode>()},
-      {"IntraDistance", makeDerivedNode<IntraDistanceNode>()},
-      {"IntraMC", makeDerivedNode<IntraMCNode>()},
-      {"MC", makeDerivedNode<MCNode>()},
-      {"ModifierOSites", makeDerivedNode<ModifierOSitesNode>()},
-      {"MoleculeTorsion", makeDerivedNode<MoleculeTorsionNode>()},
-      {"NeutronSQ", makeDerivedNode<NeutronSQNode>()},
-      {"OrientedSDF", makeDerivedNode<OrientedSDFNode>()},
-      {"QSpecies", makeDerivedNode<QSpeciesNode>()},
+      {"InsertRandom", makeDerivedNode<InsertRandomNode>()},
+      {"Instantiate", makeDerivedNode<InstantiateNode>()},
       {"ReplicatedConfiguration", makeDerivedNode<ReplicatedConfigurationNode>()},
-      {"SDF", makeDerivedNode<SDFNode>()},
       {"SetBox", makeDerivedNode<SetBoxNode>()},
       {"SetCoordinates", makeDerivedNode<SetCoordinatesNode>()},
-      {"SiteRDF", makeDerivedNode<SiteRDFNode>()},
-      {"XRaySQ", makeDerivedNode<XRaySQNode>()},
-      {"VoxelDensity", makeDerivedNode<VoxelDensityNode>()}}}};
+      {"Species", makeDerivedNode<SpeciesNode>()}}}};
 
 ProducerMap NodeRegistry::producers_;
 
@@ -159,13 +156,14 @@ ProducerMap NodeRegistry::producers_;
 EnumOptions<NodeRegistry::Category> NodeRegistry::category()
 {
     return EnumOptions<NodeRegistry::Category>("Category", {
-                                                               {Category::Action, "Action"},
-                                                               {Category::Data, "Data"},
+                                                               {Category::Analysis, "Analysis"},
+                                                               {Category::Correlation, "Correlation"},
+                                                               {Category::Evolution, "Evolution"},
                                                                {Category::Export, "Export"},
                                                                {Category::Graphs, "Graphs"},
                                                                {Category::Import, "Import"},
                                                                {Category::Math, "Math"},
-                                                               {Category::Other, "Other (TODO: finish categories)"},
+                                                               {Category::Structure, "Structure"},
                                                            });
 }
 EnumOptions<NodeRegistry::Category> getEnumOptions(NodeRegistry::Category) { return NodeRegistry::category(); }
