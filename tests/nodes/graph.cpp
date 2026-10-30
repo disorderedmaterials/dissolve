@@ -3,6 +3,7 @@
 
 #include "nodes/dissolve.h"
 #include "nodes/math/add.h"
+#include "nodes/math/subtract.h"
 #include "nodes/registry.h"
 #include "tests/testGraph.h"
 

@@ -114,6 +114,29 @@ class Graph : public Node
     std::string toMermaid(int depth) const;
     friend std::ostream &operator<<(std::ostream &stream, const Graph &node);
 
+    // Get all nodes in the graph of a given type
+    template <typename T>
+    std::vector<T *> findType() const
+        requires(std::is_base_of_v<Node, T>)
+    {
+        std::vector<T *> result;
+        for (auto &node : nodes_)
+        {
+            auto cast = dynamic_cast<T *>(node.get());
+            if (cast != nullptr)
+                result.push_back(cast);
+
+            // Check for inner graphs
+            Graph *as_graph = dynamic_cast<Graph *>(node.get());
+            if (as_graph != nullptr)
+            {
+                auto inner = as_graph->findType<T>();
+                result.insert(result.end(), inner.begin(), inner.end());
+            }
+        }
+        return result;
+    }
+
     /*
      * Serialisation
      */
