@@ -13,7 +13,7 @@ class DissolveModel : public QObject
     // File to load
     Q_PROPERTY(QUrl file READ fileName WRITE loadInput NOTIFY modelsUpdated)
     // The main graph
-    Q_PROPERTY(DissolveGraph *graph READ dissolveGraph NOTIFY modelsUpdated)
+    Q_PROPERTY(Graph *graph READ dissolveGraph NOTIFY modelsUpdated)
 
     Q_SIGNALS:
     // The models might've been updated
