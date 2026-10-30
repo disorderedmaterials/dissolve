@@ -423,6 +423,9 @@ ApplicationWindow {
             }
         }
         Item {
+            ConfigurationModel {
+                id: configModel
+            }
             id: configurationTab;
             DissolveConfigurationViewer {
                 scale: 100.0
