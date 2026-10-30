@@ -430,6 +430,7 @@ ApplicationWindow {
             ConfigurationModel {
                 id: configModel
                 graph: dissolve.graph
+                name: configurationPicker.text
             }
             // Reset the Configuration Model when the user switches
             // tabs to ensure that we have the latest graph setup.
@@ -468,26 +469,7 @@ ApplicationWindow {
 
 
                 scale: 100.0
-                atomModel: ListModel {
-                    ListElement {
-                        rx: 1.0
-                        ry: 0.0
-                        rz: 1.0
-                        element: "H"
-                    }
-                    ListElement {
-                        rx: -1.0
-                        ry: 0.0
-                        rz: 1.0
-                        element: "H"
-                    }
-                    ListElement {
-                        rx: 0.0
-                        ry: 0.0
-                        rz: 0.0
-                        element: "O"
-                    }
-                }
+                atomModel: configModel.atoms
                 bondModel: ListModel {
                     ListElement {
                         rx: 0.5

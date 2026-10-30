@@ -39,7 +39,56 @@ void ConfigurationModel::setGraph(Graph *node)
     endResetModel();
 }
 
+QString ConfigurationModel::name() const { return QString::fromStdString(name_); }
+
+void ConfigurationModel::setName(QString name)
+{
+    name_ = name.toStdString();
+    auto nodes = root_->findType<ConfigurationNode>();
+    auto it = std::find_if(nodes.begin(), nodes.end(), [this](const ConfigurationNode *x) { return x->name() == name_; });
+    if (it != nodes.end())
+    {
+        atoms_.config = &(*it)->configuration();
+        atoms_.reset();
+    }
+}
+
 void ConfigurationModel::reset()
+{
+    beginResetModel();
+    endResetModel();
+}
+
+const ConfigurationAtomsModel *ConfigurationModel::atoms() const { return &atoms_; }
+
+int ConfigurationAtomsModel::rowCount(const QModelIndex &parent) const
+{
+    Q_UNUSED(parent);
+    std::cout << "Tried to count atoms." << std::endl;
+    if (config == nullptr)
+        return 0;
+    return config->nAtoms();
+}
+
+QVariant ConfigurationAtomsModel::data(const QModelIndex &index, int role) const
+{
+    auto &atom = config->atom(index.row());
+
+    switch (role)
+    {
+        case ConfigurationAtomsModel::ConfigurationAtomsModelRoles::Element:
+            return QVariant::fromValue(atom.Z());
+        case ConfigurationAtomsModel::ConfigurationAtomsModelRoles::X:
+            return QVariant::fromValue(atom.r().x);
+        case ConfigurationAtomsModel::ConfigurationAtomsModelRoles::Y:
+            return QVariant::fromValue(atom.r().y);
+        case ConfigurationAtomsModel::ConfigurationAtomsModelRoles::Z:
+            return QVariant::fromValue(atom.r().z);
+    }
+    return {};
+}
+
+void ConfigurationAtomsModel::reset()
 {
     beginResetModel();
     endResetModel();
