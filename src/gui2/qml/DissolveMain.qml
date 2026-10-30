@@ -22,7 +22,6 @@ ApplicationWindow {
     id: dissolveWindow
 
     property Dialog quickRunDialog: null
-    property vector3d scale: Qt.vector3d(Math.min(graphView.width / 2.5, graphView.height / 2.5), Math.min(graphView.width / 2.5, graphView.height / 2.5), 200)
     property ToolBar toolBar: null
 
     height: Screen.height
@@ -430,7 +429,7 @@ ApplicationWindow {
             ConfigurationModel {
                 id: configModel
                 graph: dissolve.graph
-                name: configurationPicker.text
+                name: configurationPicker.currentText
             }
             // Reset the Configuration Model when the user switches
             // tabs to ensure that we have the latest graph setup.
