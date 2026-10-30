@@ -128,6 +128,10 @@ ApplicationWindow {
                 text: "Graph"
                 width: implicitWidth
             }
+            TabButton {
+                text: "Configuration Viewer"
+                width: implicitWidth
+            }
         }
     }
 
@@ -425,9 +429,37 @@ ApplicationWindow {
         Item {
             ConfigurationModel {
                 id: configModel
+                graph: dissolve.graph
+            }
+
+            // Tool Bar
+            Rectangle {
+                id: configToolBar
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.top: parent.top
+
+                height: configurationPicker.height+5
+                color: "red"
+
+                Text { id: configName; text: "Configuration" }
+                ComboBox {
+                    id: configurationPicker
+                    anchors.top: parent.top
+                    anchors.left: configName.right
+                    editable: true
+                    model: configModel
+                    textRole: "display"
+                }
             }
             id: configurationTab;
             DissolveConfigurationViewer {
+                anchors.top: configToolBar.bottom
+                anchors.bottom: parent.bottom
+                anchors.left: parent.left
+                anchors.right: parent.right
+
+
                 scale: 100.0
                 atomModel: ListModel {
                     ListElement {

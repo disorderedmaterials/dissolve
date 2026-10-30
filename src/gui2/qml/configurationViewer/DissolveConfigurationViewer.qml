@@ -11,11 +11,6 @@ View3D {
     required property variant bondModel;
     required property real scale;
 
-    anchors.bottom: parent.bottom
-    anchors.left: parent.left
-    anchors.right: parent.right
-    anchors.top: parent.top
-
     camera: cameraOrthographicLeft
 
     Node {
