@@ -26,4 +26,5 @@ class ConfigurationModel : public QAbstractListModel
 
     Graph *graph() const;
     void setGraph(Graph *node);
+    Q_INVOKABLE void reset();
 };

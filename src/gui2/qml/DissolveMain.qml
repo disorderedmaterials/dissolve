@@ -431,6 +431,14 @@ ApplicationWindow {
                 id: configModel
                 graph: dissolve.graph
             }
+            // Reset the Configuration Model when the user switches
+            // tabs to ensure that we have the latest graph setup.
+            Connections {
+                function onCurrentIndexChanged() {
+                    configModel.reset()
+                }
+                target: applicationTabStack
+            }
 
             // Tool Bar
             Rectangle {
@@ -440,7 +448,6 @@ ApplicationWindow {
                 anchors.top: parent.top
 
                 height: configurationPicker.height+5
-                color: "red"
 
                 Text { id: configName; text: "Configuration" }
                 ComboBox {

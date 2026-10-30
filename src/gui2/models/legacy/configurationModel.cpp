@@ -31,9 +31,16 @@ QVariant ConfigurationModel::data(const QModelIndex &index, int role) const
 }
 
 Graph *ConfigurationModel::graph() const { return root_; }
+
 void ConfigurationModel::setGraph(Graph *node)
 {
     beginResetModel();
     root_ = node;
+    endResetModel();
+}
+
+void ConfigurationModel::reset()
+{
+    beginResetModel();
     endResetModel();
 }
