@@ -95,3 +95,13 @@ void ConfigurationAtomsModel::reset()
     beginResetModel();
     endResetModel();
 }
+
+QHash<int, QByteArray> ConfigurationAtomsModel::roleNames() const
+{
+    QHash<int, QByteArray> roles;
+    roles[ConfigurationAtomsModelRoles::X] = "rx";
+    roles[ConfigurationAtomsModelRoles::Y] = "ry";
+    roles[ConfigurationAtomsModelRoles::Z] = "rz";
+    roles[ConfigurationAtomsModelRoles::Element] = "element";
+    return roles;
+}
