@@ -6,6 +6,7 @@
 #include "classes/cell.h"
 #include "classes/pairPotential.h"
 #include "math/mathFunc.h"
+#include <iterator>
 
 /*
  * Cell Data
@@ -165,13 +166,31 @@ const std::vector<CellNeighbour> &CellArray::neighbours(const Cell &cell) const 
 // Return vector of all unique cell neighbour pairs
 const std::vector<CellNeighbourPair> &CellArray::getCellNeighbourPairs() const { return neighbourPairs_; }
 
-// Return vector of all unique cell neighbour pairs with self cell pairs
-const std::vector<CellNeighbourPair> CellArray::getCellNeighbourPairsWithSelf() const
+// test whether two values are next to each other with wrapping
+// boundary conditions.
+bool wrap_test(int base, int other, int size)
 {
-    auto result = neighbourPairs_;
-    for (auto &cell : cells_)
-        result.emplace_back(cell, cell, false);
+    if (std::abs(base - other) <= 1)
+        return true;
+    if (base == 0 && other == size - 1)
+        return true;
+    if (other == 0 && base == size - 1)
+        return true;
+    return false;
+}
 
+// Return vector of all unique cell neighbour pairs with self cell pairs
+const std::vector<CellNeighbourPair> CellArray::getNearestNeighbourPairs() const
+{
+    std::vector<CellNeighbourPair> result;
+    std::ranges::copy_if(neighbourPairs_, std::back_inserter(result),
+                         [this](const auto pair) -> bool
+                         {
+                             auto &r = pair.cell.gridReference();
+                             auto &q = pair.neighbour.gridReference();
+                             return wrap_test(r.x, q.x, divisions_.x) && wrap_test(r.y, q.y, divisions_.y) &&
+                                    wrap_test(r.z, q.z, divisions_.z);
+                         });
     return result;
 }
 
