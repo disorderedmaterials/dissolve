@@ -10,7 +10,6 @@
 // Forward Declarations
 class ConfigurationAtom;
 class Box;
-class Cell;
 class Configuration;
 class PotentialMap;
 
@@ -42,7 +41,8 @@ class ForceKernel : public GeometryKernel
     void forcesWithMim(const ConfigurationAtom &i, int indexI, const ConfigurationAtom &j, int indexJ, std::vector<Vector3> &f,
                        double elecScale, double srScale) const;
     // Calculate forces between two cells
-    void cellToCellPairPotentialForces(const Cell *cell, const Cell *otherCell, bool applyMim, std::vector<Vector3> &f) const;
+    void cellToCellPairPotentialForces(const Cell<ConfigurationAtom> *cell, const Cell<ConfigurationAtom> *otherCell,
+                                       bool applyMim, std::vector<Vector3> &f) const;
 
     /*
      * Extended Terms

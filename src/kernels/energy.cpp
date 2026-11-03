@@ -40,7 +40,8 @@ double EnergyKernel::pairPotentialEnergy(const ConfigurationAtom &i, const Confi
  */
 
 // Return PairPotential energy of atoms in the supplied cell
-Kernel::PairPotentialEnergyValue EnergyKernel::cellEnergy(const Cell &cell, bool includeInter, bool includeIntra) const
+Kernel::PairPotentialEnergyValue EnergyKernel::cellEnergy(const Cell<ConfigurationAtom> &cell, bool includeInter,
+                                                          bool includeIntra) const
 {
     Kernel::PairPotentialEnergyValue totalEnergy;
     auto &atoms = cell.atoms();
@@ -81,7 +82,8 @@ Kernel::PairPotentialEnergyValue EnergyKernel::cellEnergy(const Cell &cell, bool
 }
 
 // Return PairPotential energy between atoms in supplied cells
-Kernel::PairPotentialEnergyValue EnergyKernel::cellToCellEnergy(const Cell &centralCell, const Cell &otherCell, bool applyMim,
+Kernel::PairPotentialEnergyValue EnergyKernel::cellToCellEnergy(const Cell<ConfigurationAtom> &centralCell,
+                                                                const Cell<ConfigurationAtom> &otherCell, bool applyMim,
                                                                 bool includeInter, bool includeIntra) const
 {
     Kernel::PairPotentialEnergyValue totalEnergy;
@@ -200,7 +202,7 @@ Kernel::PairPotentialEnergyValue EnergyKernel::pairPotentialEnergy(const Molecul
     auto &cells = configuration_->cells();
 
     // Create a map of atoms in cells so we can treat all atoms with the same set of neighbours at once
-    std::map<Cell *, std::vector<const ConfigurationAtom *>> locationMap;
+    std::map<Cell<ConfigurationAtom> *, std::vector<const ConfigurationAtom *>> locationMap;
     for (auto &i : mol.atoms())
         locationMap[i->cell()].push_back(i);
 

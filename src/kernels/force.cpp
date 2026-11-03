@@ -85,7 +85,8 @@ void ForceKernel::forcesWithMim(const ConfigurationAtom &i, int indexI, const Co
  */
 
 // Calculate forces between atoms in supplied cells
-void ForceKernel::cellToCellPairPotentialForces(const Cell *centralCell, const Cell *otherCell, bool applyMim,
+void ForceKernel::cellToCellPairPotentialForces(const Cell<ConfigurationAtom> *centralCell,
+                                                const Cell<ConfigurationAtom> *otherCell, bool applyMim,
                                                 std::vector<Vector3> &f) const
 {
     assert(centralCell && otherCell);

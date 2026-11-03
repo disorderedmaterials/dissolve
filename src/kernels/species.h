@@ -3,13 +3,13 @@
 
 #pragma once
 
+#include "classes/cell.h"
 #include "kernels/common.h"
 #include "kernels/geometry.h"
 #include "templates/flags.h"
 
 // Forward Declarations
 class ConfigurationAtom;
-class Cell;
 class Species;
 class SpeciesAtom;
 

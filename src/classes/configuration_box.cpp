@@ -48,8 +48,8 @@ void Configuration::setRequestedCellDivisionLength(double a) { requestedCellDivi
 double Configuration::requestedCellDivisionLength() const { return requestedCellDivisionLength_; }
 
 // Return cell array
-CellArray &Configuration::cells() { return cells_; }
-const CellArray &Configuration::cells() const { return cells_; }
+CellArray<ConfigurationAtom> &Configuration::cells() { return cells_; }
+const CellArray<ConfigurationAtom> &Configuration::cells() const { return cells_; }
 
 // Scale Box, Cells, and Molecule geometric centres according to current size factor
 void Configuration::applySizeFactor(const EnergyKernel *kernel)

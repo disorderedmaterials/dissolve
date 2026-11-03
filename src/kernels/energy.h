@@ -3,13 +3,13 @@
 
 #pragma once
 
+#include "classes/cell.h"
 #include "kernels/common.h"
 #include "kernels/geometry.h"
 #include "templates/flags.h"
 
 // Forward Declarations
 class ConfigurationAtom;
-class Cell;
 class Configuration;
 class Molecule;
 
@@ -39,9 +39,11 @@ class EnergyKernel : public GeometryKernel
      */
     private:
     // Return PairPotential energy of atoms in the supplied cell
-    Kernel::PairPotentialEnergyValue cellEnergy(const Cell &cell, bool includeInter = true, bool includeIntra = true) const;
+    Kernel::PairPotentialEnergyValue cellEnergy(const Cell<ConfigurationAtom> &cell, bool includeInter = true,
+                                                bool includeIntra = true) const;
     // Return PairPotential energy between two cells
-    Kernel::PairPotentialEnergyValue cellToCellEnergy(const Cell &cell, const Cell &otherCell, bool applyMim,
+    Kernel::PairPotentialEnergyValue cellToCellEnergy(const Cell<ConfigurationAtom> &cell,
+                                                      const Cell<ConfigurationAtom> &otherCell, bool applyMim,
                                                       bool includeInter = true, bool includeIntra = true) const;
     // Return PairPotential energy of atom with world
     double pairPotentialEnergy(const ConfigurationAtom &i) const;

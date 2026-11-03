@@ -7,6 +7,7 @@
 #include "classes/atom.h"
 #include "classes/bond.h"
 #include "classes/box.h"
+#include "classes/cell.h"
 #include <set>
 #include <vector>
 
@@ -16,6 +17,8 @@ class StructureAtom : public Atom<Bond<StructureAtom>>
     private:
     // Identifying name string
     std::string name_;
+    // Cell in which the atom exists
+    Cell<StructureAtom> *cell_{nullptr};
 
     public:
     // Copy the specified atom's data
@@ -33,6 +36,10 @@ class StructureAtom : public Atom<Bond<StructureAtom>>
         name_ = name;
         Atom::set(Elements::Unknown, r, q);
     }
+    // Set cell in which the atom exists
+    void setCell(Cell<StructureAtom> *cell) { cell_ = cell; }
+    // Return cell in which the atom exists
+    Cell<StructureAtom> *cell() const { return cell_; }
 };
 
 // Structure

@@ -54,7 +54,7 @@ void CalculateBondingNode::calculate(Structure &structure, double tolerance, boo
 
     auto box = structure.box();
 
-    CellArray cells;
+    CellArray<StructureAtom> cells;
     cells.generate(box, 6.0);
 
     // Populate cells
@@ -67,7 +67,8 @@ void CalculateBondingNode::calculate(Structure &structure, double tolerance, boo
     // one element is identical to a std::optional, but the lists can
     // be trivially combined during the reduce part of
     // transform_reduce
-    auto validBond = [&box, tolerance, preventMetallic](const CellNeighbourPair idx) -> std::set<std::pair<int, int>>
+    auto validBond = [&box, tolerance,
+                      preventMetallic](const CellNeighbourPair<StructureAtom> idx) -> std::set<std::pair<int, int>>
     {
         auto cellI = idx.cell;
         auto cellJ = idx.neighbour;

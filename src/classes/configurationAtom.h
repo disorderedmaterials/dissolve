@@ -4,13 +4,12 @@
 #pragma once
 
 #include "classes/atom.h"
+#include "classes/cell.h"
 #include "classes/speciesAtom.h"
 #include "classes/speciesBond.h"
 #include <memory>
-#include <vector>
 
 // Forward Declarations
-class Cell;
 class Molecule;
 
 // Configuration Atom
@@ -24,6 +23,8 @@ class ConfigurationAtom : public Atom<SpeciesBond>
     const SpeciesAtom *speciesAtom_{nullptr};
     // Molecule in which this Atom exists
     std::shared_ptr<Molecule> molecule_{nullptr};
+    // Cell in which the atom exists
+    Cell<ConfigurationAtom> *cell_{nullptr};
 
     public:
     // Set SpeciesAtom that this Atom represents
@@ -34,6 +35,10 @@ class ConfigurationAtom : public Atom<SpeciesBond>
     void setMolecule(std::shared_ptr<Molecule> mol);
     // Return Molecule in which this Atom exists
     const std::shared_ptr<Molecule> &molecule() const;
+    // Set cell in which the atom exists
+    void setCell(Cell<ConfigurationAtom> *cell) { cell_ = cell; }
+    // Return cell in which the atom exists
+    Cell<ConfigurationAtom> *cell() const { return cell_; }
 
     /*
      * Intramolecular Information
