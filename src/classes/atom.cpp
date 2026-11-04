@@ -39,9 +39,6 @@ bool AtomBase::isPresence(AtomConstants::Presence presence) const
 // Set atomic charge
 void AtomBase::setQ(double q) { q_ = q; }
 
-// Return atomic charge
-double AtomBase::q() const { return q_; }
-
 // Return index (0->[N-1])
 int AtomBase::index() const { return index_; }
 

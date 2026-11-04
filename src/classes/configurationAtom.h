@@ -35,6 +35,8 @@ class ConfigurationAtom : public Atom<SpeciesBond>
     void setMolecule(std::shared_ptr<Molecule> mol);
     // Return Molecule in which this Atom exists
     const std::shared_ptr<Molecule> &molecule() const override;
+    // Return atomic charge
+    double q() const override;
 
     /*
      * Intramolecular Information

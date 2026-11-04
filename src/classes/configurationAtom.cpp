@@ -23,6 +23,8 @@ void ConfigurationAtom::setMolecule(std::shared_ptr<Molecule> mol) { molecule_ =
 // Return Molecule in which this Atom exists
 const std::shared_ptr<Molecule> &ConfigurationAtom::molecule() const { return molecule_; }
 
+double ConfigurationAtom::q() const { return speciesAtom_->q(); }
+
 /*
  * Intramolecular Information
  */

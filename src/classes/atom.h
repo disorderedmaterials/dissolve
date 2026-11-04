@@ -50,7 +50,7 @@ class AtomBase
     // Set atomic charge
     void setQ(double q);
     // Return atomic charge
-    double q() const;
+    virtual double q() const { return q_; }
     // Return index (0->[N-1])
     int index() const;
     // Set index
