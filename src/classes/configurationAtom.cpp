@@ -28,7 +28,7 @@ const std::shared_ptr<Molecule> &ConfigurationAtom::molecule() const { return mo
  */
 
 // Return scaling type and factors (electrostatic, van der Waals) to employ with specified Atom
-SpeciesAtom::ScaledInteractionDefinition ConfigurationAtom::scaling(const ConfigurationAtom *j) const
+AtomBase::ScaledInteractionDefinition ConfigurationAtom::scaling(const AtomBase *j) const
 {
     assert(speciesAtom_ != nullptr);
     assert(j != nullptr);

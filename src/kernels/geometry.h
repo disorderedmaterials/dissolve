@@ -115,7 +115,7 @@ class GeometryKernel : public KernelBase
     // Return geometry energy for the specified configuration
     Kernel::GeometryEnergyValue totalGeometryEnergy(const Configuration *cfg) const;
     // Return geometry energy for the specified atom
-    Kernel::GeometryEnergyValue geometryEnergy(const ConfigurationAtom &i) const;
+    Kernel::GeometryEnergyValue geometryEnergy(const AtomBase &i) const;
     // Return geometry energy for the specified molecule
     Kernel::GeometryEnergyValue geometryEnergy(const Molecule &mol) const;
 

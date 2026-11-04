@@ -360,7 +360,7 @@ Kernel::GeometryEnergyValue GeometryKernel::totalGeometryEnergy(const Configurat
 }
 
 // Return geometry energy for the specified molecule
-Kernel::GeometryEnergyValue GeometryKernel::geometryEnergy(const ConfigurationAtom &i) const
+Kernel::GeometryEnergyValue GeometryKernel::geometryEnergy(const AtomBase &i) const
 {
     // Get the SpeciesAtom and Molecule
     const auto *spAtom = i.speciesAtom();

@@ -46,15 +46,6 @@ class SpeciesAtom : public Atom<const SpeciesBond>
      * Intramolecular Information
      */
     public:
-    // Scaled interaction types
-    enum class ScaledInteraction
-    {
-        Excluded,
-        Scaled,
-        NotScaled
-    };
-    using ScaledInteractionDefinition = std::tuple<ScaledInteraction, double, double>;
-
     private:
     // Vector of angles which this atom participates in
     std::vector<const SpeciesAngle *> angles_;
@@ -81,7 +72,11 @@ class SpeciesAtom : public Atom<const SpeciesBond>
     // Set all scaled intramolecular interactions
     void setScaledInteractions();
     // Return scaling type and factors (electrostatic, van der Waals) to employ with specified Atom
-    ScaledInteractionDefinition scaling(const SpeciesAtom *j) const;
+    AtomBase::ScaledInteractionDefinition scaling(const AtomBase *j) const override;
+    // Return the SpeciesAtom
+    const SpeciesAtom *speciesAtom() const override;
+    // Return the molecule owning this atom
+    const std::shared_ptr<Molecule> &molecule() const override;
 
     /*
      * Serialisation

@@ -69,7 +69,7 @@ template <typename T> class Cell
         assert(!atom->cell());
 
         atoms_.push_back(atom);
-        atom->setCell(this);
+        atom->setCell(toBase());
     }
     // Remove Atom from Cell
     void removeAtom(T *atom)
@@ -83,6 +83,7 @@ template <typename T> class Cell
     // Clear all atoms from cell
     void clearAtoms() { atoms_.clear(); }
 
+    // Lower contents to AtomBase pointers
     Cell<AtomBase> *toBase()
         requires std::is_base_of_v<AtomBase, T>
     {
@@ -94,5 +95,21 @@ template <typename T> class Cell
         requires std::is_base_of_v<AtomBase, T>
     {
         return (Cell<AtomBase> *)(this);
+    }
+
+    // Promote contents to more to more specific type
+    template <typename U>
+    Cell<U> *upcast()
+        requires std::is_base_of_v<T, U>
+    {
+        return (Cell<U> *)(this);
+    }
+
+    // Promote contents to more to more specific type
+    template <typename U>
+    const Cell<U> *upcast() const
+        requires std::is_base_of_v<T, U>
+    {
+        return (Cell<U> *)(this);
     }
 };

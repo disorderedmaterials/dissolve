@@ -9,7 +9,7 @@
 #include "templates/flags.h"
 
 // Forward Declarations
-class ConfigurationAtom;
+class AtomBase;
 class Configuration;
 class Molecule;
 
@@ -29,10 +29,9 @@ class EnergyKernel : public GeometryKernel
      */
     private:
     // Return PairPotential energy between atoms
-    virtual double pairPotentialEnergy(const ConfigurationAtom &i, const ConfigurationAtom &j, double r) const;
+    virtual double pairPotentialEnergy(const AtomBase &i, const AtomBase &j, double r) const;
     // Return PairPotential energy between atoms, scaling electrostatic and van der Waals components
-    virtual double pairPotentialEnergy(const ConfigurationAtom &i, const ConfigurationAtom &j, double r, double elecScale,
-                                       double srScale) const;
+    virtual double pairPotentialEnergy(const AtomBase &i, const AtomBase &j, double r, double elecScale, double srScale) const;
 
     /*
      * PairPotential Terms
@@ -45,7 +44,7 @@ class EnergyKernel : public GeometryKernel
     Kernel::PairPotentialEnergyValue cellToCellEnergy(const Cell<AtomBase> &cell, const Cell<AtomBase> &otherCell,
                                                       bool applyMim, bool includeInter = true, bool includeIntra = true) const;
     // Return PairPotential energy of atom with world
-    double pairPotentialEnergy(const ConfigurationAtom &i) const;
+    double pairPotentialEnergy(const AtomBase &i) const;
     // Return PairPotential energy of Molecule with world
     Kernel::PairPotentialEnergyValue pairPotentialEnergy(const Molecule &mol, bool includeInter = true,
                                                          bool includeIntra = true) const;
@@ -57,7 +56,7 @@ class EnergyKernel : public GeometryKernel
     // Return total extended energy
     double totalExtendedEnergy() const;
     // Return energy of supplied atom from ad hoc extended terms
-    virtual double extendedEnergy(const ConfigurationAtom &i) const;
+    virtual double extendedEnergy(const AtomBase &i) const;
     // Return energy of supplied molecule from ad hoc extended terms
     virtual double extendedEnergy(const Molecule &mol) const;
 
@@ -72,7 +71,7 @@ class EnergyKernel : public GeometryKernel
     // Return total energy
     Kernel::EnergyResult totalEnergy(Flags<Kernel::CalculationFlags> flags = {}) const;
     // Return total energy of supplied atom
-    Kernel::EnergyResult totalEnergy(const ConfigurationAtom &i) const;
+    Kernel::EnergyResult totalEnergy(const AtomBase &i) const;
     // Return total energy of supplied molecule
     Kernel::EnergyResult totalEnergy(const Molecule &mol, Flags<Kernel::CalculationFlags> flags = {}) const;
     // Return potential map

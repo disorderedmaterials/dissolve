@@ -153,12 +153,12 @@ void SpeciesAtom::setScaledInteractions()
 }
 
 // Return scaling type and factors (electrostatic, van der Waals) to employ with specified Atom
-SpeciesAtom::ScaledInteractionDefinition SpeciesAtom::scaling(const SpeciesAtom *j) const
+AtomBase::ScaledInteractionDefinition SpeciesAtom::scaling(const AtomBase *j) const
 {
     auto it = std::find_if(scaledInteractions_.begin(), scaledInteractions_.end(), [j](const auto &p) { return p.first == j; });
     if (it != scaledInteractions_.end())
         return it->second;
-    return {SpeciesAtom::ScaledInteraction::NotScaled, 1.0, 1.0};
+    return {AtomBase::ScaledInteraction::NotScaled, 1.0, 1.0};
 }
 
 /*
@@ -192,4 +192,13 @@ void SpeciesAtom::deserialise(const SerialisedValue &node)
                                    if (atomType_ == nullptr)
                                        atomType_ = parent_->addAtomType(Z_, name);
                                });
+}
+
+// Return the SpeciesAtom
+const SpeciesAtom *SpeciesAtom::speciesAtom() const { return this; }
+
+const std::shared_ptr<Molecule> &SpeciesAtom::molecule() const
+{
+    throw std::runtime_error("Attempted to access Molecule from SpeciesAtom, which should never happen.  Please contact the "
+                             "Dissolve developers to inform them of this bug.");
 }

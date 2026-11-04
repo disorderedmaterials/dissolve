@@ -151,3 +151,7 @@ void AtomBase::deserialise(const SerialisedValue &node)
     set(Elements::element(Deserialisable::deser<std::string>(node.at("z"))), Deserialisable::deser<Vector3>(node.at("r")),
         Deserialisable::deser_or<double>(node, "q", 0));
 }
+
+void AtomBase::setCell(Cell<AtomBase> *cell) { cell_ = cell; }
+
+Cell<AtomBase> *AtomBase::cell() const { return cell_; }

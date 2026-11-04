@@ -30,20 +30,16 @@ class ConfigurationAtom : public Atom<SpeciesBond>
     // Set SpeciesAtom that this Atom represents
     void setSpeciesAtom(const SpeciesAtom *spAtom);
     // Return SpeciesAtom that this Atom represents
-    const SpeciesAtom *speciesAtom() const;
+    const SpeciesAtom *speciesAtom() const override;
     // Set Molecule in which this Atom exists
     void setMolecule(std::shared_ptr<Molecule> mol);
     // Return Molecule in which this Atom exists
-    const std::shared_ptr<Molecule> &molecule() const;
-    // Set cell in which the atom exists
-    void setCell(Cell<ConfigurationAtom> *cell) { cell_ = cell; }
-    // Return cell in which the atom exists
-    Cell<ConfigurationAtom> *cell() const { return cell_; }
+    const std::shared_ptr<Molecule> &molecule() const override;
 
     /*
      * Intramolecular Information
      */
     public:
     // Return scaling type and factors (electrostatic, van der Waals) to employ with specified Atom
-    SpeciesAtom::ScaledInteractionDefinition scaling(const ConfigurationAtom *j) const;
+    AtomBase::ScaledInteractionDefinition scaling(const AtomBase *j) const override;
 };

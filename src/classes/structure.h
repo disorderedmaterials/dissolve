@@ -8,6 +8,8 @@
 #include "classes/bond.h"
 #include "classes/box.h"
 #include "classes/cell.h"
+#include "classes/speciesAtom.h"
+#include "classes/speciesBond.h"
 #include <set>
 #include <vector>
 
@@ -17,8 +19,6 @@ class StructureAtom : public Atom<Bond<StructureAtom>>
     private:
     // Identifying name string
     std::string name_;
-    // Cell in which the atom exists
-    Cell<StructureAtom> *cell_{nullptr};
 
     public:
     // Copy the specified atom's data
@@ -36,10 +36,24 @@ class StructureAtom : public Atom<Bond<StructureAtom>>
         name_ = name;
         Atom::set(Elements::Unknown, r, q);
     }
-    // Set cell in which the atom exists
-    void setCell(Cell<StructureAtom> *cell) { cell_ = cell; }
-    // Return cell in which the atom exists
-    Cell<StructureAtom> *cell() const { return cell_; }
+
+    // Return scaling type and factors (electrostatic, van der Waals) to employ with specified Atom
+    AtomBase::ScaledInteractionDefinition scaling(const AtomBase *j) const override
+    {
+        return {AtomBase::ScaledInteraction::NotScaled, 1.0, 1.0};
+    }
+
+    const std::shared_ptr<Molecule> &molecule() const override
+    {
+        throw std::runtime_error("Attempted to access Molecule from Structure Atom, which should never happen.  Please contact "
+                                 "the Dissolve developers to inform them of this bug.");
+    }
+
+    const SpeciesAtom *speciesAtom() const override
+    {
+        throw std::runtime_error("Attempted to access Species Atom from Structure Atom, which should never happen.  Please "
+                                 "contact the Dissolve developers to inform them of this bug.");
+    }
 };
 
 // Structure

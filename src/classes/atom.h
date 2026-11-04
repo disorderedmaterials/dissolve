@@ -9,6 +9,11 @@
 #include "data/elements.h"
 #include "math/vector3.h"
 
+// Forward Declarations
+template <typename T> class Cell;
+class Molecule;
+class SpeciesAtom;
+
 // Atom Base
 class AtomBase
 {
@@ -26,6 +31,8 @@ class AtomBase
     int index_{-1};
     // Atom type index in parent object
     int atomTypeIndex_{AtomConstants::TypeIndex::Ignore};
+    // Cell in which the atom exists
+    Cell<AtomBase> *cell_{nullptr};
 
     public:
     // Set basic properties
@@ -52,6 +59,10 @@ class AtomBase
     void setAtomTypeIndex(int id);
     // Return associated atom type index
     int atomTypeIndex() const;
+    // Set cell in which the atom exists
+    void setCell(Cell<AtomBase> *cell);
+    // Return cell in which the atom exists
+    Cell<AtomBase> *cell() const;
 
     /*
      * General Connectivity
@@ -61,6 +72,20 @@ class AtomBase
     virtual int nBonds() const = 0;
     // Return other AtomBases connected to this one via bonds
     virtual std::vector<AtomBase *> connectedAtoms() const = 0;
+    // Return the molecule owning this atom
+    virtual const std::shared_ptr<Molecule> &molecule() const = 0;
+    // Return the SpeciesAtom
+    virtual const SpeciesAtom *speciesAtom() const = 0;
+    // Scaled interaction types
+    enum class ScaledInteraction
+    {
+        Excluded,
+        Scaled,
+        NotScaled
+    };
+    using ScaledInteractionDefinition = std::tuple<ScaledInteraction, double, double>;
+    // Return scaling type and factors (electrostatic, van der Waals) to employ with specified Atom
+    virtual AtomBase::ScaledInteractionDefinition scaling(const AtomBase *j) const = 0;
 
     /*
      * Atom Geometry
