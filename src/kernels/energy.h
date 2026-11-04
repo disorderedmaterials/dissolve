@@ -39,12 +39,11 @@ class EnergyKernel : public GeometryKernel
      */
     private:
     // Return PairPotential energy of atoms in the supplied cell
-    Kernel::PairPotentialEnergyValue cellEnergy(const Cell<ConfigurationAtom> &cell, bool includeInter = true,
+    Kernel::PairPotentialEnergyValue cellEnergy(const Cell<AtomBase> &cell, bool includeInter = true,
                                                 bool includeIntra = true) const;
     // Return PairPotential energy between two cells
-    Kernel::PairPotentialEnergyValue cellToCellEnergy(const Cell<ConfigurationAtom> &cell,
-                                                      const Cell<ConfigurationAtom> &otherCell, bool applyMim,
-                                                      bool includeInter = true, bool includeIntra = true) const;
+    Kernel::PairPotentialEnergyValue cellToCellEnergy(const Cell<AtomBase> &cell, const Cell<AtomBase> &otherCell,
+                                                      bool applyMim, bool includeInter = true, bool includeIntra = true) const;
     // Return PairPotential energy of atom with world
     double pairPotentialEnergy(const ConfigurationAtom &i) const;
     // Return PairPotential energy of Molecule with world

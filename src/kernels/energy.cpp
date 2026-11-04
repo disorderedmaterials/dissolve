@@ -40,7 +40,7 @@ double EnergyKernel::pairPotentialEnergy(const ConfigurationAtom &i, const Confi
  */
 
 // Return PairPotential energy of atoms in the supplied cell
-Kernel::PairPotentialEnergyValue EnergyKernel::cellEnergy(const Cell<ConfigurationAtom> &cell, bool includeInter,
+Kernel::PairPotentialEnergyValue EnergyKernel::cellEnergy(const Cell<AtomBase> &cell, bool includeInter,
                                                           bool includeIntra) const
 {
     Kernel::PairPotentialEnergyValue totalEnergy;
@@ -82,8 +82,8 @@ Kernel::PairPotentialEnergyValue EnergyKernel::cellEnergy(const Cell<Configurati
 }
 
 // Return PairPotential energy between atoms in supplied cells
-Kernel::PairPotentialEnergyValue EnergyKernel::cellToCellEnergy(const Cell<ConfigurationAtom> &centralCell,
-                                                                const Cell<ConfigurationAtom> &otherCell, bool applyMim,
+Kernel::PairPotentialEnergyValue EnergyKernel::cellToCellEnergy(const Cell<AtomBase> &centralCell,
+                                                                const Cell<AtomBase> &otherCell, bool applyMim,
                                                                 bool includeInter, bool includeIntra) const
 {
     Kernel::PairPotentialEnergyValue totalEnergy;
@@ -320,10 +320,10 @@ Kernel::PairPotentialEnergyValue EnergyKernel::totalPairPotentialEnergy(bool inc
                                       [&](const auto &pair)
                                       {
                                           if (&pair.cell == &pair.neighbour)
-                                              return cellEnergy(pair.cell, includeInter, includeIntra);
+                                              return cellEnergy(*pair.cell.toBase(), includeInter, includeIntra);
                                           else
-                                              return cellToCellEnergy(pair.cell, pair.neighbour, pair.requiresMIM, includeInter,
-                                                                      includeIntra);
+                                              return cellToCellEnergy(*pair.cell.toBase(), *pair.neighbour.toBase(),
+                                                                      pair.requiresMIM, includeInter, includeIntra);
                                       });
 }
 

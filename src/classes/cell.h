@@ -5,9 +5,11 @@
 
 #include "math/vector3.h"
 #include "math/vector3i.h"
+#include <type_traits>
 #include <vector>
 
 // Forward Declarations
+class AtomBase;
 class Box;
 
 /*
@@ -81,6 +83,16 @@ template <typename T> class Cell
     // Clear all atoms from cell
     void clearAtoms() { atoms_.clear(); }
 
-    template <typename U> Cell<U> *recast() { return static_cast<Cell<U>>(this); }
-    template <typename U> const Cell<U> *recast() const { return static_cast<Cell<U>>(this); }
+    Cell<AtomBase> *toBase()
+        requires std::is_base_of_v<AtomBase, T>
+    {
+        return (Cell<AtomBase> *)(this);
+    }
+
+    // Lower contents to AtomBase pointers
+    const Cell<AtomBase> *toBase() const
+        requires std::is_base_of_v<AtomBase, T>
+    {
+        return (Cell<AtomBase> *)(this);
+    }
 };
