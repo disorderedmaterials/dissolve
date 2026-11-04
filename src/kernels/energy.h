@@ -71,7 +71,7 @@ class EnergyKernel : public GeometryKernel
     // Return total energy
     Kernel::EnergyResult totalEnergy(Flags<Kernel::CalculationFlags> flags = {}) const;
     // Return total energy of supplied atom
-    Kernel::EnergyResult totalEnergy(const AtomBase &i) const;
+    Kernel::EnergyResult totalEnergy(const ConfigurationAtom &i) const;
     // Return total energy of supplied molecule
     Kernel::EnergyResult totalEnergy(const Molecule &mol, Flags<Kernel::CalculationFlags> flags = {}) const;
     // Return potential map

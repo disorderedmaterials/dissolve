@@ -48,12 +48,6 @@ class StructureAtom : public Atom<Bond<StructureAtom>>
         throw std::runtime_error("Attempted to access Molecule from Structure Atom, which should never happen.  Please contact "
                                  "the Dissolve developers to inform them of this bug.");
     }
-
-    const SpeciesAtom *speciesAtom() const override
-    {
-        throw std::runtime_error("Attempted to access Species Atom from Structure Atom, which should never happen.  Please "
-                                 "contact the Dissolve developers to inform them of this bug.");
-    }
 };
 
 // Structure

@@ -30,7 +30,7 @@ class ConfigurationAtom : public Atom<SpeciesBond>
     // Set SpeciesAtom that this Atom represents
     void setSpeciesAtom(const SpeciesAtom *spAtom);
     // Return SpeciesAtom that this Atom represents
-    const SpeciesAtom *speciesAtom() const override;
+    const SpeciesAtom *speciesAtom() const;
     // Set Molecule in which this Atom exists
     void setMolecule(std::shared_ptr<Molecule> mol);
     // Return Molecule in which this Atom exists

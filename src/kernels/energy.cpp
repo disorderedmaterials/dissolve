@@ -348,7 +348,7 @@ Kernel::EnergyResult EnergyKernel::totalEnergy(Flags<Kernel::CalculationFlags> f
 }
 
 // Return total energy of supplied atom
-Kernel::EnergyResult EnergyKernel::totalEnergy(const AtomBase &i) const
+Kernel::EnergyResult EnergyKernel::totalEnergy(const ConfigurationAtom &i) const
 {
     return {{pairPotentialEnergy(i), 0.0}, geometryEnergy(i), extendedEnergy(i)};
 }

@@ -32,9 +32,10 @@ double ConfigurationAtom::q() const { return speciesAtom_->q(); }
 // Return scaling type and factors (electrostatic, van der Waals) to employ with specified Atom
 AtomBase::ScaledInteractionDefinition ConfigurationAtom::scaling(const AtomBase *j) const
 {
+    auto jj = dynamic_cast<const ConfigurationAtom *>(j);
     assert(speciesAtom_ != nullptr);
-    assert(j != nullptr);
-    assert(j->speciesAtom() != nullptr);
+    assert(jj != nullptr);
+    assert(jj->speciesAtom() != nullptr);
 
-    return speciesAtom_->scaling(j->speciesAtom());
+    return speciesAtom_->scaling(jj->speciesAtom());
 }

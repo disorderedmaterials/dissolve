@@ -194,9 +194,6 @@ void SpeciesAtom::deserialise(const SerialisedValue &node)
                                });
 }
 
-// Return the SpeciesAtom
-const SpeciesAtom *SpeciesAtom::speciesAtom() const { return this; }
-
 const std::shared_ptr<Molecule> &SpeciesAtom::molecule() const
 {
     throw std::runtime_error("Attempted to access Molecule from SpeciesAtom, which should never happen.  Please contact the "

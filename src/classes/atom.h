@@ -12,7 +12,6 @@
 // Forward Declarations
 template <typename T> class Cell;
 class Molecule;
-class SpeciesAtom;
 
 // Atom Base
 class AtomBase
@@ -74,8 +73,6 @@ class AtomBase
     virtual std::vector<AtomBase *> connectedAtoms() const = 0;
     // Return the molecule owning this atom
     virtual const std::shared_ptr<Molecule> &molecule() const = 0;
-    // Return the SpeciesAtom
-    virtual const SpeciesAtom *speciesAtom() const = 0;
     // Scaled interaction types
     enum class ScaledInteraction
     {

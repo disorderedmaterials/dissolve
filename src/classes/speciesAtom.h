@@ -73,8 +73,6 @@ class SpeciesAtom : public Atom<const SpeciesBond>
     void setScaledInteractions();
     // Return scaling type and factors (electrostatic, van der Waals) to employ with specified Atom
     AtomBase::ScaledInteractionDefinition scaling(const AtomBase *j) const override;
-    // Return the SpeciesAtom
-    const SpeciesAtom *speciesAtom() const override;
     // Return the molecule owning this atom
     const std::shared_ptr<Molecule> &molecule() const override;
 
