@@ -80,20 +80,29 @@ NodeBox {
             readonly property Popup messagesPopup: Popup {
                 id: messages
 
+                readonly property bool hovered: messagesPopupHoverHandler.hovered
+                readonly property MenuItem menuItem: messagesMenuItem
+
                 height: 250
                 padding: 4
                 parent: Overlay.overlay
                 width: 300
 
+                HoverHandler {
+                    id: messagesPopupHoverHandler
+
+                    onHoveredChanged: {
+                        if (hovered)
+                            messages.menuItem.sharedHoverTimer.stop();
+                        else
+                            messages.menuItem.sharedHoverTimer.restart();
+                    }
+                }
                 Item {
+                    id: messagesItem
+
                     anchors.fill: parent
 
-                    HoverHandler {
-                        onHoveredChanged: {
-                            if (!hovered)
-                                messages.close();
-                        }
-                    }
                     ColumnLayout {
                         anchors.fill: parent
                         spacing: 2
@@ -157,35 +166,68 @@ NodeBox {
                     }
                 }
             }
+            readonly property Timer sharedHoverTimer: Timer {
+                interval: 150
+                repeat: false
 
+                onTriggered: {
+                    const noHover = !messagesMenuItem.hovered && !messagesMenuItem.messagesPopup.hovered;
+                    if (noHover)
+                        messagesMenuItem.messagesPopup.close();
+                }
+            }
+
+            hoverEnabled: true
             text: "Messages"
 
             HoverHandler {
-                id: messagesHoverHandler
+                id: messagesMenuHoverHandler
 
                 readonly property Popup popup: messagesMenuItem.messagesPopup
 
                 onHoveredChanged: {
                     if (hovered) {
+                        messagesMenuItem.sharedHoverTimer.stop();
                         const p = messagesMenuItem.mapToItem(Overlay.overlay, messagesMenuItem.width, 0);
                         popup.x = p.x;
                         popup.y = p.y;
                         popup.open();
-                    }
+                    } else
+                        messagesMenuItem.sharedHoverTimer.restart();
                 }
             }
         }
         MenuSeparator {
         }
         DissolveMenuItem {
-            id: outputMenu
+            id: outputMenuItem
 
-            enabled: !root.renderables.empty()
+            readonly property Menu outputMenu: Menu {
+                Repeater {
+                    model: 3
+
+                    delegate: MenuItem {
+                        text: "haha"
+                    }
+                }
+            }
+
             iconPath: "qrc:/DissolveIconsModule/output.svg"
 
             dissolveAction: Action {
                 shortcut: "Ctrl+O"
                 text: "&Output"
+            }
+
+            HoverHandler {
+                onHoveredChanged: {
+                    if (hovered) {
+                        const p = parent.mapToItem(Overlay.overlay, parent.width, 0);
+                        parent.outputMenu.x = p.x;
+                        parent.outputMenu.y = p.y;
+                        parent.outputMenu.open();
+                    }
+                }
             }
         }
     }
@@ -199,10 +241,6 @@ NodeBox {
     ColumnLayout {
         id: nodeColumnLayout
 
-        /*
-        anchors.left: header.left
-        anchors.right: header.right
-        */
         anchors.leftMargin: 8
         anchors.rightMargin: 8
         spacing: 8
