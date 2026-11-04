@@ -6,9 +6,11 @@ import Qt.labs.qmlmodels
 import Dissolve
 import DissolveControlsModule
 import DissolveIconsModule
+import DissolvePlottingModule
 import "../Dissolve"
 import "../DissolveControlsModule"
 import "../DissolveIconsModule"
+import "../DissolvePlottingModule"
 
 NodeBox {
     id: root
@@ -62,15 +64,11 @@ NodeBox {
     Menu {
         id: nodePopupMenu
 
-        DissolveMenuItem {
-            iconPath: "qrc:/DissolveIconsModule/play.svg"
+        MenuItem {
+            icon.source: "qrc:/DissolveIconsModule/play.svg"
+            text: "Run"
 
-            dissolveAction: Action {
-                shortcut: "Ctrl+Enter"
-                text: "&Run"
-
-                onTriggered: rootGraphModel.run(nodeName)
-            }
+            onTriggered: rootGraphModel.run(nodeName)
         }
         MenuSeparator {
         }
@@ -99,8 +97,6 @@ NodeBox {
                     }
                 }
                 Item {
-                    id: messagesItem
-
                     anchors.fill: parent
 
                     ColumnLayout {
@@ -167,22 +163,23 @@ NodeBox {
                 }
             }
             readonly property Timer sharedHoverTimer: Timer {
+                readonly property Popup popup: messagesMenuItem.messagesPopup
+
                 interval: 150
                 repeat: false
 
                 onTriggered: {
-                    const noHover = !messagesMenuItem.hovered && !messagesMenuItem.messagesPopup.hovered;
+                    const noHover = !messagesMenuItem.hovered && !popup.hovered;
                     if (noHover)
-                        messagesMenuItem.messagesPopup.close();
+                        popup.close();
                 }
             }
 
             hoverEnabled: true
+            icon.source: "qrc:/DissolveIconsModule/messages.svg"
             text: "Messages"
 
             HoverHandler {
-                id: messagesMenuHoverHandler
-
                 readonly property Popup popup: messagesMenuItem.messagesPopup
 
                 onHoveredChanged: {
@@ -199,30 +196,121 @@ NodeBox {
         }
         MenuSeparator {
         }
-        DissolveMenuItem {
+        MenuItem {
             id: outputMenuItem
 
             readonly property Menu outputMenu: Menu {
                 Repeater {
-                    model: 3
+                    model: renderables
+
+                    // TODO: Potential requirement for a proxy model to filter out empty renderable datasets
 
                     delegate: MenuItem {
-                        text: "haha"
+                        id: renderableItem
+
+                        required property string key
+
+                        // This will need to be dynamic for different plot dimensionalities
+                        readonly property Popup plotPopup: Popup {
+                            id: plotContainer
+
+                            readonly property bool hovered: plotContainerHoverHandler.hovered
+
+                            height: 450
+                            width: 600
+
+                            contentItem: Item {
+                                ColumnLayout {
+                                    anchors.fill: parent
+                                    spacing: 0
+
+                                    Rectangle {
+                                        id: header
+
+                                        Layout.preferredHeight: 20
+                                        Layout.preferredWidth: parent.width
+                                        border.color: "lightgrey"
+                                        border.width: 1
+                                        color: "white"
+                                        radius: 3
+
+                                        RowLayout {
+                                            anchors.fill: parent
+                                            anchors.leftMargin: 3
+                                            anchors.rightMargin: 6
+                                            spacing: 2
+
+                                            Label {
+                                                Layout.fillWidth: true
+                                                color: "grey"
+                                                font.bold: true
+                                                text: qsTr("Plot1D")
+                                            }
+                                        }
+                                    }
+                                    Plot1DContext {
+                                        Layout.fillHeight: true
+                                        Layout.fillWidth: true
+                                        canvasDimensions: {
+                                            "dx": plotContainer.width / 3,
+                                            "dy": plotContainer.height / 4
+                                        }
+                                        plotModel: renderableData
+                                        title: key
+                                    }
+                                }
+                            }
+
+                            HoverHandler {
+                                id: plotContainerHoverHandler
+
+                                onHoveredChanged: {
+                                    if (hovered)
+                                        renderableItem.sharedHoverTimer.stop();
+                                    else
+                                        renderableItem.sharedHoverTimer.restart();
+                                }
+                            }
+                        }
+                        required property var renderableData
+                        readonly property Timer sharedHoverTimer: Timer {
+                            readonly property Popup popup: renderableItem.plotPopup
+
+                            interval: 150
+                            repeat: false
+
+                            onTriggered: {
+                                const noHover = !renderableItem.hovered && !popup.hovered;
+                                if (noHover)
+                                    popup.close();
+                            }
+                        }
+
+                        hoverEnabled: true
+                        text: key
+
+                        onHoveredChanged: {
+                            if (hovered) {
+                                renderableItem.sharedHoverTimer.stop();
+                                const p = renderableItem.mapToItem(renderableItem, renderableItem.width, 0);
+                                plotPopup.x = p.x;
+                                plotPopup.y = p.y;
+                                plotPopup.open();
+                            } else
+                                renderableItem.sharedHoverTimer.restart();
+                        }
                     }
                 }
             }
 
-            iconPath: "qrc:/DissolveIconsModule/output.svg"
-
-            dissolveAction: Action {
-                shortcut: "Ctrl+O"
-                text: "&Output"
-            }
+            enabled: !renderables.empty()
+            icon.source: "qrc:/DissolveIconsModule/output.svg"
+            text: "Output"
 
             HoverHandler {
                 onHoveredChanged: {
                     if (hovered) {
-                        const p = parent.mapToItem(Overlay.overlay, parent.width, 0);
+                        const p = parent.mapToItem(parent, parent.width, 0);
                         parent.outputMenu.x = p.x;
                         parent.outputMenu.y = p.y;
                         parent.outputMenu.open();

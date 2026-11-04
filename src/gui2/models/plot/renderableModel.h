@@ -13,7 +13,7 @@ class RenderableModel : public QAbstractListModel
     Q_OBJECT;
 
     public:
-    RenderableModel() = default;
+    RenderableModel(const Node::NodeParameterMap &outputs);
     ~RenderableModel() = default;
 
     struct RenderableData
@@ -24,7 +24,7 @@ class RenderableModel : public QAbstractListModel
 
     enum Roles
     {
-        NAME,
+        KEY,
         DATA,
         TYPE
     };
@@ -34,13 +34,13 @@ class RenderableModel : public QAbstractListModel
     bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole);
 
     private:
-    //
+    // Renderable data
     std::vector<std::pair<std::string, std::unique_ptr<Plot1DModel>>> dataSets_;
 
     public Q_SLOTS:
-    //
+    // Update all renderable data
     void update();
-    //
+    // Returns bool - true if there are no renderables associated with this node
     bool empty();
 
     /*

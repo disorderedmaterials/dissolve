@@ -23,6 +23,12 @@ TestNode::TestNode(Graph *parentGraph) : Node(parentGraph)
     addOutput("NumberVector", "A vector of numbers", numberVector_);
     addOutput("OptionalNumber", "An optional number", optionalNumber_);
     addOutput("Variant", "A variant", variant_);
+    addOutput("Sine", "A test sine data series", sineData_);
+    addOutput("Cosine", "A test cosine data series", cosineData_);
+
+    // Fill out some test data at construction time
+    makeSine(sineData_);
+    makeCosine(cosineData_);
 }
 
 /*
@@ -40,6 +46,36 @@ const std::optional<Configuration> &TestNode::optionalConfiguration() const { re
 
 // Return the variant
 TestNode::TestVariant TestNode::variant() { return variant_; }
+
+//
+static void TestNode::makeSine(auto &sineData)
+{
+    // Append sine data
+    sineData.addPoint(0, 0);
+    sineData.addPoint(0.7853981634, 0.7071067812);
+    sineData.addPoint(1.570796327, 1);
+    sineData.addPoint(2.35619449, 0.7071067812);
+    sineData.addPoint(3.141592654, 0);
+    sineData.addPoint(3.926990817, -0.7071067812);
+    sineData.addPoint(4.71238898, -1);
+    sineData.addPoint(5.497787144, -0.7071067812);
+    sineData.addPoint(6.283185307, 0);
+}
+
+//
+static void TestNode::makeCosine(auto &cosineData)
+{
+    // Append cosine data
+    cosineData.addPoint(0, 1);
+    cosineData.addPoint(0.7853981634, 0.7071067812);
+    cosineData.addPoint(1.570796327, 0);
+    cosineData.addPoint(2.35619449, -0.7071067812);
+    cosineData.addPoint(3.141592654, -1);
+    cosineData.addPoint(3.926990817, -0.7071067812);
+    cosineData.addPoint(4.71238898, 0);
+    cosineData.addPoint(5.497787144, 0.7071067812);
+    cosineData.addPoint(6.283185307, 1);
+}
 
 /*
  * Processing

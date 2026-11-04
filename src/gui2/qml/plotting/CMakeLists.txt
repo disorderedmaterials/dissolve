@@ -7,7 +7,8 @@ qt6_add_qml_module(
   VERSION
   1.0
   QML_FILES
-  Plot1D.qml
+  Plot1DContext.qml
+  Plot1DCanvas.qml
 )
 
 find_package(Qt6 REQUIRED COMPONENTS Core Quick)

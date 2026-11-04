@@ -2,15 +2,45 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "renderableModel.h"
+#include "classes/partialSet.h"
+#include "math/histogram1D.h"
+#include "templates/doubleKeyedMap.h"
 
-//
+RenderableModel::RenderableModel(const Node::NodeParameterMap &outputs)
+{
+    for (const auto &[name, parameter] : outputs)
+    {
+        // Handle Data1D source
+        if (parameter->storedDataType() == typeid(Data1D))
+            setData(index(rowCount(), 0), QVariant::fromValue<RenderableModel::RenderableData>(
+                                              {name, [parameter]() -> const Data1D * { return parameter->getPtr<Data1D>(); }}));
+
+        // Handle Histogram1D source
+        if (parameter->storedDataType() == typeid(Histogram1D))
+            setData(index(rowCount(), 0), QVariant::fromValue<RenderableModel::RenderableData>(
+                                              {name, [parameter]() -> const Data1D *
+                                               { return &parameter->getPtr<Histogram1D>()->accumulatedData(); }}));
+
+        // Handle PartialSet source
+        if (parameter->storedDataType() == typeid(PartialSet *))
+        {
+            setData(index(rowCount(), 0), QVariant::fromValue<RenderableModel::RenderableData>(
+                                              {name + "/" + "Total", [parameter]() -> const Data1D *
+                                               { return &parameter->getPtr<PartialSet>()->total(); }}));
+
+            // Do the same for bound and unbound totals and partials...
+        }
+    }
+}
+
+// Update all datasets
 void RenderableModel::update()
 {
     for (auto &[_, model] : dataSets_)
         model->reset();
 }
 
-//
+// Returns bool - true if there are no renderables associated with this node
 bool RenderableModel::empty() { return dataSets_.empty(); }
 
 /*
@@ -37,7 +67,7 @@ QVariant RenderableModel::data(const QModelIndex &index, int role) const
 
     switch (role - Qt::UserRole)
     {
-        case NAME:
+        case KEY:
             return QString::fromStdString(dataSets_.at(row).first);
         case DATA:
             return QVariant::fromValue<Plot1DModel *>(dataSets_.at(row).second.get());
@@ -55,8 +85,8 @@ Qt::ItemFlags RenderableModel::flags(const QModelIndex &index) const
 QHash<int, QByteArray> RenderableModel::roleNames() const
 {
     QHash<int, QByteArray> roles;
-    roles[Qt::UserRole + (int)NAME] = "name";
-    roles[Qt::UserRole + (int)DATA] = "data";
+    roles[Qt::UserRole + (int)KEY] = "key";
+    roles[Qt::UserRole + (int)DATA] = "renderableData";
     roles[Qt::UserRole + (int)TYPE] = "type";
     return roles;
 }

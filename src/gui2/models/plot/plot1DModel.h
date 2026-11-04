@@ -27,7 +27,11 @@ class Plot1DModel : public QAbstractListModel
     // Dataset name
     const std::string &name_;
     //
-    const std::function<const Data1D *()> &sourceDataGetter_;
+    const std::function<const Data1D *()> sourceDataGetter_;
+    //
+    std::string xName_{"x-axis"};
+    //
+    std::string yName_{"y-axis"};
 
     public:
     //
@@ -48,4 +52,24 @@ class Plot1DModel : public QAbstractListModel
     public Q_SLOTS:
     //
     QString name();
+    //
+    double minX();
+    //
+    double minY();
+    //
+    double maxX();
+    //
+    double maxY();
+    //
+    QString xName();
+    //
+    QString yName();
+    //
+    double xOffsetPercentage();
+    //
+    double yOffsetPercentage();
+
+    Q_SIGNALS:
+    //
+    void dataChanged();
 };

@@ -18,6 +18,10 @@ class TestNode : public Node
      * Definition
      */
     private:
+    //
+    Data1D sineData_;
+    //
+    Data1D cosineData_;
     // Configuration pointer input
     Configuration *configuration_{nullptr};
     // Optional configuration output
@@ -54,6 +58,12 @@ class TestNode : public Node
     }
     // Return the variant
     TestVariant variant();
+
+    private:
+    //
+    static void makeSine(auto &sineData);
+    //
+    static void makeCosine(auto &cosineData);
 
     /*
      * Processing
