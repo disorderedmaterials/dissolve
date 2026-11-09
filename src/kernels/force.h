@@ -8,7 +8,6 @@
 #include "templates/flags.h"
 
 // Forward Declarations
-class ConfigurationAtom;
 class Box;
 class Configuration;
 class PotentialMap;
@@ -29,27 +28,25 @@ class ForceKernel : public GeometryKernel
      */
     private:
     // Calculate inter-particle forces between Atoms provided
-    void forcesWithoutMim(const ConfigurationAtom &i, int indexI, const ConfigurationAtom &j, int indexJ,
-                          std::vector<Vector3> &f) const;
+    void forcesWithoutMim(const AtomBase &i, int indexI, const AtomBase &j, int indexJ, std::vector<Vector3> &f) const;
     // Calculate inter-particle forces between Atoms provided, scaling electrostatic and van der Waals components
-    void forcesWithoutMim(const ConfigurationAtom &i, int indexI, const ConfigurationAtom &j, int indexJ,
-                          std::vector<Vector3> &f, double elecScale, double srScale) const;
+    void forcesWithoutMim(const AtomBase &i, int indexI, const AtomBase &j, int indexJ, std::vector<Vector3> &f,
+                          double elecScale, double srScale) const;
     // Calculate inter-particle forces between Atoms provided
-    void forcesWithMim(const ConfigurationAtom &i, int indexI, const ConfigurationAtom &j, int indexJ,
-                       std::vector<Vector3> &f) const;
+    void forcesWithMim(const AtomBase &i, int indexI, const AtomBase &j, int indexJ, std::vector<Vector3> &f) const;
     // Calculate inter-particle forces between Atoms provided, scaling electrostatic and van der Waals components
-    void forcesWithMim(const ConfigurationAtom &i, int indexI, const ConfigurationAtom &j, int indexJ, std::vector<Vector3> &f,
-                       double elecScale, double srScale) const;
+    void forcesWithMim(const AtomBase &i, int indexI, const AtomBase &j, int indexJ, std::vector<Vector3> &f, double elecScale,
+                       double srScale) const;
     // Calculate forces between two cells
-    void cellToCellPairPotentialForces(const Cell<ConfigurationAtom> *cell, const Cell<ConfigurationAtom> *otherCell,
-                                       bool applyMim, std::vector<Vector3> &f) const;
+    void cellToCellPairPotentialForces(const Cell<AtomBase> *cell, const Cell<AtomBase> *otherCell, bool applyMim,
+                                       std::vector<Vector3> &f) const;
 
     /*
      * Extended Terms
      */
     private:
     // Calculate extended forces on supplied atom
-    virtual void extendedForces(const ConfigurationAtom &i, Vector3 &fVec) const;
+    virtual void extendedForces(const AtomBase &i, Vector3 &fVec) const;
     // Calculate extended forces on supplied molecule
     virtual void extendedForces(const Molecule &mol, std::vector<Vector3> &f) const;
 

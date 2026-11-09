@@ -6,6 +6,7 @@
 #include "base/enumOptions.h"
 #include "classes/atomConstants.h"
 #include "classes/bond.h"
+#include "classes/box.h"
 #include "data/elements.h"
 #include "math/vector3.h"
 

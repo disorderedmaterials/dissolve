@@ -9,7 +9,7 @@
 #include "classes/box.h"
 #include "classes/cell.h"
 #include "classes/speciesAtom.h"
-#include "classes/speciesBond.h"
+#include "classes/speciesBond.h" // This include is *not* optional on Windows, due to template restrictions
 #include <set>
 #include <vector>
 
