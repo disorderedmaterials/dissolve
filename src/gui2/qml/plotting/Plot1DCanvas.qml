@@ -7,25 +7,27 @@ import "../Dissolve"
 Item {
     id: root
 
-    required property var dimensions
-    readonly property double graphCornerHeight: dimensions["dy"] / 3
-    readonly property double graphCornerWidth: dimensions["dx"] / 4
-    readonly property double maxX: model.maxX()
-    readonly property double maxY: model.maxY()
-    readonly property double minX: model.minX()
-    readonly property double minY: model.minY()
-    required property var model
-    required property int nAxisTicks
+    required property var context
+    readonly property double graphCornerHeight: context.canvasDimensions["dy"] / 3
+    readonly property double graphCornerWidth: context.canvasDimensions["dx"] / 4
+    readonly property double maxX: context.plotModel.maxX()
+    readonly property double maxY: context.plotModel.maxY()
+    readonly property double minX: context.plotModel.minX()
+    readonly property double minY: context.plotModel.minY()
     readonly property double realXAxisLength: Math.abs(maxX - minX)
     readonly property double realYAxisLength: Math.abs(maxY - minY)
-    readonly property double xAxisLength: dimensions["dx"] - graphCornerWidth
-    readonly property double yAxisLength: dimensions["dy"] - graphCornerHeight
+    readonly property double xAxisLength: context.canvasDimensions["dx"] - graphCornerWidth
+    readonly property double yAxisLength: context.canvasDimensions["dy"] - graphCornerHeight
 
     RowLayout {
+        id: graphAreaRowLayout
+
         anchors.fill: parent
         spacing: 0
 
         ColumnLayout {
+            id: graphLeftColumnLayout
+
             Layout.fillHeight: true
             Layout.fillWidth: true
             spacing: 0
@@ -47,12 +49,12 @@ Item {
                     Repeater {
                         id: yAxisTickRepeater
 
-                        model: root.nAxisTicks
+                        model: context.nYAxisTicks
 
                         delegate: Rectangle {
                             id: yTickRectangle
 
-                            readonly property double value: index > 0 ? yAxisTickRepeater.itemAt(index - 1).value - (root.realYAxisLength / root.nAxisTicks) : root.maxY - root.realYAxisLength / (2 * root.nAxisTicks)
+                            readonly property double value: index > 0 ? yAxisTickRepeater.itemAt(index - 1).value - (root.realYAxisLength / context.nYAxisTicks) : root.maxY - root.realYAxisLength / (2 * context.nYAxisTicks)
 
                             Layout.fillHeight: true
                             Layout.preferredWidth: root.graphCornerWidth
@@ -102,6 +104,8 @@ Item {
             }
         }
         ColumnLayout {
+            id: graphRightColumnLayout
+
             Layout.fillHeight: true
             Layout.fillWidth: true
             spacing: 0
@@ -114,8 +118,43 @@ Item {
                 Layout.fillWidth: true
                 color: "white"
 
+                // Vertical gridlines
+                RowLayout {
+                    anchors.fill: parent
+                    spacing: 0
+
+                    Repeater {
+                        model: context.nXAxisTicks
+
+                        delegate: Rectangle {
+                            Layout.fillHeight: true
+                            color: "grey"
+                            visible: context.showVGridLines
+                            width: 1
+                        }
+                    }
+                }
+
+                // Horizontal gridlines
+                ColumnLayout {
+                    anchors.fill: parent
+                    spacing: 0
+
+                    Repeater {
+                        model: context.nYAxisTicks
+
+                        delegate: Rectangle {
+                            Layout.fillWidth: true
+                            color: "grey"
+                            height: 1
+                            visible: context.showHGridLines
+                        }
+                    }
+                }
+
+                // Data points
                 Repeater {
-                    model: root.model
+                    model: context.plotModel
 
                     delegate: Rectangle {
                         id: dataPoint
@@ -137,8 +176,9 @@ Item {
                         width: 8
 
                         // Apply offsets and scale factors
+                        // TODO: mapToItem is probably being used incorrectly, leading to the necessity to use these slightly awkward scale factors - need to investigate this
                         x: 1.05 * (root.realXAxisLength * (mappedXY.x - xOffset) - width) / 2
-                        y: (2 * root.realYAxisLength) * (mappedXY.y + yOffset) - (height / 2)
+                        y: 1.05 * (2 * root.realYAxisLength) * (mappedXY.y + yOffset) - (height / 2)
                     }
                 }
             }
@@ -165,12 +205,12 @@ Item {
                     Repeater {
                         id: xAxisTickRepeater
 
-                        model: root.nAxisTicks
+                        model: context.nXAxisTicks
 
                         delegate: Rectangle {
                             id: xTickRectangle
 
-                            readonly property double value: index > 0 ? xAxisTickRepeater.itemAt(index - 1).value + (root.realXAxisLength / root.nAxisTicks) : root.minX + root.realXAxisLength / (2 * root.nAxisTicks)
+                            readonly property double value: index > 0 ? xAxisTickRepeater.itemAt(index - 1).value + (root.realXAxisLength / context.nXAxisTicks) : root.minX + root.realXAxisLength / (2 * context.nXAxisTicks)
 
                             Layout.fillWidth: true
                             Layout.preferredHeight: root.graphCornerHeight

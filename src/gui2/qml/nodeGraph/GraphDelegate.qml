@@ -214,10 +214,15 @@ NodeBox {
                         readonly property Popup plotPopup: Popup {
                             id: plotContainer
 
+                            readonly property double headerHeight: 20
                             readonly property bool hovered: plotContainerHoverHandler.hovered
+                            readonly property var canvasDimensions: {
+                                            "dx": 600 / 3,
+                                            "dy": 430 / 4
+                                        }
 
-                            height: 450
-                            width: 600
+                            height: (4 * canvasDimensions["dy"]) + headerHeight
+                            width: 3 * canvasDimensions["dx"]
 
                             contentItem: Item {
                                 ColumnLayout {
@@ -227,7 +232,7 @@ NodeBox {
                                     Rectangle {
                                         id: header
 
-                                        Layout.preferredHeight: 20
+                                        Layout.preferredHeight: plotContainer.headerHeight
                                         Layout.preferredWidth: parent.width
                                         border.color: "lightgrey"
                                         border.width: 1
@@ -251,10 +256,7 @@ NodeBox {
                                     Plot1DContext {
                                         Layout.fillHeight: true
                                         Layout.fillWidth: true
-                                        canvasDimensions: {
-                                            "dx": plotContainer.width / 3,
-                                            "dy": plotContainer.height / 4
-                                        }
+                                        canvasDimensions: plotContainer.canvasDimensions
                                         plotModel: renderableData
                                         title: key
                                     }
@@ -305,7 +307,7 @@ NodeBox {
 
             enabled: !renderables.empty()
             icon.source: "qrc:/DissolveIconsModule/output.svg"
-            text: "Output"
+            text: "Output (" + renderables.rowCount() + ")"
 
             HoverHandler {
                 onHoveredChanged: {
