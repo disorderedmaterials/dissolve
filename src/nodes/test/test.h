@@ -19,6 +19,8 @@ class TestNode : public Node
      */
     private:
     //
+    int iteration_{0};
+    //
     Data1D sineData_;
     //
     Data1D cosineData_;
@@ -61,9 +63,11 @@ class TestNode : public Node
 
     private:
     //
-    static void makeSine(auto &sineData);
+    void makeSine();
     //
-    static void makeCosine(auto &cosineData);
+    void makeCosine();
+    //
+    void shiftSinusoid(Data1D &data, bool cosine = false);
 
     /*
      * Processing

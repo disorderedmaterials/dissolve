@@ -1,7 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
+#define _USE_MATH_DEFINES
 #include "nodes/test/test.h"
+#include <cmath>
 
 TestNode::TestNode(Graph *parentGraph) : Node(parentGraph)
 {
@@ -27,8 +29,8 @@ TestNode::TestNode(Graph *parentGraph) : Node(parentGraph)
     addOutput("Cosine", "A test cosine data series", cosineData_);
 
     // Fill out some test data at construction time
-    makeSine(sineData_);
-    makeCosine(cosineData_);
+    makeSine();
+    makeCosine();
 }
 
 /*
@@ -48,33 +50,46 @@ const std::optional<Configuration> &TestNode::optionalConfiguration() const { re
 TestNode::TestVariant TestNode::variant() { return variant_; }
 
 //
-static void TestNode::makeSine(auto &sineData)
+void TestNode::makeSine()
 {
     // Append sine data
-    sineData.addPoint(0, 0);
-    sineData.addPoint(0.7853981634, 0.7071067812);
-    sineData.addPoint(1.570796327, 1);
-    sineData.addPoint(2.35619449, 0.7071067812);
-    sineData.addPoint(3.141592654, 0);
-    sineData.addPoint(3.926990817, -0.7071067812);
-    sineData.addPoint(4.71238898, -1);
-    sineData.addPoint(5.497787144, -0.7071067812);
-    sineData.addPoint(6.283185307, 0);
+    sineData_.addPoint(0, 0);
+    sineData_.addPoint(0.7853981634, 0.7071067812);
+    sineData_.addPoint(1.570796327, 1);
+    sineData_.addPoint(2.35619449, 0.7071067812);
+    sineData_.addPoint(3.141592654, 0);
+    sineData_.addPoint(3.926990817, -0.7071067812);
+    sineData_.addPoint(4.71238898, -1);
+    sineData_.addPoint(5.497787144, -0.7071067812);
+    sineData_.addPoint(6.283185307, 0);
 }
 
 //
-static void TestNode::makeCosine(auto &cosineData)
+void TestNode::makeCosine()
 {
     // Append cosine data
-    cosineData.addPoint(0, 1);
-    cosineData.addPoint(0.7853981634, 0.7071067812);
-    cosineData.addPoint(1.570796327, 0);
-    cosineData.addPoint(2.35619449, -0.7071067812);
-    cosineData.addPoint(3.141592654, -1);
-    cosineData.addPoint(3.926990817, -0.7071067812);
-    cosineData.addPoint(4.71238898, 0);
-    cosineData.addPoint(5.497787144, 0.7071067812);
-    cosineData.addPoint(6.283185307, 1);
+    cosineData_.addPoint(0, 1);
+    cosineData_.addPoint(0.7853981634, 0.7071067812);
+    cosineData_.addPoint(1.570796327, 0);
+    cosineData_.addPoint(2.35619449, -0.7071067812);
+    cosineData_.addPoint(3.141592654, -1);
+    cosineData_.addPoint(3.926990817, -0.7071067812);
+    cosineData_.addPoint(4.71238898, 0);
+    cosineData_.addPoint(5.497787144, 0.7071067812);
+    cosineData_.addPoint(6.283185307, 1);
+}
+
+//
+void TestNode::shiftSinusoid(Data1D &data, bool cosine)
+{
+    Data1D shifted;
+    for (int i = 0; i < data.nValues(); i++)
+    {
+        auto x = i * 2 * M_PI / data.nValues();
+        auto arg = x + (iteration_ * M_PI);
+        shifted.addPoint(x, cosine ? cos(arg) : sin(arg));
+    }
+    data = shifted;
 }
 
 /*
@@ -96,6 +111,11 @@ NodeConstants::ProcessResult TestNode::process()
     // Standard dynamic outputs
     messageParts_.clear();
     messageParts_.insert(messageParts_.end(), message_.begin(), message_.end());
+
+    // Data plotting
+    iteration_++;
+    shiftSinusoid(sineData_);
+    shiftSinusoid(cosineData_, true);
 
     /*
      * Dynamic outputs
