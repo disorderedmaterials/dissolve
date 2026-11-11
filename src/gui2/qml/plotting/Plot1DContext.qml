@@ -45,6 +45,19 @@ Item {
                     text: "Save"
                 }
 
+                // Export data button
+                ToolButton {
+                    id: exportDataButton
+
+                    Layout.fillHeight: true
+                    ToolTip.text: "Export plot data"
+                    ToolTip.visible: hovered
+                    enabled: false // enable only when graph is stopped
+                    height: plotToolBar.implicitHeight
+                    icon.source: "qrc:/DissolveIconsModule/data.svg"
+                    text: "Export"
+                }
+
                 // N x-axis ticks button
                 ToolButton {
                     id: nXTicksButton
