@@ -255,8 +255,8 @@ Item {
                 Layout.fillWidth: true
 
                 Plot1DCanvas {
-                    Layout.fillHeight: true
-                    Layout.fillWidth: true
+                    Layout.preferredHeight: root.canvasDimensions["dy"]
+                    Layout.preferredWidth: root.canvasDimensions["dx"]
                     context: root
                 }
                 Label {

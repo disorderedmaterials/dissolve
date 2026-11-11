@@ -214,15 +214,15 @@ NodeBox {
                         readonly property Popup plotPopup: Popup {
                             id: plotContainer
 
+                            readonly property var canvasDimensions: {
+                                "dx": 430,
+                                "dy": 300
+                            }
                             readonly property double headerHeight: 20
                             readonly property bool hovered: plotContainerHoverHandler.hovered
-                            readonly property var canvasDimensions: {
-                                            "dx": 600 / 3,
-                                            "dy": 430 / 4
-                                        }
 
-                            height: (4 * canvasDimensions["dy"]) + headerHeight
-                            width: 3 * canvasDimensions["dx"]
+                            height: 1.5 * canvasDimensions["dy"]
+                            width: 1.5 * canvasDimensions["dx"]
 
                             contentItem: Item {
                                 ColumnLayout {

@@ -8,8 +8,8 @@ Item {
     id: root
 
     required property var context
-    readonly property double graphCornerHeight: context.canvasDimensions["dy"] / 3
-    readonly property double graphCornerWidth: context.canvasDimensions["dx"] / 4
+    readonly property double graphCornerHeight: context.canvasDimensions["dy"] / 8
+    readonly property double graphCornerWidth: context.canvasDimensions["dx"] / 8
     readonly property double maxX: context.plotModel.maxX()
     readonly property double maxY: context.plotModel.maxY()
     readonly property double minX: context.plotModel.minX()
@@ -159,14 +159,10 @@ Item {
                     delegate: Rectangle {
                         id: dataPoint
 
-                        readonly property point mappedXY: canvasRectangle.mapToItem(canvasRectangle, xy)
+                        // Get the point's xy coordinates in terms of the pixel length of the axes
+                        readonly property point mappedXY: Qt.point((pX * root.xAxisLength) / root.realXAxisLength, -(pY * root.yAxisLength) / root.realYAxisLength)
                         required property double pX
                         required property double pY
-                        readonly property double xOffset: root.minX * root.xAxisLength / root.realXAxisLength
-
-                        // Get the point's xy coordinates in terms of the pixel length of the axes
-                        readonly property point xy: Qt.point((pX * root.xAxisLength) / root.realXAxisLength, -(pY * root.yAxisLength) / root.realYAxisLength)
-                        readonly property double yOffset: root.maxY * root.yAxisLength / root.realYAxisLength
 
                         border.color: "cyan"
                         border.width: 1
@@ -174,11 +170,8 @@ Item {
                         height: 8
                         radius: 50
                         width: 8
-
-                        // Apply offsets and scale factors
-                        // TODO: mapToItem is probably being used incorrectly, leading to the necessity to use these slightly awkward scale factors - need to investigate this
-                        x: 1.05 * (root.realXAxisLength * (mappedXY.x - xOffset) - width) / 2
-                        y: 1.05 * (2 * root.realYAxisLength) * (mappedXY.y + yOffset) - (height / 2)
+                        x: mappedXY.x - (width / 2)
+                        y: mappedXY.y - ((height / 2) - root.maxY * root.yAxisLength / root.realYAxisLength)
                     }
                 }
             }
