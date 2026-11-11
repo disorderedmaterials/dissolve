@@ -57,7 +57,8 @@ class CellsMIMTest : public ::testing::Test
         for (auto &jCell : cfg->cells().cells())
         {
             // Check whether this cell is within range of the central one
-            if (cfg->cells().withinMinimumImageRange(iCell, &jCell, cutoff))
+            if (cfg->cells().withinMinimumImageRange(iCell->upcast<ConfigurationAtom>(), jCell.upcast<ConfigurationAtom>(),
+                                                     cutoff))
             {
                 count += std::count_if(jCell.atoms().begin(), jCell.atoms().end(),
                                        [&](const auto &j)

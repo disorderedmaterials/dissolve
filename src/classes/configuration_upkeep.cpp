@@ -50,7 +50,7 @@ void Configuration::updateAtomLocation(ConfigurationAtom *i)
     auto *cell = cells_.cell(i->r());
 
     // Need to move?
-    if (cell != i->cell())
+    if (cell->toBase() != i->cell())
     {
         if (i->cell())
             i->cell()->removeAtom(i);

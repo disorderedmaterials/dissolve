@@ -9,6 +9,7 @@
 #include <vector>
 
 // Forward Declarations
+class AtomBase;
 class ConfigurationAtom;
 class Box;
 class Matrix3;
@@ -49,7 +50,7 @@ class Molecule : public std::enable_shared_from_this<Molecule>
     // Return global atom offset of first atom
     int globalAtomOffset() const;
     // Return global index of supplied atom
-    int globalAtomIndex(const ConfigurationAtom *i) const;
+    int globalAtomIndex(const AtomBase *i) const;
     // Sets the index of the object within the parent DynamicArray
     void setArrayIndex(int index);
     // Gets the index of the object within the parent DynamicArray

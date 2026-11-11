@@ -7,8 +7,6 @@ add_library(
   bondFunctions.cpp
   box.cpp
   braggReflection.cpp
-  cell.cpp
-  cellArray.cpp
   configuration.cpp
   configuration_box.cpp
   configuration_contents.cpp

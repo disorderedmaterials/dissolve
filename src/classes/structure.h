@@ -7,6 +7,9 @@
 #include "classes/atom.h"
 #include "classes/bond.h"
 #include "classes/box.h"
+#include "classes/cell.h"
+#include "classes/speciesAtom.h"
+#include "classes/speciesBond.h" // This include is *not* optional on Windows, due to template restrictions
 #include <set>
 #include <vector>
 
@@ -32,6 +35,18 @@ class StructureAtom : public Atom<Bond<StructureAtom>>
     {
         name_ = name;
         Atom::set(Elements::Unknown, r, q);
+    }
+
+    // Return scaling type and factors (electrostatic, van der Waals) to employ with specified Atom
+    AtomBase::ScaledInteractionDefinition scaling(const AtomBase *j) const override
+    {
+        return {AtomBase::ScaledInteraction::NotScaled, 1.0, 1.0};
+    }
+
+    const std::shared_ptr<Molecule> &molecule() const override
+    {
+        throw std::runtime_error("Attempted to access Molecule from Structure Atom, which should never happen.  Please contact "
+                                 "the Dissolve developers to inform them of this bug.");
     }
 };
 

@@ -23,16 +23,19 @@ void ConfigurationAtom::setMolecule(std::shared_ptr<Molecule> mol) { molecule_ =
 // Return Molecule in which this Atom exists
 const std::shared_ptr<Molecule> &ConfigurationAtom::molecule() const { return molecule_; }
 
+double ConfigurationAtom::q() const { return speciesAtom_->q(); }
+
 /*
  * Intramolecular Information
  */
 
 // Return scaling type and factors (electrostatic, van der Waals) to employ with specified Atom
-SpeciesAtom::ScaledInteractionDefinition ConfigurationAtom::scaling(const ConfigurationAtom *j) const
+AtomBase::ScaledInteractionDefinition ConfigurationAtom::scaling(const AtomBase *j) const
 {
+    auto jj = dynamic_cast<const ConfigurationAtom *>(j);
     assert(speciesAtom_ != nullptr);
-    assert(j != nullptr);
-    assert(j->speciesAtom() != nullptr);
+    assert(jj != nullptr);
+    assert(jj->speciesAtom() != nullptr);
 
-    return speciesAtom_->scaling(j->speciesAtom());
+    return speciesAtom_->scaling(jj->speciesAtom());
 }
