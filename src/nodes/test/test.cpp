@@ -50,46 +50,31 @@ const std::optional<Configuration> &TestNode::optionalConfiguration() const { re
 TestNode::TestVariant TestNode::variant() { return variant_; }
 
 //
-void TestNode::makeSine()
+void TestNode::makeSine(double phi)
 {
     // Append sine data
-    sineData_.addPoint(0, 0);
-    sineData_.addPoint(0.7853981634, 0.7071067812);
-    sineData_.addPoint(1.570796327, 1);
-    sineData_.addPoint(2.35619449, 0.7071067812);
-    sineData_.addPoint(3.141592654, 0);
-    sineData_.addPoint(3.926990817, -0.7071067812);
-    sineData_.addPoint(4.71238898, -1);
-    sineData_.addPoint(5.497787144, -0.7071067812);
-    sineData_.addPoint(6.283185307, 0);
+    auto dx = M_PI / 4;
+    const auto nPoints = 9;
+    for (int i = 0; i < 9; i++)
+    {
+        auto x = i * dx;
+        auto arg = x + phi;
+        sineData_.addPoint(x, sin(arg));
+    }
 }
 
 //
-void TestNode::makeCosine()
+void TestNode::makeCosine(double phi)
 {
     // Append cosine data
-    cosineData_.addPoint(0, 1);
-    cosineData_.addPoint(0.7853981634, 0.7071067812);
-    cosineData_.addPoint(1.570796327, 0);
-    cosineData_.addPoint(2.35619449, -0.7071067812);
-    cosineData_.addPoint(3.141592654, -1);
-    cosineData_.addPoint(3.926990817, -0.7071067812);
-    cosineData_.addPoint(4.71238898, 0);
-    cosineData_.addPoint(5.497787144, 0.7071067812);
-    cosineData_.addPoint(6.283185307, 1);
-}
-
-//
-void TestNode::shiftSinusoid(Data1D &data, bool cosine)
-{
-    Data1D shifted;
-    for (int i = 0; i < data.nValues(); i++)
+    auto dx = M_PI / 4;
+    const auto nPoints = 9;
+    for (int i = 0; i < 9; i++)
     {
-        auto x = i * 2 * M_PI / data.nValues();
-        auto arg = x + (iteration_ * M_PI);
-        shifted.addPoint(x, cosine ? cos(arg) : sin(arg));
+        auto x = i * dx;
+        auto arg = x + phi;
+        cosineData_.addPoint(x, cos(arg));
     }
-    data = shifted;
 }
 
 /*
@@ -114,8 +99,8 @@ NodeConstants::ProcessResult TestNode::process()
 
     // Data plotting
     iteration_++;
-    shiftSinusoid(sineData_);
-    shiftSinusoid(cosineData_, true);
+    makeSine(iteration_ * (M_PI / 4));
+    makeCosine(iteration_ * (M_PI / 4));
 
     /*
      * Dynamic outputs

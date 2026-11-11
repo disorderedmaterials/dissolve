@@ -63,11 +63,9 @@ class TestNode : public Node
 
     private:
     //
-    void makeSine();
+    void makeSine(double phi = 0);
     //
-    void makeCosine();
-    //
-    void shiftSinusoid(Data1D &data, bool cosine = false);
+    void makeCosine(double phi = 0);
 
     /*
      * Processing
