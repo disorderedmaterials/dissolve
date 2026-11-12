@@ -30,6 +30,7 @@ int IterableGraph::nIterations() const { return nIterations_.asInteger(); }
 LoopBacksNode *IterableGraph::loopBacks() const { return loopBacks_; }
 
 // Return loop edges
+Graph::Edges &IterableGraph::loopEdges() { return loopEdges_; }
 const Graph::Edges &IterableGraph::loopEdges() const { return loopEdges_; }
 
 // Set the loopbacks corresponding to the graph inputs

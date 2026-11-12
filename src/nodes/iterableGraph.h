@@ -48,6 +48,8 @@ class IterableGraph : public Graph
     Edge *addOutputLoopEdge(std::string_view sourceOutput, Edge *edge);
     // Remove edge from node map
     Edge *removeOutputLoopEdge(std::string_view sourceOutput, Edge *edge);
+    // Remove specified loop edge
+    bool removeEdge(LoopEdge *edgeToRemove);
 
     public:
     // Set the loopbacks corresponding to the graph inputs
@@ -59,9 +61,8 @@ class IterableGraph : public Graph
     // Return loopbacks node
     LoopBacksNode *loopBacks() const;
     // Return loop edges
+    Graph::Edges &loopEdges();
     const Edges &loopEdges() const;
-    // Remove specified loop edge
-    bool removeEdge(LoopEdge *edgeToRemove);
     // Find loop edge between nodes
     LoopEdge *findLoopEdge(const EdgeDefinition &definition) const;
 
