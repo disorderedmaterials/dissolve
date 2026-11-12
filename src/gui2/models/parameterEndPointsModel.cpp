@@ -2,6 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "gui2/models/parameterEndPointsModel.h"
+#include "nodes/iterableGraph.h"
 #include "nodes/edge.h"
 
 // Return vector of parameter endpoint QQuickItem * pairs
@@ -49,12 +50,14 @@ void ParameterEndPointsModel::remove(const std::string &sourceNode, const std::s
 }
 
 // Add all parameter endpoint pairs from a graph's edges
-void ParameterEndPointsModel::resetFromEdges(const std::vector<std::unique_ptr<Edge>> &edges,
+void ParameterEndPointsModel::resetFromEdges(GraphEdges &edges,
                                              const std::map<const Node *, std::map<std::string, QQuickItem *>> &curveOutputsMap,
                                              const std::map<const Node *, std::map<std::string, QQuickItem *>> &curveInputsMap)
 {
     clear();
-    for (const auto &edge : edges)
+
+    // Add standard edges
+    for (const auto &edge : edges.standard())
     {
         const auto *sourceNodePtr = &(edge->sourceNode());
         const auto &output = edge->sourceOutput();
@@ -62,6 +65,19 @@ void ParameterEndPointsModel::resetFromEdges(const std::vector<std::unique_ptr<E
         const auto &input = edge->targetInput();
         auto outputEndPointsMap = curveOutputsMap.find(sourceNodePtr)->second;
         auto inputEndPointsMap = curveInputsMap.find(targetNodePtr)->second;
+        add(outputEndPointsMap[std::string(output.name())], inputEndPointsMap[std::string(input.name())]);
+    }
+
+    // Add loop edges if they exist
+    auto iterable = dynamic_cast<IterableGraph *>(edges.graph());
+    for (const auto &edge : edges.loop())
+    {
+        const auto *sourceNodePtr = &(edge->sourceNode());
+        const auto &output = edge->sourceOutput();
+        const auto *targetNodePtr = &(edge->targetNode());
+        const auto &input = edge->targetInput();
+        auto outputEndPointsMap = curveOutputsMap.find(sourceNodePtr)->second;
+        auto inputEndPointsMap = curveInputsMap.find(iterable->loopBacks())->second;
         add(outputEndPointsMap[std::string(output.name())], inputEndPointsMap[std::string(input.name())]);
     }
 }

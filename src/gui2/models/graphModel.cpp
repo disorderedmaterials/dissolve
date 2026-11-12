@@ -2,7 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "graphModel.h"
-#include "graphEdgeModel.h"
+#include "graphEdges.h"
 #include "graphNodeModel.h"
 #include "nodes/edge.h"
 #include <QAbstractItemModel>
@@ -15,12 +15,7 @@
 
 GraphModel::GraphModel() : nodes_(this), graph_(nullptr), edges_(this, graph_)
 {
-    // TODO: Using the current edge management method (by rendering edges between the positions of QML objects corresponding to
-    // drag/drop locations) this connection has no effect. This model's exposed roles sourceX, sourceY, targetX, and targetY,
-    // are not used. We should consider a refactor to remove this unused code, and potentially relegate the GraphEdgeModel to a
-    // QObject derivate, or even a simple struct interface for edges.
-    //
-    // QObject::connect(&nodes_, &GraphNodeModel::updatePosition, &edges_, &GraphEdgeModel::updatePosition);
+    QObject::connect(this, &GraphModel::graphChanged, &edges_, &GraphEdges::update);
 }
 
 // Return the graph status
@@ -60,13 +55,13 @@ void GraphModel::setGraph(Graph *graph)
 
     graph_ = graph;
 
-    auto iterator = dynamic_cast<IterableGraph *>(graph_);
-    if (iterator)
-        iterator->setLoopBacks();
+    // Check if graph is iterable and initialise its loopbacks if true
+    iterable_ = dynamic_cast<IterableGraph *>(graph_);
+    if (iterable_)
+        iterable_->setLoopBacks();
 
     parameterEndPoints_.clear();
     nodes_.reset();
-    edges_.reset();
     Q_EMIT graphChanged();
 }
 
@@ -83,6 +78,9 @@ NodeWrapper &GraphModel::wrappedNode(std::string_view nodeName)
                            [nodeName](const auto &nodeWrapper) { return nodeWrapper.node()->name() == nodeName; });
     return wrapped_[std::distance(wrapped_.begin(), it)];
 }
+
+//
+IterableGraph *GraphModel::iterable() { return iterable_; }
 
 // Returns the graph status icon
 QUrl GraphModel::statusIcon()
@@ -219,13 +217,13 @@ void GraphModel::deleteNode(int idx)
     Q_EMIT graphChanged();
 }
 
-GraphEdgeModel *GraphModel::edges() { return &edges_; }
+GraphEdges *GraphModel::edges() { return &edges_; }
 
 int GraphModel::nEdges()
 {
     if (graph_ == nullptr)
         return 0;
-    return edges_.rowCount();
+    return edges_.count();
 }
 
 // Select a specific output for connection
@@ -276,44 +274,56 @@ bool GraphModel::renameNode(QString currentName, QString newName)
 // Select an existing edge for deletion, determined from the target node and input parameter name
 void GraphModel::deleteEdgeFromTarget(QString tgtNode, QString tgtInput)
 {
-    auto edge = graph_->findEdgeByTarget(tgtNode.toStdString(), tgtInput.toStdString());
+    Edge *edge;
+    if (iterable_ && tgtNode == "LoopBacks")
+        edge = Graph::findEdgeByTarget("Inputs", tgtInput.toStdString(), iterable_->loopEdges());
+    else
+        edge = Graph::findEdgeByTarget(tgtNode.toStdString(), tgtInput.toStdString(), graph_->edges());
+
+    if (!edge)
+        return;
+
     auto sourceNode = std::string(edge->sourceNode().name());
-    auto targetNode = std::string(edge->targetNode().name());
+    auto targetNode = tgtNode == "LoopBacks" ? tgtNode.toStdString() : std::string(edge->targetNode().name());
     auto sourceOutput = std::string(edge->sourceOutput().name());
     auto targetInput = std::string(edge->targetInput().name());
-    if (edges_.remove(*edge))
+    if (edges_.remove(edge))
         parameterEndPoints()->remove(sourceNode, sourceOutput, targetNode, targetInput);
 }
 
 // Select all relevant edges for deletion, determined from the source node and output parameter name
 void GraphModel::deleteEdgeFromSource(QString sourceNode, QString sourceInput)
 {
-    auto edges = graph_->findEdgesBySource(sourceNode.toStdString(), sourceInput.toStdString());
-    for (const auto &edge : edges)
+    // Look in loop edges
+    std::vector<Edge *> loopEdges;
+    if (iterable_)
+        loopEdges = Graph::findEdgesBySource(sourceNode.toStdString(), sourceInput.toStdString(), iterable_->loopEdges());
+
+    // Look in standard edges
+    auto standardEdges = Graph::findEdgesBySource(sourceNode.toStdString(), sourceInput.toStdString(), graph()->edges());
+
+    if (standardEdges.empty() && loopEdges.empty())
+        return;
+
+    for (const auto &edge : standardEdges)
     {
         auto sourceNode = std::string(edge->sourceNode().name());
         auto targetNode = std::string(edge->targetNode().name());
         auto sourceOutput = std::string(edge->sourceOutput().name());
         auto targetInput = std::string(edge->targetInput().name());
-        if (edges_.remove(*edge))
+        if (edges_.remove(edge))
             parameterEndPoints()->remove(sourceNode, sourceOutput, targetNode, targetInput);
     }
-}
 
-/* UNUSED
-// public wrapper of connect_
-bool GraphModel::connect(std::string source, int sourceIndex, std::string destination, int destinationIndex)
-{
-    // FIXME
-    return false;
+    for (const auto &edge : loopEdges)
+    {
+        auto sourceNode = std::string(edge->sourceNode().name());
+        auto sourceOutput = std::string(edge->sourceOutput().name());
+        auto targetInput = std::string(edge->targetInput().name());
+        if (edges_.remove(edge))
+            parameterEndPoints()->remove(sourceNode, sourceOutput, "LoopBacks", targetInput);
+    }
 }
-// Public wrapper of disconnect_
-bool GraphModel::disconnect(std::string source, int sourceIndex, std::string destination, int destinationIndex)
-{
-    // FIXME
-    return false;
-}
-*/
 
 // Return bool - true if node exists in graph
 bool GraphModel::isValidNode(QVariant nodeName) const { return graph_->findNode(nodeName.toString().toStdString()); }
@@ -379,10 +389,7 @@ int GraphModel::indexByName(std::string_view name)
 void GraphModel::reload() { setGraph(graph_); }
 
 // Reset the end points (this completely re-renders the edges from the base graph's knowledge of them)
-void GraphModel::resetEndPoints()
-{
-    parameterEndPoints_.resetFromEdges(graph_->edges(), curveOutputEndPoints_, curveInputEndPoints_);
-}
+void GraphModel::resetEndPoints() { parameterEndPoints_.resetFromEdges(edges_, curveOutputEndPoints_, curveInputEndPoints_); }
 
 // Rename an input parameter
 bool GraphModel::renameInput(QString nodeName, QString currentName, QString newName)
@@ -562,7 +569,7 @@ void GraphModel::reconstructed(QString constructedName)
         if (updateEndPoints)
         {
             reconstructibleNodes_.reset();
-            parameterEndPoints_.resetFromEdges(graph_->edges(), curveOutputEndPoints_, curveInputEndPoints_);
+            resetEndPoints();
         }
     }
 }
@@ -571,9 +578,14 @@ void GraphModel::reconstructed(QString constructedName)
 bool GraphModel::hasConnections(QString nodeName, QString paramName)
 {
     if (graph_->findNode(nodeName.toStdString())->findInput(paramName.toStdString()))
-        return graph_->findEdgeByTarget(nodeName.toStdString(), paramName.toStdString()) != nullptr;
+        return ((Graph::findEdgeByTarget(nodeName.toStdString(), paramName.toStdString(), graph_->edges()) != nullptr) ||
+                (iterable_ ? Graph::findEdgeByTarget(nodeName.toStdString(), paramName.toStdString(), iterable_->loopEdges())
+                           : nullptr) != nullptr);
     else if (graph_->findNode(nodeName.toStdString())->findOutput(paramName.toStdString()))
-        return !graph_->findEdgesBySource(nodeName.toStdString(), paramName.toStdString()).empty();
+        return !Graph::findEdgesBySource(nodeName.toStdString(), paramName.toStdString(), graph_->edges()).empty() ||
+                 !(iterable_ ? Graph::findEdgesBySource(nodeName.toStdString(), paramName.toStdString(), iterable_->loopEdges())
+                            : std::vector<Edge *>{})
+                     .empty();
     else
         return false;
 }
@@ -582,11 +594,10 @@ bool GraphModel::hasConnections(QString nodeName, QString paramName)
 // been deferred
 void GraphModel::addDeferredEndPoints()
 {
-    const auto &edges = graph_->edges();
-    if (edges.empty())
+    if (edges_.count() == 0)
         return;
 
-    const auto edge = edges.back().get();
+    const auto edge = edges_.standard().back();
     addEndPoints(std::string(edge->sourceNode().name()), std::string(edge->sourceOutput().name()),
                  std::string(edge->targetNode().name()), std::string(edge->targetInput().name()));
 }

@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "graphEdgeModel.h"
+#include "gui2/models/graphEdges.h"
 #include "gui2/models/graphNodeModel.h"
 #include "gui2/models/nodeWrapper.h"
 #include "gui2/models/parameterEndPointsModel.h"
@@ -21,7 +21,7 @@
 
 class ParameterEndPointsModel;
 class GraphNodeModel;
-class GraphEdgeModel;
+class GraphEdges;
 
 // This is the base class for any node graph type
 class GraphModel : public QObject
@@ -38,7 +38,7 @@ class GraphModel : public QObject
 
     // Read-only graph models
     Q_PROPERTY(ParameterEndPointsModel *parameterEndPoints READ parameterEndPoints NOTIFY graphChanged);
-    Q_PROPERTY(GraphEdgeModel *edges READ edges NOTIFY graphChanged);
+    Q_PROPERTY(GraphEdges *edges READ edges NOTIFY graphChanged);
     Q_PROPERTY(GraphNodeModel *nodes READ nodes NOTIFY graphChanged);
 
     // Graph object
@@ -48,7 +48,7 @@ class GraphModel : public QObject
     Q_PROPERTY(QSizeF canvasDimensions READ canvasDimensions WRITE setCanvasDimensions NOTIFY canvasDimensionsChanged);
 
     friend GraphNodeModel;
-    friend GraphEdgeModel;
+    friend GraphEdges;
 
     public:
     using NodeParameterEndPointsMap = std::map<const Node *, std::map<std::string, QQuickItem *>>;
@@ -78,11 +78,13 @@ class GraphModel : public QObject
     // The model for the edge curve end points corresponding to parameter drop areas
     ParameterEndPointsModel *parameterEndPoints();
     // The model for the edges in the graph
-    GraphEdgeModel *edges();
+    GraphEdges *edges();
     // The model for the nodes in the graph
     GraphNodeModel *nodes();
     //
     NodeWrapper &wrappedNode(std::string_view nodeName);
+    //
+    IterableGraph *iterable();
     // Returns the graph status icon
     QUrl statusIcon();
     // The total number of nodes in the graph
@@ -141,9 +143,11 @@ class GraphModel : public QObject
     // The abstract data model for the nodes
     GraphNodeModel nodes_;
     // The abstract data model for the edges between nodes
-    GraphEdgeModel edges_;
+    GraphEdges edges_;
     // The graph being modelled
     Graph *graph_;
+    // The iterable graph (null unless this graph is of type IterableGraph)
+    IterableGraph *iterable_{nullptr};
     // Graph nodes wrapped in the wrappers
     std::vector<NodeWrapper> wrapped_;
     // Get index of name
@@ -180,16 +184,6 @@ class GraphModel : public QObject
     void addEndPoints(std::string sourceNodeName, std::string sourceParamName, std::string targetNodeName,
                       std::string targetParamName);
 
-    /* UNUSED
-    private:
-    // Check whether a given source and destination can be connected
-    bool isValidEdgeSource_(Edge &edge);
-    // Connect two nodes
-    bool connect_(Edge &edge);
-    // Remove a connection
-    bool disconnect_(Edge &edge);
-    */
-
     Q_SIGNALS:
     void graphChanged();
     void canvasDimensionsChanged();
@@ -224,10 +218,4 @@ class GraphModel : public QObject
     void upLevel();
     // Move into an inner graph
     void descend(int index);
-    /* UNUSED
-    // public wrapper of connect_
-    bool connect(std::string source, int sourceIndex, std::string destination, int destinationIndex);
-    // Public wrapper of disconnect_
-    bool disconnect(std::string source, int sourceIndex, std::string destination, int destinationIndex);
-    */
 };

@@ -4,7 +4,7 @@ set(nodeGraphModels_MOC_HDRS
     enumRegistry.h
     exampleGraphModel.h
     graphModelBase.h
-    graphEdgeModel.h
+    graphEdges.h
     graphNodeModel.h
     generatorGraphModel.h
     nodeWrapper.h
@@ -17,7 +17,7 @@ set(nodeGraphModels_MOC_HDRS
 set(nodeGraphModel_SRCS
     enumOptionsModel.cpp
     enumRegistry.cpp
-    graphEdgeModel.cpp
+    graphEdges.cpp
     graphModel.cpp
     graphNodeModel.cpp
     parameterModel.cpp

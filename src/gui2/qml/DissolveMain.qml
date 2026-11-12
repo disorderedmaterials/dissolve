@@ -360,7 +360,6 @@ ApplicationWindow {
                 id: graph
 
                 anchors.fill: parent
-                edgeModel: graphModel.edges
                 nodeModel: graphModel.nodes
                 parameterEndPointsModel: graphModel.parameterEndPoints
                 rootGraphModel: graphModel

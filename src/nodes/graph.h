@@ -98,9 +98,10 @@ class Graph : public Node
     // Find edge between nodes
     Edge *findEdge(const EdgeDefinition &definition) const;
     // Find edge between nodes based on the target node and input
-    Edge *findEdgeByTarget(const std::string &targetNode, const std::string &targetInput) const;
+    static Edge *findEdgeByTarget(const std::string &targetNode, const std::string &targetInput, const Edges &edges);
     // Find edges between nodes based on the source node and output
-    std::vector<Edge *> findEdgesBySource(const std::string &sourceNode, const std::string &sourceOutput) const;
+    static std::vector<Edge *> findEdgesBySource(const std::string &sourceNode, const std::string &sourceOutput,
+                                                 const Edges &edges);
     // Return named node, if it exists
     Node *findNode(std::string_view nodeName);
     const Node *findNode(std::string_view nodeName) const;
