@@ -28,17 +28,21 @@ class GraphEdges : public QObject
 
     private:
     //
-    std::vector<Edge *> loop_;
+    Graph::Edges *loop_;
     //
-    std::vector<Edge *> standard_;
+    Graph::Edges *standard_;
 
     public:
     //
     Graph *&graph();
     //
-    const std::vector<Edge *> &loop() const;
+    const Graph::Edges *loop() const;
     //
-    const std::vector<Edge *> &standard() const;
+    const Graph::Edges *standard() const;
+    //
+    void setLoopEdges(Graph::Edges *edges);
+    //
+    void setEdges(Graph::Edges *edges);
     //
     std::vector<const Edge *>::iterator find(const Edge *edge);
     // Remove an edge. Returns false if the edge does not exist
@@ -55,8 +59,6 @@ class GraphEdges : public QObject
     Q_INVOKABLE bool edgeEditMode();
 
     public Q_SLOTS:
-    //
-    void update();
     //
     int count();
 

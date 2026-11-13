@@ -61,6 +61,7 @@ class IterableGraph : public Graph
     // Return loopbacks node
     LoopBacksNode *loopBacks() const;
     // Return loop edges
+    Graph::Edges &loopEdges();
     const Edges &loopEdges() const;
     // Find loop edge between nodes
     LoopEdge *findLoopEdge(const EdgeDefinition &definition) const;

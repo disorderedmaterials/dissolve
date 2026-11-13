@@ -2,8 +2,8 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "gui2/models/parameterEndPointsModel.h"
-#include "nodes/iterableGraph.h"
 #include "nodes/edge.h"
+#include "nodes/iterableGraph.h"
 
 // Return vector of parameter endpoint QQuickItem * pairs
 ParameterEndPointsModel::ParameterEndPoints &ParameterEndPointsModel::endPoints() { return endPoints_; }
@@ -57,8 +57,9 @@ void ParameterEndPointsModel::resetFromEdges(GraphEdges &edges,
     clear();
 
     // Add standard edges
-    for (const auto &edge : edges.standard())
+    for (int i = 0; i < edges.standard()->size(); i++)
     {
+        const auto *edge = edges.standard()->at(i).get();
         const auto *sourceNodePtr = &(edge->sourceNode());
         const auto &output = edge->sourceOutput();
         const auto *targetNodePtr = &(edge->targetNode());
@@ -70,8 +71,9 @@ void ParameterEndPointsModel::resetFromEdges(GraphEdges &edges,
 
     // Add loop edges if they exist
     auto iterable = dynamic_cast<IterableGraph *>(edges.graph());
-    for (const auto &edge : edges.loop())
+    for (int i = 0; i < edges.loop()->size(); i++)
     {
+        const auto *edge = edges.loop()->at(i).get();
         const auto *sourceNodePtr = &(edge->sourceNode());
         const auto &output = edge->sourceOutput();
         const auto *targetNodePtr = &(edge->targetNode());

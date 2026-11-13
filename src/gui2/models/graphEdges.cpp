@@ -7,7 +7,10 @@
 #include <qnamespace.h>
 #include <stdexcept>
 
-GraphEdges::GraphEdges(GraphModel *parent, Graph *&graph) : parent_(parent), graph_(graph) {}
+GraphEdges::GraphEdges(GraphModel *parent, Graph *&graph)
+    : parent_(parent), graph_(graph), standard_(&graph->edges()), loop_(nullptr)
+{
+}
 
 GraphEdges::GraphEdges(const GraphEdges &other) : graph_(other.graph_) {}
 
@@ -15,29 +18,19 @@ GraphEdges::GraphEdges(const GraphEdges &other) : graph_(other.graph_) {}
 Graph *&GraphEdges::graph() { return graph_; }
 
 //
-const std::vector<Edge *> &GraphEdges::loop() const { return loop_; }
+const Graph::Edges *GraphEdges::loop() const { return loop_; }
 
 //
-const std::vector<Edge *> &GraphEdges::standard() const { return standard_; }
+const Graph::Edges *GraphEdges::standard() const { return standard_; }
 
 //
-void GraphEdges::update()
-{
-    standard_.clear();
-    loop_.clear();
-
-    // Update loop edges, if any exist
-    if (parent_->iterable())
-        for (const auto &loopEdge : parent_->iterable()->loopEdges())
-            loop_.push_back(loopEdge.get());
-
-    // Update standard edges
-    for (const auto &edge : graph_->edges())
-        standard_.push_back(edge.get());
-}
+void GraphEdges::setLoopEdges(Graph::Edges *edges) { loop_ = edges; }
 
 //
-int GraphEdges::count() { return standard_.size() + loop_.size(); }
+void GraphEdges::setEdges(Graph::Edges *edges) { standard_ = edges; }
+
+//
+int GraphEdges::count() { return (standard_ ? standard_->size() : 0) + (loop_ ? loop_->size() : 0); }
 
 // Remove an edge. Returns false if the edge does not exist
 bool GraphEdges::remove(Edge *edge)
@@ -59,14 +52,15 @@ void GraphEdges::removeConnected(std::string nodeName)
     };
 
     // Remove connected standard edges
-    for (const auto &edge : standard_)
-        if (toRemove(edge))
-            remove(edge);
+    for (int i = 0; i < standard_->size(); i++)
+        if (toRemove(standard_->at(i)))
+            remove(standard_->at(i).get());
 
-    // Remove connected loop edges
-    for (const auto &edge : loop_)
-        if (toRemove(edge))
-            remove(edge);
+    // Remove connected loop edges, if any exist
+    if (loop_)
+        for (int i = 0; i < loop_->size(); i++)
+            if (toRemove(loop_->at(i)))
+                remove(loop_->at(i).get());
 }
 
 // Create a new edge. Returns false if the edge could not be created

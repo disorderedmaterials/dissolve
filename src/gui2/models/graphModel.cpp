@@ -13,10 +13,7 @@
 #include <set>
 #include <stdexcept>
 
-GraphModel::GraphModel() : nodes_(this), graph_(nullptr), edges_(this, graph_)
-{
-    QObject::connect(this, &GraphModel::graphChanged, &edges_, &GraphEdges::update);
-}
+GraphModel::GraphModel() : nodes_(this), graph_(nullptr), edges_(this, graph_) {}
 
 // Return the graph status
 const std::variant<GraphModel::GraphGlobalStates, NodeConstants::ProcessResult> &GraphModel::graphStatus() const
@@ -53,13 +50,21 @@ void GraphModel::setGraph(Graph *graph)
             reconstructibleNodes_->push_back(std::string(node->name()));
     }
 
+    // Set the graph
     graph_ = graph;
+
+    // Set the graph's edges
+    edges_.setEdges(&graph_->edges());
 
     // Check if graph is iterable and initialise its loopbacks if true
     iterable_ = dynamic_cast<IterableGraph *>(graph_);
     if (iterable_)
+    {
+        edges_.setLoopEdges(&iterable_->loopEdges());
         iterable_->setLoopBacks();
+    }
 
+    // Reset this graph's nodes and parameter endpoints models
     parameterEndPoints_.clear();
     nodes_.reset();
     Q_EMIT graphChanged();
@@ -274,10 +279,14 @@ bool GraphModel::renameNode(QString currentName, QString newName)
 // Select an existing edge for deletion, determined from the target node and input parameter name
 void GraphModel::deleteEdgeFromTarget(QString tgtNode, QString tgtInput)
 {
-    Edge *edge;
+    Edge *edge = nullptr;
+
+    // Find in loop edges if this is an iterable graph
     if (iterable_ && tgtNode == "LoopBacks")
         edge = Graph::findEdgeByTarget("Inputs", tgtInput.toStdString(), iterable_->loopEdges());
-    else
+
+    // Find in standard edges if not found
+    if (!edge)
         edge = Graph::findEdgeByTarget(tgtNode.toStdString(), tgtInput.toStdString(), graph_->edges());
 
     if (!edge)
@@ -294,12 +303,12 @@ void GraphModel::deleteEdgeFromTarget(QString tgtNode, QString tgtInput)
 // Select all relevant edges for deletion, determined from the source node and output parameter name
 void GraphModel::deleteEdgeFromSource(QString sourceNode, QString sourceInput)
 {
-    // Look in loop edges
+    // Find in loop edges
     std::vector<Edge *> loopEdges;
     if (iterable_)
         loopEdges = Graph::findEdgesBySource(sourceNode.toStdString(), sourceInput.toStdString(), iterable_->loopEdges());
 
-    // Look in standard edges
+    // Find in standard edges
     auto standardEdges = Graph::findEdgesBySource(sourceNode.toStdString(), sourceInput.toStdString(), graph()->edges());
 
     if (standardEdges.empty() && loopEdges.empty())
@@ -583,9 +592,9 @@ bool GraphModel::hasConnections(QString nodeName, QString paramName)
                            : nullptr) != nullptr);
     else if (graph_->findNode(nodeName.toStdString())->findOutput(paramName.toStdString()))
         return !Graph::findEdgesBySource(nodeName.toStdString(), paramName.toStdString(), graph_->edges()).empty() ||
-                 !(iterable_ ? Graph::findEdgesBySource(nodeName.toStdString(), paramName.toStdString(), iterable_->loopEdges())
-                            : std::vector<Edge *>{})
-                     .empty();
+               !(iterable_ ? Graph::findEdgesBySource(nodeName.toStdString(), paramName.toStdString(), iterable_->loopEdges())
+                           : std::vector<Edge *>{})
+                    .empty();
     else
         return false;
 }
@@ -597,7 +606,7 @@ void GraphModel::addDeferredEndPoints()
     if (edges_.count() == 0)
         return;
 
-    const auto edge = edges_.standard().back();
+    const auto *edge = edges_.standard()->back().get();
     addEndPoints(std::string(edge->sourceNode().name()), std::string(edge->sourceOutput().name()),
                  std::string(edge->targetNode().name()), std::string(edge->targetInput().name()));
 }

@@ -388,7 +388,7 @@ ApplicationWindow {
                         }
                         Label {
                             padding: 2
-                            text: "Nodes: " + "<b>%1</b>".arg(graphModel.nodeCount - 2) // Ignore two (inputs and outputs)
+                            text: "Nodes: " + "<b>%1</b>".arg(graphModel.nodeCount - (graphModel.atRoot ? 2 : 0))
                         }
                         Label {
                             padding: 2
