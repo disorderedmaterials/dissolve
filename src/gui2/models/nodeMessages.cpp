@@ -172,6 +172,14 @@ void NodeMessages::setGraphModel(GraphModel *graphModel)
                          flags_.setFlag(NodeMessages::Invalid);
                          peekNode();
                      });
+
+    if (!sourceNode())
+        return;
+
+    auto &wrappedNode = graphModel_->wrappedNode(sourceNode()->name());
+    QObject::connect(this, &NodeMessages::peeked, wrappedNode.renderableModel(), &RenderableModel::update);
+
+    // Object has been initialised
     ready_ = true;
 }
 

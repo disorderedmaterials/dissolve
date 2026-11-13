@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "graphEdges.h"
 #include "nodes/node.h"
 #include <QAbstractListModel>
 #include <QQuickItem>
@@ -37,7 +38,7 @@ class ParameterEndPointsModel : public QAbstractListModel
     void remove(const std::string &sourceNode, const std::string &sourceOutput, const std::string &targetNode,
                 const std::string &targetInput);
     // Add all parameter endpoint DropArea pairs from a graph's edges
-    void resetFromEdges(const std::vector<std::unique_ptr<Edge>> &edges,
+    void resetFromEdges(GraphEdges &edges,
                         const std::map<const Node *, std::map<std::string, QQuickItem *>> &curveOutputsMap,
                         const std::map<const Node *, std::map<std::string, QQuickItem *>> &curveInputsMap);
     // Clear all end points

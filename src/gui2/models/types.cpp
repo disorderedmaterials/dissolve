@@ -10,6 +10,7 @@
 #include "gui2/models/legacy/speciesModel.h"
 #include "gui2/models/nodeMessages.h"
 #include "gui2/models/nodeRegistrySortFilterModel.h"
+#include "gui2/models/plot/renderableModel.h"
 #include <QQmlEngine>
 #include <QSortFilterProxyModel>
 
@@ -27,4 +28,6 @@ void Types::registerDissolveQmlTypes()
     qmlRegisterType<SimpleForcefieldModel>(PROJECT, 1, 0, "SimpleForcefieldModel");
     qmlRegisterType<NodeRegistrySortFilterModel>(PROJECT, 1, 0, "NodeRegistrySortFilterModel");
     qmlRegisterType<NodeMessages>(PROJECT, 1, 0, "NodeMessages");
+    qmlRegisterType<RenderableModel>(PROJECT, 1, 0, "RenderableModel");
+    qmlRegisterType<Plot1DModel>(PROJECT, 1, 0, "Plot1DModel");
 }

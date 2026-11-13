@@ -108,6 +108,7 @@ QHash<int, QByteArray> GraphNodeModel::roleNames() const
     roles[Qt::UserRole + (int)INPUTS] = "inputs";
     roles[Qt::UserRole + (int)OUTPUTS] = "outputs";
     roles[Qt::UserRole + (int)OPTIONS] = "options";
+    roles[Qt::UserRole + (int)RENDERABLES] = "renderables";
     roles[Qt::UserRole + (int)HAS_INNER_GRAPH] = "hasInnerGraph";
     roles[Qt::UserRole + (int)IS_ROOT_NODE] = "isRootNode";
     roles[Qt::UserRole + (int)IS_ITERABLE] = "isIterable";
@@ -161,6 +162,8 @@ QVariant GraphNodeModel::data(const QModelIndex &index, int role) const
             return QVariant::fromValue(item.outputs.get());
         case OPTIONS:
             return QVariant::fromValue(item.options.get());
+        case RENDERABLES:
+            return QVariant::fromValue(item.renderables.get());
         case HAS_INNER_GRAPH:
             return item.hasInner();
         case IS_ROOT_NODE:

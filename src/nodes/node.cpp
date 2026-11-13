@@ -146,10 +146,10 @@ NodeConstants::ProcessResult Node::run()
     if (completionStatus_.has_value())
         throw std::runtime_error(std::format(
             "{}::completionStatus_ already has a value, which should not be possible when node process starts.", name()));
-    completionStatus_.emplace(NodeConstants::ProcessResult::Running);
 
     if (!upToDate_ || versionIndex_ == NodeConstants::InvalidVersion)
     {
+        completionStatus_.emplace(NodeConstants::ProcessResult::Running);
         result = process();
         switch (result)
         {
@@ -166,12 +166,9 @@ NodeConstants::ProcessResult Node::run()
     }
 
     // Finish monitoring node progress
-    if (!completionStatus_.has_value() || !(completionStatus_.value() == NodeConstants::ProcessResult::Running))
-        throw std::runtime_error(std::format("{}::completionStatus_ either does not already have a value, or the value is "
-                                             "already a complete value (one of Unchanged, Success, or Failed); "
-                                             "neither case should be possible when node process finishes.",
-                                             name()));
-    *completionStatus_ = result;
+    if (completionStatus_.has_value())
+        completionStatus_.reset();
+    completionStatus_.emplace(result);
 
     return result;
 }

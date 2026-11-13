@@ -8,7 +8,6 @@ Pane {
 
     property double curveOffset: 125
     property variant delegate
-    property variant edgeModel
     property variant nodeModel
     property variant parameterEndPointsModel
     property variant rootGraphModel

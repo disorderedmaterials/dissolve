@@ -231,30 +231,30 @@ Edge *Graph::findEdge(const EdgeDefinition &definition) const
 }
 
 // Find edge between nodes based on the target node and input
-Edge *Graph::findEdgeByTarget(const std::string &targetNode, const std::string &targetInput) const
+Edge *Graph::findEdgeByTarget(const std::string &targetNode, const std::string &targetInput, const Edges &edges)
 {
-    auto it = std::find_if(edges_.begin(), edges_.end(),
+    auto it = std::find_if(edges.begin(), edges.end(),
                            [&](const auto &edge)
                            {
                                auto otherDefinition = edge->definition();
                                return otherDefinition.targetNode == targetNode && otherDefinition.targetInput == targetInput;
                            });
 
-    if (it != edges_.end())
+    if (it != edges.end())
         return it->get();
 
     return {};
 }
 
 // Find edges between nodes based on the source node and output
-std::vector<Edge *> Graph::findEdgesBySource(const std::string &sourceNode, const std::string &sourceOutput) const
+std::vector<Edge *> Graph::findEdgesBySource(const std::string &sourceNode, const std::string &sourceOutput, const Edges &edges)
 {
-    std::vector<Edge *> edges;
-    for (const auto &edge : edges_)
+    std::vector<Edge *> matches;
+    for (const auto &edge : edges)
         if (edge->definition().sourceNode == sourceNode && edge->definition().sourceOutput == sourceOutput)
-            edges.push_back(edge.get());
+            matches.push_back(edge.get());
 
-    return edges;
+    return matches;
 }
 
 // Return named node, if it exists

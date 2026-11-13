@@ -30,6 +30,7 @@ class GraphNodeModel : public QAbstractListModel
         INPUTS,
         OUTPUTS,
         OPTIONS,
+        RENDERABLES,
         HAS_INNER_GRAPH,
         IS_ROOT_NODE,
         IS_ITERABLE,
