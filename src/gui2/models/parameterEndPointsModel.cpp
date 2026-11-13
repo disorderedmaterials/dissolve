@@ -71,17 +71,18 @@ void ParameterEndPointsModel::resetFromEdges(GraphEdges &edges,
 
     // Add loop edges if they exist
     auto iterable = dynamic_cast<IterableGraph *>(edges.graph());
-    for (int i = 0; i < edges.loop()->size(); i++)
-    {
-        const auto *edge = edges.loop()->at(i).get();
-        const auto *sourceNodePtr = &(edge->sourceNode());
-        const auto &output = edge->sourceOutput();
-        const auto *targetNodePtr = &(edge->targetNode());
-        const auto &input = edge->targetInput();
-        auto outputEndPointsMap = curveOutputsMap.find(sourceNodePtr)->second;
-        auto inputEndPointsMap = curveInputsMap.find(iterable->loopBacks())->second;
-        add(outputEndPointsMap[std::string(output.name())], inputEndPointsMap[std::string(input.name())]);
-    }
+    if (iterable)
+        for (int i = 0; i < edges.loop()->size(); i++)
+        {
+            const auto *edge = edges.loop()->at(i).get();
+            const auto *sourceNodePtr = &(edge->sourceNode());
+            const auto &output = edge->sourceOutput();
+            const auto *targetNodePtr = &(edge->targetNode());
+            const auto &input = edge->targetInput();
+            auto outputEndPointsMap = curveOutputsMap.find(sourceNodePtr)->second;
+            auto inputEndPointsMap = curveInputsMap.find(iterable->loopBacks())->second;
+            add(outputEndPointsMap[std::string(output.name())], inputEndPointsMap[std::string(input.name())]);
+        }
 }
 
 // Clear all end points

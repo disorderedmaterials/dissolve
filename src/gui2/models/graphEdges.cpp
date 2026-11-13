@@ -52,15 +52,18 @@ void GraphEdges::removeConnected(std::string nodeName)
     };
 
     // Remove connected standard edges
-    for (int i = 0; i < standard_->size(); i++)
+    const auto nStandardEdges = standard_->size();
+    for (int i = nStandardEdges - 1; i >= 0; --i)
         if (toRemove(standard_->at(i)))
             remove(standard_->at(i).get());
 
     // Remove connected loop edges, if any exist
     if (loop_)
-        for (int i = 0; i < loop_->size(); i++)
-            if (toRemove(loop_->at(i)))
-                remove(loop_->at(i).get());
+    {
+        const auto nLoopEdges = loop_->size();
+        for (int i = nLoopEdges - 1; i >= 0; --i)
+            remove(loop_->at(i).get());
+    }
 }
 
 // Create a new edge. Returns false if the edge could not be created
