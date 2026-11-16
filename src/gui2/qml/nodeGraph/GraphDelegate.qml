@@ -60,6 +60,7 @@ NodeBox {
         imageSource: messageStore.indicatorImage
         opacity: messageStore.indicatorOpacity
         summary: messageStore.indicatorSummary
+        bypass: isAnyIONode
     }
     Menu {
         id: nodePopupMenu

@@ -86,6 +86,8 @@ class NodeMessages : public QObject
     private:
     // Reset flags
     void resetFlags();
+    //
+    void initialise();
 
     private:
     // Line break used to demarcate graph runs in the node messages

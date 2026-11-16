@@ -361,7 +361,7 @@ void GraphModel::run(QVariant nodeName)
                              Q_EMIT graphRunComplete(NodeConstants::ProcessResult::Failed, std::string(runnerNode->name()));
 
                              // Reset graph global state
-                             graphStatus_ = GraphGlobalStates::Initialised;
+                             graphStatus_ = NodeConstants::ProcessResult::Failed;
                              return;
                          }
 
@@ -370,13 +370,11 @@ void GraphModel::run(QVariant nodeName)
                          // Update dynamic outputs
                          auto dynamicNodes = nodes_.findAllByRoleTrue(GraphNodeModel::HAS_DYNAMIC_OUTPUTS + Qt::UserRole);
                          for (auto &nodeWrapper : dynamicNodes)
-                             if (nodeWrapper->node()->completionStatus().value() != NodeConstants::ProcessResult::Unchanged)
-                                 nodeWrapper->outputs->resetParameters();
+                             if (nodeWrapper->node()->completionStatus().has_value())
+                                 if (nodeWrapper->node()->completionStatus().value() != NodeConstants::ProcessResult::Unchanged)
+                                     nodeWrapper->outputs->resetParameters();
 
                          Q_EMIT graphRunComplete(*result.get(), std::string(runnerNode->name()));
-
-                         // Reset graph global state
-                         graphStatus_ = GraphGlobalStates::Initialised;
                      });
     QObject::connect(this, &GraphModel::graphRunComplete, this,
                      [this]()

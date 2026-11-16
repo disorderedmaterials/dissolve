@@ -8,6 +8,7 @@ Rectangle {
 
     required property var imageSource
     required property string summary
+    required property bool bypass
 
     ToolTip.text: summary
     ToolTip.visible: errorIndicatorHover.hovered && (summary.length > 0)
@@ -19,6 +20,7 @@ Rectangle {
     height: width
     radius: width / 2
     width: 25
+    visible: !bypass
 
     HoverHandler {
         id: errorIndicatorHover
