@@ -23,13 +23,13 @@ int CLIOptions::parse(const int args, char **argv, bool isGUI, bool isParallel)
     // TEST Create some H isotope mixes
     auto H = Sears91::isotopeData(Elements::H, 0);
     auto D = Sears91::isotopeData(Elements::H, 2);
-    for (auto i = 0; i <= 10; ++i)
+    for (auto i = 0; i <= 20; ++i)
     {
-        auto fracD = i * 0.1;
+        auto fracD = i * 0.05;
         auto fracH = 1.0 - fracD;
 
         // {Isotope::H_1, Elements::H, 1, "1/2(+)", 1.00783, -3.7406, 25.274, 1.7583, 80.27, 82.03, 0.3326},
-        Messenger::print("{{Isotope::H{}D{}, Elements::H, {}, \"\", {}, {}, {}, {}, {}, {}, {}}},\n", 100 - i * 10, i * 10,
+        Messenger::print("{{Isotope::H{}D{}, Elements::H, {}, \"\", {}, {}, {}, {}, {}, {}, {}}},\n", 100 - i * 5, i * 5,
                          10 + i, H.mass() * fracH + D.mass() * fracD, H.boundCoherent() * fracH + D.boundCoherent() * fracD,
                          H.boundIncoherent() * fracH + D.boundIncoherent() * fracD,
                          H.boundCoherentXS() * fracH + D.boundCoherentXS() * fracD,
