@@ -32,15 +32,13 @@ class LoopBacksNode : public Node
     // Run the node, retrieving dependent inputs as necessary
     NodeConstants::ProcessResult run() override;
 
-    // Get the outgoing edges from this node
-    Node::EdgeMap &outputEdges() override;
-
-    private:
-    Node::EdgeMap loopEdges_;
-
     public:
     // Flag that the node data needs to be updated
     void setUpdateRequired() override;
+    // Returns bool - true if this node terminates
+    bool terminates() const override;
+    // Remove the input loop edge corresponding to a target input on this node
+    void removeInputLoopEdge(std::string_view targetInput);
 
     /*
      * Serialisation

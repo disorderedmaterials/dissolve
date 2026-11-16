@@ -46,9 +46,6 @@ NodeConstants::ProcessResult LoopBacksNode::run()
     return status;
 }
 
-// Get the outgoing edges from this node
-Node::EdgeMap &LoopBacksNode::outputEdges() { return loopEdges_; }
-
 // Flag that the node data needs to be updated
 void LoopBacksNode::setUpdateRequired()
 {
@@ -62,6 +59,12 @@ void LoopBacksNode::setUpdateRequired()
     // Call base class function to set flag and propagate through outputs (not there there should be any)
     Node::setUpdateRequired();
 }
+
+// Returns bool - true if this node terminates
+bool LoopBacksNode::terminates() const { return false; }
+
+// Remove the input loop edge corresponding to a target input on this node
+void LoopBacksNode::removeInputLoopEdge(std::string_view targetInput) { inputEdges_.extract(targetInput); }
 
 /*
  * Serialisation

@@ -84,6 +84,9 @@ void Node::setUpdateRequired()
         }
 }
 
+// Returns bool - true if this node terminates
+bool Node::terminates() const { return outputEdges_.empty(); }
+
 // Return whether the node is volatile
 bool Node::isVolatile() const { return volatile_; }
 
