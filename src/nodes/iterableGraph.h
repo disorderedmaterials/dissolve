@@ -44,10 +44,6 @@ class IterableGraph : public Graph
     private:
     // Add edge between nodes
     bool addLoopEdge(std::unique_ptr<Edge> edge, std::string_view source);
-    // Add edge to node map
-    Edge *addOutputLoopEdge(std::string_view sourceOutput, Edge *edge);
-    // Remove edge from node map
-    Edge *removeOutputLoopEdge(std::string_view sourceOutput, Edge *edge);
     // Remove specified loop edge
     bool removeEdge(LoopEdge *edgeToRemove);
 

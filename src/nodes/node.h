@@ -152,6 +152,8 @@ class Node
     void invalidate();
     // Flag that the node data needs to be updated
     virtual void setUpdateRequired();
+    // Returns bool - true if this node terminates
+    virtual bool terminates() const;
     // Return whether the node is volatile
     bool isVolatile() const;
     // Returns the current state of the node's progress tracker

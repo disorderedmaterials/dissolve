@@ -86,43 +86,7 @@ LoopEdge *IterableGraph::findLoopEdge(const EdgeDefinition &definition) const
 // Add edge between nodes
 bool IterableGraph::addLoopEdge(std::unique_ptr<Edge> edge, std::string_view source)
 {
-    return addOutputLoopEdge(source, loopEdges_.emplace_back(LoopEdge::makeLoopEdge(edge.release(), proxyInputs())).get());
-}
-
-// Add edge to node map
-Edge *IterableGraph::addOutputLoopEdge(std::string_view sourceOutput, Edge *edge)
-{
-    auto &outputEdgeMap = loopBacks()->outputEdges();
-    auto outputEdges = outputEdgeMap.find(sourceOutput);
-
-    // If source not in edge map, insert it, otherwise push new edge to current source node
-    if (outputEdges != outputEdgeMap.end())
-    {
-        outputEdges->second.push_back(edge);
-        return edge;
-    }
-    else
-    {
-        outputEdgeMap.insert({sourceOutput, {edge}});
-        return edge;
-    }
-
-    return nullptr;
-}
-
-// Remove edge from node map
-Edge *IterableGraph::removeOutputLoopEdge(std::string_view sourceOutput, Edge *edge)
-{
-    auto outputEdgeMap = loopBacks()->outputEdges();
-    auto outputEdges = outputEdgeMap.find(sourceOutput);
-    if (outputEdges != outputEdgeMap.end())
-    {
-        auto removedEdge = std::remove(outputEdges->second.begin(), outputEdges->second.end(), edge);
-        outputEdges->second.erase(removedEdge, outputEdges->second.end());
-        return edge;
-    }
-
-    return nullptr;
+    return loopEdges_.emplace_back(LoopEdge::makeLoopEdge(edge.release(), proxyInputs())).get() != nullptr;
 }
 
 /*
@@ -163,7 +127,8 @@ bool IterableGraph::removeEdge(const EdgeDefinition &definition)
         if (!removeEdge(static_cast<LoopEdge *>(loopEdge)))
             return false;
 
-        removeOutputLoopEdge(definition.sourceOutput, static_cast<Edge *>(loopEdge));
+        // Remove the input edge between the source and the loopbacks node
+        loopBacks_->removeInputLoopEdge(definition.targetInput);
     }
     return true;
 }
