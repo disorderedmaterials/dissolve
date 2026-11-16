@@ -133,28 +133,36 @@ void NodeMessages::setGraphModel(GraphModel *graphModel)
                              peekTimer_ = new QTimer(this);
                          QObject::connect(peekTimer_, &QTimer::timeout, this, &NodeMessages::peekNode);
                          peekTimer_->start(250);
+
+                         // Connect renderable model for this node
+                         auto &wrappedNode = graphModel_->wrappedNode(sourceNode()->name());
+                         QObject::connect(this, &NodeMessages::peeked, wrappedNode.renderableModel(), &RenderableModel::update);
                      });
-    QObject::connect(graphModel_, &GraphModel::graphRunComplete, this,
-                     [this]()
-                     {
-                         // Check that source node is not null (else, return early)
-                         if (!sourceNode())
-                             return;
+    QObject::connect(
+        graphModel_, &GraphModel::graphRunComplete, this,
+        [this]()
+        {
+            // Check that source node is not null (else, return early)
+            if (!sourceNode())
+                return;
 
-                         // Stop the timer and reset it
-                         if (peekTimer_)
-                         {
-                             peekTimer_->stop();
-                             peekTimer_ = nullptr;
-                         }
+            // Stop the timer and reset it
+            if (peekTimer_)
+            {
+                peekTimer_->stop();
+                peekTimer_ = nullptr;
+            }
 
-                         // If no changes to node during graph run, return
-                         if (completionStatus_->has_value() &&
-                             completionStatus_->value() == NodeConstants::ProcessResult::Unchanged)
-                             return;
+            // If no changes to node during graph run, return
+            if (completionStatus_->has_value() && completionStatus_->value() == NodeConstants::ProcessResult::Unchanged)
+                return;
 
-                         peekNode();
-                     });
+            peekNode();
+
+            // Disconnect renderable model for this node
+            auto &wrappedNode = graphModel_->wrappedNode(sourceNode()->name());
+            QObject::disconnect(this, &NodeMessages::peeked, wrappedNode.renderableModel(), &RenderableModel::update);
+        });
     QObject::connect(graphModel_, &GraphModel::graphChanged, this,
                      [this]()
                      {
@@ -172,12 +180,6 @@ void NodeMessages::setGraphModel(GraphModel *graphModel)
                          flags_.setFlag(NodeMessages::Invalid);
                          peekNode();
                      });
-
-    if (!sourceNode())
-        return;
-
-    auto &wrappedNode = graphModel_->wrappedNode(sourceNode()->name());
-    QObject::connect(this, &NodeMessages::peeked, wrappedNode.renderableModel(), &RenderableModel::update);
 
     // Object has been initialised
     ready_ = true;
