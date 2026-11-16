@@ -38,8 +38,8 @@ class IterableGraph : public Graph
     LoopBacksNode *loopBacks_{nullptr};
     // Loop edges
     Edges loopEdges_;
-    // Release a loopback by name
-    void releaseLoopBack(const std::string &name);
+    // Remove a loopback by name
+    void removeLoopBack(const std::string &name);
 
     private:
     // Add edge between nodes

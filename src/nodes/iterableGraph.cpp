@@ -45,8 +45,8 @@ void IterableGraph::setLoopBacks()
 // Current loop iteration
 int IterableGraph::currentIteration() const { return i_; }
 
-// Release loopback by name
-void IterableGraph::releaseLoopBack(const std::string &name)
+// Remove a loopback by name
+void IterableGraph::removeLoopBack(const std::string &name)
 {
     auto inputs = loopBacks_->inputs();
     auto it = inputs.find(name);
@@ -160,9 +160,7 @@ bool IterableGraph::removeEdge(const EdgeDefinition &definition)
     if (!Graph::removeEdge(definition))
     {
         auto loopEdge = findLoopEdge(definition);
-        if (removeEdge(static_cast<LoopEdge *>(loopEdge)))
-            releaseLoopBack(definition.targetInput);
-        else
+        if (!removeEdge(static_cast<LoopEdge *>(loopEdge)))
             return false;
 
         removeOutputLoopEdge(definition.sourceOutput, static_cast<Edge *>(loopEdge));
