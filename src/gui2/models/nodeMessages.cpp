@@ -117,26 +117,16 @@ void NodeMessages::setGraphModel(GraphModel *graphModel)
                          if (sourceNode()->inputEdges().empty() && sourceNode()->outputEdges().empty())
                              return;
 
+                         qDebug() << "The source node (" << sourceNode()->name() << ") "
+                                  << (sourceNode()->hasAncestor(runnerNode) ? "DOES" : "does NOT") << " have an ancestor "
+                                  << runnerNode->name() << ", and " << (sourceNode()->isAncestor(runnerNode) ? "IS" : "is NOT")
+                                  << " an ancestor of " << runnerNode->name();
+
                          // Check if the node has any connections whatsoever to the runner node
                          if (!sourceNode()->hasAncestor(runnerNode) && !sourceNode()->isAncestor(runnerNode))
                              return;
 
-                         // Clear the outdated messages
-                         latestMessages_.clear();
-
-                         // Reset the node messages to default state for the start of a new graph run
-                         resetFlags();
-                         flags_.setFlag(NodeMessages::Standby);
-
-                         // Start the timer to peek the node progress at 250 ms intervals
-                         if (!peekTimer_)
-                             peekTimer_ = new QTimer(this);
-                         QObject::connect(peekTimer_, &QTimer::timeout, this, &NodeMessages::peekNode);
-                         peekTimer_->start(250);
-
-                         // Connect renderable model for this node
-                         auto &wrappedNode = graphModel_->wrappedNode(sourceNode()->name());
-                         QObject::connect(this, &NodeMessages::peeked, wrappedNode.renderableModel(), &RenderableModel::update);
+                         initialise();
                      });
     QObject::connect(
         graphModel_, &GraphModel::graphRunComplete, this,
@@ -175,10 +165,20 @@ void NodeMessages::setGraphModel(GraphModel *graphModel)
                              (sourceNode()->versionIndex() < 0 && !completionStatus_->has_value()))
                              return;
 
+                         // Do not invalidate nodes while graph is running
+                         // TODO: Try moving this check into the NodeMessages::setIndicatorProperties where we set the invalid
+                         // status, then use peekNode as normal here
+                         const auto graphStatus = graphModel_->graphStatus();
+                         if (std::holds_alternative<GraphModel::GraphGlobalStates>(graphStatus) &&
+                             std::get<GraphModel::GraphGlobalStates>(graphStatus) == GraphModel::InProgress)
+                             return;
+
                          // Mark node as invalid since graph's connections have changed and it is no longer up to date
                          resetFlags();
                          flags_.setFlag(NodeMessages::Invalid);
-                         peekNode();
+
+                         setIndicatorProperties();
+                         Q_EMIT peeked();
                      });
 
     // Object has been initialised
@@ -218,6 +218,27 @@ void NodeMessages::peekNode()
         updateMessages();
     setIndicatorProperties();
     Q_EMIT peeked();
+}
+
+//
+void NodeMessages::initialise()
+{
+    // Clear the outdated messages
+    latestMessages_.clear();
+
+    // Reset the node messages to default state for the start of a new graph run
+    resetFlags();
+    flags_.setFlag(NodeMessages::Standby);
+
+    // Start the timer to peek the node progress at 250 ms intervals
+    if (!peekTimer_)
+        peekTimer_ = new QTimer(this);
+    QObject::connect(peekTimer_, &QTimer::timeout, this, &NodeMessages::peekNode);
+    peekTimer_->start(250);
+
+    // Connect renderable model for this node
+    auto &wrappedNode = graphModel_->wrappedNode(sourceNode()->name());
+    QObject::connect(this, &NodeMessages::peeked, wrappedNode.renderableModel(), &RenderableModel::update);
 }
 
 // Update all - get latest messages and set node status flags
