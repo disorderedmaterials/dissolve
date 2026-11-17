@@ -117,13 +117,8 @@ void NodeMessages::setGraphModel(GraphModel *graphModel)
                          if (sourceNode()->inputEdges().empty() && sourceNode()->outputEdges().empty())
                              return;
 
-                         qDebug() << "The source node (" << sourceNode()->name() << ") "
-                                  << (sourceNode()->hasAncestor(runnerNode) ? "DOES" : "does NOT") << " have an ancestor "
-                                  << runnerNode->name() << ", and " << (sourceNode()->isAncestor(runnerNode) ? "IS" : "is NOT")
-                                  << " an ancestor of " << runnerNode->name();
-
-                         // Check if the node has any connections whatsoever to the runner node
-                         if (!sourceNode()->hasAncestor(runnerNode) && !sourceNode()->isAncestor(runnerNode))
+                         // Check if the node is an ancestor to the runner node (if not - return since no updates expected)
+                         if (!sourceNode()->isAncestor(runnerNode))
                              return;
 
                          initialise();
@@ -142,6 +137,10 @@ void NodeMessages::setGraphModel(GraphModel *graphModel)
                 peekTimer_->stop();
                 peekTimer_ = nullptr;
             }
+
+            // If source node is not up to date, return
+            if (!sourceNode()->isUpToDate())
+                return;
 
             // If no changes to node during graph run, return
             if (completionStatus_->has_value() && completionStatus_->value() == NodeConstants::ProcessResult::Unchanged)
