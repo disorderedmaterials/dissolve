@@ -30,8 +30,6 @@ void Dissolve::clear()
 
     // Simulation
     Messenger::printVerbose("Clearing Simulation...\n");
-    iteration_ = 0;
-    nIterationsPerformed_ = 0;
 
     // Graph
     graphNode_ = std::make_unique<DissolveGraph>();

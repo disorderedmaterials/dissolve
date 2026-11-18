@@ -40,19 +40,6 @@ class Dissolve
     // Dissolve graph node
     std::unique_ptr<DissolveGraph> graphNode_;
 
-    /*
-     * Simulation
-     */
-    private:
-    // Current simulation step
-    int iteration_;
-    // Number of iterations performed
-    int nIterationsPerformed_;
-    // Main loop iterations timer
-    Timer iterationTimer_;
-    // Accumulated timing information for main loop iterations
-    SampledDouble iterationTime_;
-
     public:
     // Load TOML input file  TO BE DELETED
     bool loadTOML(std::string_view filename);
