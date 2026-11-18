@@ -6,12 +6,6 @@
 #include "main/dissolve.h"
 #include <cstdio>
 
-// Set frequency with which to write various iteration data
-void Dissolve::setRestartFileFrequency(int n) { restartFileFrequency_ = n; }
-
-// Return frequency with which to write restart file
-int Dissolve::restartFileFrequency() const { return restartFileFrequency_; }
-
 // Prepare for main simulation
 bool Dissolve::prepare()
 {

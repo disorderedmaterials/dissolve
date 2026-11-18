@@ -45,6 +45,16 @@ std::optional<std::string> DissolveGraph::loadFile(std::filesystem::path name)
 DissolveGraph *DissolveGraph::dissolveGraph() { return this; }
 
 /*
+ * Files
+ */
+
+// Set frequency with which to write various iteration data
+void DissolveGraph::setRestartDirectoryFrequency(int n) { restartDirectoryFrequency_ = n; }
+
+// Return frequency with which to write restart file
+int DissolveGraph::restartDirectoryFrequency() const { return restartDirectoryFrequency_; }
+
+/*
  * Pair Potentials, Energy and Forces
  */
 

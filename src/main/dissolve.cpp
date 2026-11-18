@@ -7,9 +7,6 @@
 
 Dissolve::Dissolve()
 {
-    // Set core simulation variables
-    restartFileFrequency_ = 10;
-
     graphNode_ = std::make_unique<DissolveGraph>();
 
     // Clear everything

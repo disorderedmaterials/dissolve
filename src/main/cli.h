@@ -11,7 +11,7 @@
 class CLIOptions
 {
     public:
-    CLIOptions();
+    CLIOptions() = default;
     ~CLIOptions() = default;
 
     /*
@@ -48,7 +48,7 @@ class CLIOptions
         Success = 1
     };
     // Parse supplied options
-    int parse(int args, char **argv, bool isGUI = false);
+    int parse(int args, char **argv);
     // Return input file to load
     std::optional<std::filesystem::path> inputFile() const;
     // Return the node to run
@@ -71,4 +71,26 @@ class CLIOptions
     bool noRestartFile() const;
     // Return whether to simply export the graph as mermaid and quit
     bool exportMermaid() const;
+};
+
+// GUI Options Parser
+class GUIOptions
+{
+    public:
+    GUIOptions() = default;
+    ~GUIOptions() = default;
+
+    /*
+     * Options
+     */
+    private:
+    // Input file to load
+    std::optional<std::filesystem::path> inputFile_;
+
+    public:
+
+    // Parse supplied options
+    int parse(int args, char **argv);
+    // Return input file to load
+    std::optional<std::filesystem::path> inputFile() const;
 };

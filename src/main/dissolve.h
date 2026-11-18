@@ -82,8 +82,6 @@ class Dissolve
      * Simulation
      */
     private:
-    // Frequency at which to write restart file
-    int restartFileFrequency_;
     // Current simulation step
     int iteration_;
     // Number of iterations performed
@@ -94,10 +92,6 @@ class Dissolve
     SampledDouble iterationTime_;
 
     public:
-    // Set frequency with which to write various iteration data
-    void setRestartFileFrequency(int n);
-    // Return frequency with which to write restart file
-    int restartFileFrequency() const;
     // Prepare for main simulation
     bool prepare();
 

@@ -44,6 +44,19 @@ class DissolveGraph : public Graph
     DissolveGraph *dissolveGraph() override;
 
     /*
+     * Files
+     */
+    public:
+    // Frequency at which to write restart directory
+    int restartDirectoryFrequency_{10};
+
+    private:
+    // Set frequency with which to write various iteration data
+    void setRestartDirectoryFrequency(int n);
+    // Return frequency with which to write restart directory
+    int restartDirectoryFrequency() const;
+
+    /*
      * Pair Potentials, Energy and Forces
      */
     private:
