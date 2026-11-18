@@ -19,6 +19,8 @@ class TestNode : public Node
      */
     private:
     //
+    bool sleepOnIteration_{false};
+    //
     int iteration_{0};
     //
     Data1D sineData_;
@@ -63,9 +65,9 @@ class TestNode : public Node
 
     private:
     //
-    void makeSine(double phi = 0);
+    void emplaceSine(double phi = 0);
     //
-    void makeCosine(double phi = 0);
+    void emplaceCosine(double phi = 0);
 
     /*
      * Processing

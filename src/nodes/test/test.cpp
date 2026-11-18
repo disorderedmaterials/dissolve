@@ -28,9 +28,29 @@ TestNode::TestNode(Graph *parentGraph) : Node(parentGraph)
     addOutput("Sine", "A test sine data series", sineData_);
     addOutput("Cosine", "A test cosine data series", cosineData_);
 
+    // Options
+    addOption("SleepOnIteration", "The node process will sleep for 2000ms on each iteration", sleepOnIteration_);
+
     // Fill out some test data at construction time
-    makeSine();
-    makeCosine();
+    auto dx = M_PI / 4;
+    sineData_.addPoint(0, sin(0));
+    sineData_.addPoint(dx, sin(dx));
+    sineData_.addPoint(2 * dx, sin(2 * dx));
+    sineData_.addPoint(3 * dx, sin(3 * dx));
+    sineData_.addPoint(4 * dx, sin(4 * dx));
+    sineData_.addPoint(5 * dx, sin(5 * dx));
+    sineData_.addPoint(6 * dx, sin(6 * dx));
+    sineData_.addPoint(7 * dx, sin(7 * dx));
+    sineData_.addPoint(8 * dx, sin(8 * dx));
+    cosineData_.addPoint(0, sin(0));
+    cosineData_.addPoint(dx, sin(dx));
+    cosineData_.addPoint(2 * dx, sin(2 * dx));
+    cosineData_.addPoint(3 * dx, sin(3 * dx));
+    cosineData_.addPoint(4 * dx, sin(4 * dx));
+    cosineData_.addPoint(5 * dx, sin(5 * dx));
+    cosineData_.addPoint(6 * dx, sin(6 * dx));
+    cosineData_.addPoint(7 * dx, sin(7 * dx));
+    cosineData_.addPoint(8 * dx, sin(8 * dx));
 }
 
 /*
@@ -50,7 +70,7 @@ const std::optional<Configuration> &TestNode::optionalConfiguration() const { re
 TestNode::TestVariant TestNode::variant() { return variant_; }
 
 //
-void TestNode::makeSine(double phi)
+void TestNode::emplaceSine(double phi)
 {
     // Append sine data
     auto dx = M_PI / 4;
@@ -59,12 +79,13 @@ void TestNode::makeSine(double phi)
     {
         auto x = i * dx;
         auto arg = x + phi;
-        sineData_.addPoint(x, sin(arg));
+        sineData_.xAxis(i) = x;
+        sineData_.value(i) = sin(arg);
     }
 }
 
 //
-void TestNode::makeCosine(double phi)
+void TestNode::emplaceCosine(double phi)
 {
     // Append cosine data
     auto dx = M_PI / 4;
@@ -73,7 +94,8 @@ void TestNode::makeCosine(double phi)
     {
         auto x = i * dx;
         auto arg = x + phi;
-        cosineData_.addPoint(x, cos(arg));
+        cosineData_.xAxis(i) = x;
+        cosineData_.value(i) = cos(arg);
     }
 }
 
@@ -97,10 +119,16 @@ NodeConstants::ProcessResult TestNode::process()
     messageParts_.clear();
     messageParts_.insert(messageParts_.end(), message_.begin(), message_.end());
 
+    iteration_ = number_.asInteger();
+
     // Data plotting
     iteration_++;
-    makeSine(iteration_ * (M_PI / 4));
-    makeCosine(iteration_ * (M_PI / 4));
+    emplaceSine(iteration_ * (M_PI / 4));
+    emplaceCosine(iteration_ * (M_PI / 4));
+
+    number_ = iteration_;
+
+    message("Current iteration: {}", iteration_);
 
     /*
      * Dynamic outputs
