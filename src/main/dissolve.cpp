@@ -27,8 +27,6 @@ void Dissolve::clear()
     // PairPotentials
     Messenger::printVerbose("Clearing Pair Potentials...\n");
     PairPotential::setChargeSource(PairPotential::ChargeSource::Automatic);
-    pairPotentials_.clear();
-    potentialMap_.clear();
 
     // Simulation
     Messenger::printVerbose("Clearing Simulation...\n");

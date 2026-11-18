@@ -26,36 +26,6 @@ class Dissolve
     public:
     // Clear all data
     void clear();
-    // TOML Toggle
-    static constexpr bool toml_testing_flag = false;
-
-    /*
-     * Pair Potentials
-     */
-    private:
-    // Simulation PairPotentials
-    std::vector<PairPotential::Definition> pairPotentials_;
-    // Map for PairPotentials
-    PotentialMap potentialMap_;
-
-    public:
-    // Return index of specified PairPotential
-    int indexOf(PairPotential *pp);
-    // Return number of defined PairPotentials
-    int nPairPotentials() const;
-    // Add new pair potential to list
-    PairPotential *addPairPotential(const std::shared_ptr<AtomType> &at1, const std::shared_ptr<AtomType> &at2);
-    // Return PairPotentials list
-    const std::vector<PairPotential::Definition> &pairPotentials() const;
-    std::vector<PairPotential::Definition> &pairPotentials();
-    // Return nth PairPotential in list
-    PairPotential *pairPotential(int n);
-    // Return specified PairPotential (if defined)
-    PairPotential *pairPotential(const AtomType *at1, const AtomType *at2) const;
-    PairPotential *pairPotential(std::string_view at1Name, std::string_view at2Name) const;
-    // Return map for PairPotentials
-    const PotentialMap &potentialMap() const;
-    PotentialMap &potentialMap();
 
     /*
      * Graph node
@@ -88,7 +58,7 @@ class Dissolve
     bool loadTOML(std::string_view filename);
     // Save TOML input file  TO BE DELETED
     bool saveTOML(std::string_view filename) const;
-    // Prepare for main simulation
+    // Prepare for main simulation  TO BE DELETED
     bool prepare();
 
     /*
