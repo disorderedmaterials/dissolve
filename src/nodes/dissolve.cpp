@@ -300,7 +300,6 @@ void DissolveGraph::deserialise(const SerialisedValue &node)
 
     Deserialisable::optionalOn(node, "pairPotentials", [this](const auto node) { deserialisePairPotentials(node); });
 
-    Graph::deserialise(node.at("graph"));
     Deserialisable::vector(node, "pairPotentialOverrides",
                            [this](const auto ppOverrideNode) { addPairPotentialOverride()->deserialise(ppOverrideNode); });
 
