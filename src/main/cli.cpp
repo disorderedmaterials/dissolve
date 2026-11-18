@@ -41,7 +41,7 @@ int CLIOptions::parse(const int args, char **argv)
     app.add_option("--restart", restartFilename_,
                    "Read restart file specified instead of the default one (but still write to the default one)")
         ->group("Input Files")
-        ->check(CLI::ExistingFile);
+        ->check(CLI::ExistingDirectory);
 
     app.add_option("node", node_, "Node to run")->required();
 

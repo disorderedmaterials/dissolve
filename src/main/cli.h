@@ -88,7 +88,6 @@ class GUIOptions
     std::optional<std::filesystem::path> inputFile_;
 
     public:
-
     // Parse supplied options
     int parse(int args, char **argv);
     // Return input file to load

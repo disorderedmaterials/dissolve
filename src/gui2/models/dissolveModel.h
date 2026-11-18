@@ -4,8 +4,8 @@
 #pragma once
 
 #include "nodes/dissolve.h"
-#include <QUrl>
 #include <QObject>
+#include <QUrl>
 
 class DissolveModel : public QObject
 {

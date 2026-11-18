@@ -29,7 +29,6 @@ void DissolveModel::setDissolveGraph(DissolveGraph *dissolveGraph)
     Q_EMIT modelsUpdated();
 }
 
-
 // Update models
 void DissolveModel::update() { Q_EMIT modelsUpdated(); }
 

@@ -3,10 +3,10 @@
 
 #include "classes/atomType.h"
 #include "classes/configuration.h"
+#include "classes/pairPotential.h"
 #include "classes/species.h"
 #include "math/mathFunc.h"
 #include <gtest/gtest.h>
-#include "classes/pairPotential.h"
 
 namespace UnitTest
 {

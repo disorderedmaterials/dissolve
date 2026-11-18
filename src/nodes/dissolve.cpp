@@ -276,15 +276,15 @@ void DissolveGraph::deserialisePairPotentials(const SerialisedValue &node)
 // Express as a serialisable value
 void DissolveGraph::serialise(std::string tag, SerialisedValue &target) const
 {
-    auto &root = target[tag];
+    auto &node = target[tag];
 
-    root["version"] = Version::semantic();
+    node["version"] = Version::semantic();
 
-    root["pairPotentials"] = serialisePairPotentials();
+    node["pairPotentials"] = serialisePairPotentials();
 
-    Graph::serialise("graph", root);
+    Graph::serialise("graph", node);
 
-    Serialisable::vector<>(pairPotentialOverrides_, "pairPotentialOverrides", root);
+    Serialisable::vector<>(pairPotentialOverrides_, "pairPotentialOverrides", node);
 }
 
 // Read values from a serialisable value

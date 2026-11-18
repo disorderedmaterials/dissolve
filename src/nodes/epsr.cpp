@@ -4,6 +4,7 @@
 #include "nodes/epsr.h"
 #include "base/sysFunc.h"
 #include "classes/configuration.h"
+#include "classes/pairPotential.h"
 #include "classes/partialSet.h"
 #include "classes/scatteringMatrix.h"
 #include "math/error.h"
@@ -17,7 +18,6 @@
 #include "nodes/correlation/xRaySQ.h"
 #include "templates/algorithms.h"
 #include <functional>
-#include "classes/pairPotential.h"
 
 EPSRNode::EPSRNode(Graph *parentGraph) : Node(parentGraph)
 {
