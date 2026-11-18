@@ -3,7 +3,6 @@
 
 #include "main/version.h"
 #include "base/serialiser.h"
-#include "main/dissolve.h"
 #include <gtest/gtest.h>
 
 namespace UnitTest

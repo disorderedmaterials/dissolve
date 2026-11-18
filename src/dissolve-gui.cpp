@@ -5,7 +5,6 @@
 #include "gui/gui.h"
 #include "gui/models/types.h"
 #include "main/cli.h"
-#include "main/dissolve.h"
 #include "main/version.h"
 #include "math/mathFunc.h"
 #include <QSurfaceFormat>

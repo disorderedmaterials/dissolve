@@ -4,43 +4,33 @@
 #include "gui2/models/dissolveModel.h"
 #include "nodes/dissolve.h"
 
-/*
- * Data
- */
+// Return the current filename
+QUrl DissolveModel::fileName() const { return QUrl(dissolveGraph_->inputFile().c_str()); }
 
-Dissolve &DissolveModel::dissolve()
+void DissolveModel::loadInput(QUrl filename)
 {
-    if (!dissolve_)
-        Messenger::exception("DissolveModel is lacking a backend.  This should *never* happen, so please contact the "
-                             "Dissolve developers to inform them of the issue.");
-    return *dissolve_;
+    dissolveGraph_->loadTOML(filename.toLocalFile().toStdString());
+    Q_EMIT(modelsUpdated());
 }
 
-// Set reference to Dissolve
-void DissolveModel::setDissolve(Dissolve &dissolve)
+DissolveGraph *DissolveModel::dissolveGraph()
 {
-    dissolve_ = &dissolve;
+    if (!dissolveGraph_)
+        Messenger::exception("DissolveModel is lacking a backend.  This should *never* happen, so please contact the "
+                             "Dissolve developers to inform them of the issue.");
+    return dissolveGraph_;
+}
+
+// Set DissolveGraph root
+void DissolveModel::setDissolveGraph(DissolveGraph *dissolveGraph)
+{
+    dissolveGraph_ = dissolveGraph;
 
     Q_EMIT modelsUpdated();
 }
 
+
 // Update models
 void DissolveModel::update() { Q_EMIT modelsUpdated(); }
 
-// Getter for filename
-QUrl DissolveModel::fileName() const { return QUrl(dissolve_->inputFile().c_str()); }
-
-void DissolveModel::loadInput(QUrl filename)
-{
-    dissolve_->loadTOML(filename.toLocalFile().toStdString());
-    Q_EMIT(modelsUpdated());
-}
-
-bool DissolveModel::saveAs(QUrl filename) { return dissolve_->saveTOML(filename.toLocalFile().toStdString()); }
-
-Graph *DissolveModel::graph()
-{
-    if (!dissolve_)
-        return nullptr;
-    return dissolve_->graph();
-}
+bool DissolveModel::saveAs(QUrl filename) { return dissolveGraph_->saveTOML(filename.toLocalFile().toStdString()); }

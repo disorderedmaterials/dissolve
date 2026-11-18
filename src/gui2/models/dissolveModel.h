@@ -3,14 +3,9 @@
 
 #pragma once
 
-#include "gui2/models/legacy/atomTypeModel.h"
-#include "gui2/models/legacy/commonTermTreeModel.h"
-#include "gui2/models/legacy/configurationModel.h"
-#include "main/dissolve.h"
-#include "nodes/graph.h"
-#include "templates/optionalRef.h"
+#include "nodes/dissolve.h"
 #include <QUrl>
-#include <memory>
+#include <QObject>
 
 class DissolveModel : public QObject
 {
@@ -18,41 +13,34 @@ class DissolveModel : public QObject
     // File to load
     Q_PROPERTY(QUrl file READ fileName WRITE loadInput NOTIFY modelsUpdated)
     // The main graph
-    Q_PROPERTY(Graph *graph READ graph NOTIFY modelsUpdated)
-
-    public:
-    DissolveModel() = default;
-    ~DissolveModel() = default;
-
-    public:
-    // Getter for filename
-    QUrl fileName() const;
-    // Setter for filename
-    void loadInput(QUrl filename);
-    // Getter for graph
-    Graph *graph();
+    Q_PROPERTY(DissolveGraph *graph READ dissolveGraph NOTIFY modelsUpdated)
 
     Q_SIGNALS:
     // The models might've been updated
     void modelsUpdated();
 
+    public:
+    DissolveModel() = default;
+    ~DissolveModel() = default;
+
+    private:
+    // The DissolveGraph root node
+    DissolveGraph *dissolveGraph_ = nullptr;
+
+    public:
+    // Return the current filename
+    QUrl fileName() const;
+    // Load the specified file
+    void loadInput(QUrl filename);
+    // Getter for root graph
+    DissolveGraph *dissolveGraph();
+    // Set root graph
+    void setDissolveGraph(DissolveGraph *dissolveGraph);
+    // Update models
+    void update();
+
     public Q_SLOTS:
     // Export to a file
     bool save();
     bool saveAs(QUrl filename);
-
-    /*
-     * Data
-     */
-    private:
-    // The main Dissolve instance
-    Dissolve *dissolve_ = nullptr;
-
-    public:
-    // Access dissolve reference
-    Dissolve &dissolve();
-    // Set reference to Dissolve
-    void setDissolve(Dissolve &dissolve);
-    // Update models
-    void update();
 };

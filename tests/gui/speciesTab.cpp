@@ -8,7 +8,6 @@
 #include "gui/models/speciesImproperModel.h"
 #include "gui/models/speciesIsoModel.h"
 #include "gui/models/speciesTorsionModel.h"
-#include "main/dissolve.h"
 #include <gmock/gmock.h>
 #include <vector>
 

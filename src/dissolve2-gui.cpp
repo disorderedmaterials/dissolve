@@ -7,7 +7,6 @@
 #include "gui2/models/types.h"
 #include "gui2/singletons/types.h"
 #include "main/cli.h"
-#include "main/dissolve.h"
 #include "main/version.h"
 #include "math/mathFunc.h"
 #include <QGuiApplication>
@@ -19,10 +18,10 @@
 int main(int args, char **argv)
 {
     // Instantiate main classes
-    Dissolve dissolve;
+    auto dissolveGraph = std::make_unique<DissolveGraph>();
 
     DissolveModel dissolveModel;
-    dissolveModel.setDissolve(dissolve);
+    dissolveModel.setDissolveGraph(dissolveGraph.get());
 
     NodeRegistryModel nodeRegistryModel;
 
@@ -65,6 +64,7 @@ int main(int args, char **argv)
     Messenger::print("For more details read the GPL at <http://www.gnu.org/copyleft/gpl.html>.\n");
 
     // If an input file was specified, load it here
+    // TODO DISSOLVE2
     // if (options.inputFile())
     // loadSuccessful = dissolveWindow.loadInputFile(options.inputFile().value());
 

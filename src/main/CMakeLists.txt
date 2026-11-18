@@ -2,11 +2,9 @@ add_library(
   main
   compatibility.cpp
   cli.cpp
-  dissolve.cpp
   version.cpp
   cli.h
   compatibility.h
-  dissolve.h
   version.h
 )
 
