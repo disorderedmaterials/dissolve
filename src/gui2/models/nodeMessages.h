@@ -14,6 +14,8 @@ class NodeMessageModel : public QAbstractListModel
 {
     friend class NodeMessages;
 
+    using StatusMessagePair = std::pair<Node::MessageStatus, std::string>;
+
     Q_OBJECT
 
     public:
@@ -32,8 +34,8 @@ class NodeMessageModel : public QAbstractListModel
     protected:
     // Return the message list
     Node::MessageStore &messageList();
-    // Set the message list
-    void setMessages(const Node::MessageStore &messages);
+    //
+    const StatusMessagePair *append(const StatusMessagePair *element);
 
     /*
      * QAbstractListModel overrides

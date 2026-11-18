@@ -2,6 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "nodeMessages.h"
+#include "plot/renderableModel.h"
 #include <QTimer>
 
 // Default tuple representing properties of the node status indicator delegate
@@ -101,6 +102,20 @@ const NodeMessageModel *NodeMessages::model() { return &model_; }
 void NodeMessages::setGraphModel(GraphModel *graphModel)
 {
     graphModel_ = graphModel;
+    QObject::connect(this, &NodeMessages::peeked, this,
+                     [this]()
+                     {
+                         if (!sourceNode())
+                             return;
+
+                         const auto &parentGraph = graphModel_->graph();
+                         const auto thisName = sourceNode()->name();
+                         if (!parentGraph->findNode(thisName) || parentGraph->name() == thisName)
+                             return;
+
+                         auto &wrappedNode = graphModel_->wrappedNode(sourceNode()->name());
+                         wrappedNode.renderableModel()->update();
+                     });
     QObject::connect(graphModel_, &GraphModel::graphReconstructionComplete, this, &NodeMessages::peekNode);
     QObject::connect(graphModel_, &GraphModel::graphRunStarted, this,
                      [this](const auto &runnerNode)
@@ -123,35 +138,31 @@ void NodeMessages::setGraphModel(GraphModel *graphModel)
 
                          initialise();
                      });
-    QObject::connect(
-        graphModel_, &GraphModel::graphRunComplete, this,
-        [this]()
-        {
-            // Check that source node is not null (else, return early)
-            if (!sourceNode())
-                return;
+    QObject::connect(graphModel_, &GraphModel::graphRunComplete, this,
+                     [this]()
+                     {
+                         // Check that source node is not null (else, return early)
+                         if (!sourceNode())
+                             return;
 
-            // Stop the timer and reset it
-            if (peekTimer_)
-            {
-                peekTimer_->stop();
-                peekTimer_ = nullptr;
-            }
+                         // Stop the timer and reset it
+                         if (peekTimer_)
+                         {
+                             peekTimer_->stop();
+                             peekTimer_ = nullptr;
+                         }
 
-            // If source node is not up to date, return
-            if (!sourceNode()->isUpToDate())
-                return;
+                         // If source node is not up to date, return
+                         if (!sourceNode()->isUpToDate())
+                             return;
 
-            // If no changes to node during graph run, return
-            if (completionStatus_->has_value() && completionStatus_->value() == NodeConstants::ProcessResult::Unchanged)
-                return;
+                         // If no changes to node during graph run, return
+                         if (completionStatus_->has_value() &&
+                             completionStatus_->value() == NodeConstants::ProcessResult::Unchanged)
+                             return;
 
-            peekNode();
-
-            // Disconnect renderable model for this node
-            auto &wrappedNode = graphModel_->wrappedNode(sourceNode()->name());
-            QObject::disconnect(this, &NodeMessages::peeked, wrappedNode.renderableModel(), &RenderableModel::update);
-        });
+                         peekNode();
+                     });
     QObject::connect(graphModel_, &GraphModel::graphChanged, this,
                      [this]()
                      {
@@ -234,10 +245,6 @@ void NodeMessages::initialise()
         peekTimer_ = new QTimer(this);
     QObject::connect(peekTimer_, &QTimer::timeout, this, &NodeMessages::peekNode);
     peekTimer_->start(250);
-
-    // Connect renderable model for this node
-    auto &wrappedNode = graphModel_->wrappedNode(sourceNode()->name());
-    QObject::connect(this, &NodeMessages::peeked, wrappedNode.renderableModel(), &RenderableModel::update);
 }
 
 // Update all - get latest messages and set node status flags
@@ -267,7 +274,7 @@ void NodeMessages::updateMessages()
 
             const auto &[level, msg] = nodeLocalMessageStore_->at(i);
             latestMessages_.emplace_back(level, msg);
-            latestMessageIndex_ = i + 1;
+            // latestMessageIndex_ = i + 1;
         }
 
         // Check overall status of graph run - log graph summary if graph process result (i.e. that of the runner node) is
@@ -322,7 +329,9 @@ void NodeMessages::updateMessages()
         }
 
         // Pass the latest messages to the list model
-        model_.setMessages(latestMessages_);
+        for (const auto &pair : latestMessages_)
+            model_.append(&pair);
+        latestMessageIndex_ = model_.messageList().size();
     }
     else
     {
@@ -336,12 +345,13 @@ void NodeMessages::updateMessages()
 // Return the message list
 Node::MessageStore &NodeMessageModel::messageList() { return messages_; }
 
-// Set the message list
-void NodeMessageModel::setMessages(const Node::MessageStore &messages)
+//
+const NodeMessageModel::StatusMessagePair *NodeMessageModel::append(const NodeMessageModel::StatusMessagePair *element)
 {
-    beginResetModel();
-    messages_ = messages;
-    endResetModel();
+    beginInsertRows(QModelIndex(), messages_.size(), messages_.size());
+    messages_.push_back(*element);
+    endInsertRows();
+    return element;
 }
 
 /*

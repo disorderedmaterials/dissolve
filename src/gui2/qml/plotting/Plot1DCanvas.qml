@@ -156,6 +156,10 @@ Item {
                 Repeater {
                     model: context.plotModel
 
+                    onItemAdded: function (index, item) {
+                        console.log("Item added: MODEL: ", context.plotModel, ", INDEX: ", index, ", item: ", item);
+                    }
+
                     delegate: Rectangle {
                         id: dataPoint
 

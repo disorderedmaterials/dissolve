@@ -312,6 +312,9 @@ NodeBox {
 
             HoverHandler {
                 onHoveredChanged: {
+                    if (renderables.rowCount() == 0)
+                        return;
+
                     if (hovered) {
                         const p = parent.mapToItem(parent, parent.width, 0);
                         parent.outputMenu.x = p.x;

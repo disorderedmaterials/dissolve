@@ -5,6 +5,7 @@
 #include "gui2/models/parameterModel.h"
 #include "gui2/models/plot/plot1DModel.h"
 #include "gui2/models/plot/renderableModel.h"
+#include "nodes/graph.h"
 #include "nodes/node.h"
 #include <QAbstractListModel>
 #include <QPointF>
@@ -37,7 +38,8 @@ class NodeWrapper
     // Does this node contain other nodes?
     bool hasInner() { return dynamic_cast<Graph *>(node_) != nullptr; }
     //
-    const RenderableModel *renderableModel() { return renderables.get(); }
+    const RenderableModel *renderableModel() const { return renderables.get(); }
+    RenderableModel *renderableModel() { return renderables.get(); }
 
     private:
     // Pointer to the node we're wrapping
