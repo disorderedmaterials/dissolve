@@ -46,11 +46,15 @@ class DissolveGraph : public Graph
     /*
      * Files
      */
-    public:
+    private:
     // Frequency at which to write restart directory
     int restartDirectoryFrequency_{10};
 
-    private:
+    public:
+    // Load TOML input file
+    bool loadTOML(std::string_view filename);
+    // Save TOML input file
+    bool saveTOML(std::string_view filename) const;
     // Set frequency with which to write various iteration data
     void setRestartDirectoryFrequency(int n);
     // Return frequency with which to write restart directory
@@ -60,6 +64,8 @@ class DissolveGraph : public Graph
      * Pair Potentials, Energy and Forces
      */
     private:
+    // Whether pair potentials are updated automatically through combination rules
+    bool useCombinationRules_{true};
     // Generated pair potentials
     DoubleKeyedMap<PairPotential> pairPotentials_{true};
     // Defined pair potential overrides
@@ -72,6 +78,10 @@ class DissolveGraph : public Graph
     void updatePairPotential(const AtomType &i, const AtomType &j);
 
     public:
+    // Set whether pair potentials are updated automatically through combination rules
+    void setUseCombinationRules(bool b);
+    // Return whether pair potentials are updated automatically through combination rules
+    bool useCombinationRules() const;
     // Clear all pair potentials
     void clearPairPotentials();
     // Access a pair potential
@@ -94,9 +104,15 @@ class DissolveGraph : public Graph
     /*
      * Serialisation
      */
+    private:
+    // Express pair potentials as a serialisable value
+    SerialisedValue serialisePairPotentials() const;
+    // Read pair potentials from a serialisable value
+    void deserialisePairPotentials(const SerialisedValue &node);
+
     public:
     // Express as a serialisable value
-    void serialise(std::string tag, SerialisedValue &target) const;
+    void serialise(std::string tag, SerialisedValue &target) const override;
     // Read values from a serialisable value
-    void deserialise(const SerialisedValue &node);
+    void deserialise(const SerialisedValue &node) override;
 };

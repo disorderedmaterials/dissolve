@@ -5,7 +5,6 @@ add_library(
   dissolve.cpp
   io.cpp
   pairPotentials.cpp
-  simulation.cpp
   version.cpp
   cli.h
   compatibility.h

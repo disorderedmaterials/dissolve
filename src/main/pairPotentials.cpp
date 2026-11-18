@@ -5,12 +5,6 @@
 #include "main/dissolve.h"
 #include <utility>
 
-// Set whether pair potentials are updated automatically through combination rules
-void Dissolve::setUseCombinationRules(bool b) { useCombinationRules_ = b; }
-
-// Return whether pair potentials are updated automatically through combination rules
-bool Dissolve::useCombinationRules() const { return useCombinationRules_; }
-
 // Return index of specified PairPotential
 int Dissolve::indexOf(PairPotential *pp)
 {
@@ -67,81 +61,3 @@ PairPotential *Dissolve::pairPotential(std::string_view at1Name, std::string_vie
 // Return map for PairPotentials
 const PotentialMap &Dissolve::potentialMap() const { return potentialMap_; }
 PotentialMap &Dissolve::potentialMap() { return potentialMap_; }
-
-// Update all pair potentials
-bool Dissolve::updatePairPotentials(std::optional<bool> useCombinationRulesHint)
-{
-    Messenger::print("Updating pair potentials...\n");
-    potentialMap_.clear();
-
-    auto useCombinationRules = useCombinationRulesHint.value_or(useCombinationRules_);
-
-    // // First step - remove any pair potentials which reference non-existent atom types
-    // pairPotentials_.erase(std::remove_if(pairPotentials_.begin(), pairPotentials_.end(),
-    //                                      [&](const auto &pot)
-    //                                      {
-    //                                          return (std::find(coreData_.atomTypes().begin(), coreData_.atomTypes().end(),
-    //                                                            std::get<0>(pot)) == coreData_.atomTypes().end() ||
-    //                                                  std::find(coreData_.atomTypes().begin(), coreData_.atomTypes().end(),
-    //                                                            std::get<1>(pot)) == coreData_.atomTypes().end());
-    //                                      }),
-    //                       pairPotentials_.end());
-    //
-    // // Second step - add or update tabulated pair potentials defined by the parameters and form of the associated atom types
-    // dissolve::for_each_pair(ParallelPolicies::seq, coreData_.atomTypes(),
-    //                         [&](int typeI, const auto &at1, int typeJ, const auto &at2)
-    //                         {
-    //                             // Try to locate existing pair potential between these atom types
-    //                             auto *pot = pairPotential(at1.get(), at2.get());
-    //
-    //                             // If it doesn't exist we create it
-    //                             if (!pot)
-    //                             {
-    //                                 Messenger::print("Creating new PairPotential for interaction between '{}' and '{}'...\n",
-    //                                                  at1->name(), at2->name());
-    //                                 pot = addPairPotential(at1, at2);
-    //                             }
-    //
-    //                             // Update basic parameters
-    //                             pot->setNames(at1->name(), at2->name());
-    //
-    //                             // Auto-update parameters using combination rules?
-    //                             if (useCombinationRules)
-    //                             {
-    //                                 // Combine the atom type parameters into potential function parameters
-    //                                 auto optPotential =
-    //                                     ShortRangeFunctions::combine(at1->interactionPotential(),
-    //                                     at2->interactionPotential());
-    //                                 if (optPotential)
-    //                                     pot->setInteractionPotential(*optPotential);
-    //                                 else
-    //                                     pot->setInteractionPotential(Functions1D::Form::None, "");
-    //                             }
-    //
-    //                             // Set local charge product
-    //                             pot->setLocalChargeProduct(at1->charge() * at2->charge());
-    //                         });
-    // TODO DISSOLVE2
-
-    // Re-tabulate the potentials to account for changes in charge inclusion/exclusion, range etc. as well as parameters
-    for (auto &&[at1, at2, pot] : pairPotentials_)
-        pot->tabulate();
-
-    // Third step - apply any overrides
-    // REMOVED for Dissolve2
-
-    // Fourth step - set any additional potential
-    // TODO DISSOLVE2
-    // for (auto &&[at1, at2, pp] : pairPotentials_)
-    // {
-    //     // Check processing module data for a named additional potential
-    //     auto addPotName = std::format("Potential_{}-{}_Additional", at1->name(), at2->name());
-    //     if (processingModuleData_.contains(addPotName, "Dissolve"))
-    //         pp->setAdditionalPotential(processingModuleData_.retrieve<Data1D>(addPotName, "Dissolve"));
-    // }
-
-    // Reinitialise the potential map
-    // DSABLED FOR DISSOLVE2
-    // return potentialMap_.initialise(coreData_.atomTypes(), pairPotentials_);
-    return true;
-}

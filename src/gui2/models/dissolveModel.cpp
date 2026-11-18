@@ -25,28 +25,18 @@ void DissolveModel::setDissolve(Dissolve &dissolve)
 }
 
 // Update models
-void DissolveModel::update()
-{
-    Q_EMIT modelsUpdated();
-}
+void DissolveModel::update() { Q_EMIT modelsUpdated(); }
 
 // Getter for filename
 QUrl DissolveModel::fileName() const { return QUrl(dissolve_->inputFilename().data()); }
 
 void DissolveModel::loadInput(QUrl filename)
 {
-    dissolve_->loadInput(filename.toLocalFile().toStdString());
+    dissolve_->loadTOML(filename.toLocalFile().toStdString());
     Q_EMIT(modelsUpdated());
 }
 
-bool DissolveModel::save() { return dissolve_->saveToml(dissolve_->inputFilename()); }
-
-bool DissolveModel::saveAs(QUrl filename)
-{
-    dissolve_->setInputFilename(filename.toLocalFile().toStdString());
-    Q_EMIT(modelsUpdated());
-    return save();
-}
+bool DissolveModel::saveAs(QUrl filename) { return dissolve_->saveTOML(filename.toLocalFile().toStdString()); }
 
 Graph *DissolveModel::graph()
 {

@@ -33,18 +33,12 @@ class Dissolve
      * Pair Potentials
      */
     private:
-    // Whether pair potentials are updated automatically through combination rules
-    bool useCombinationRules_;
     // Simulation PairPotentials
     std::vector<PairPotential::Definition> pairPotentials_;
     // Map for PairPotentials
     PotentialMap potentialMap_;
 
     public:
-    // Set whether pair potentials are updated automatically through combination rules
-    void setUseCombinationRules(bool b);
-    // Return whether pair potentials are updated automatically through combination rules
-    bool useCombinationRules() const;
     // Return index of specified PairPotential
     int indexOf(PairPotential *pp);
     // Return number of defined PairPotentials
@@ -62,8 +56,6 @@ class Dissolve
     // Return map for PairPotentials
     const PotentialMap &potentialMap() const;
     PotentialMap &potentialMap();
-    // Update all pair potentials
-    bool updatePairPotentials(std::optional<bool> useCombinationRulesHint = {});
 
     /*
      * Graph node
@@ -92,6 +84,10 @@ class Dissolve
     SampledDouble iterationTime_;
 
     public:
+    // Load TOML input file  TO BE DELETED
+    bool loadTOML(std::string_view filename);
+    // Save TOML input file  TO BE DELETED
+    bool saveTOML(std::string_view filename) const;
     // Prepare for main simulation
     bool prepare();
 
@@ -107,18 +103,6 @@ class Dissolve
     SampledDouble saveRestartTimes_;
 
     public:
-    // Load input file
-    bool loadInput(std::string_view filename);
-    // Read pair potentials from a serialisable value
-    void deserialisePairPotentials(const SerialisedValue &node);
-    // Read values from a serialisable value
-    void deserialise(const SerialisedValue &node);
-    // Save TOML file
-    bool saveToml(std::string_view filename) const;
-    // Express pair potentials as a serialisable value
-    SerialisedValue serialisePairPotentials() const;
-    // Express as a serialisable value
-    void serialise(std::string tag, SerialisedValue &target) const;
     // Return whether an input filename has been set
     bool hasInputFilename() const;
     // Set current input filename
