@@ -1,7 +1,15 @@
+
 name = "Root"
 type = "Dissolve"
 x = 0
 y = 0
+version = "1.9.0"
+[pairPotentials]
+shortRangeTruncation = "Shifted"
+chargeSource = "Automatic"
+coulombTruncation = "Shifted"
+delta = 0.005
+range = 15.0
 
 [nodes]
 [nodes.x]
@@ -36,20 +44,13 @@ type = "Add"
 x = 750
 y = 500
 
-[nodes.z.inputs]
-[nodes.z.inputs.X]
-data = 0
-
-[nodes.z.inputs.Y]
-data = 0
-
-[[edges]]
+[[graph.edges]]
 sourceNode = "x"
 sourceOutput = "Result"
 targetNode = "z"
 targetInput = "X"
 
-[[edges]]
+[[graph.edges]]
 sourceNode = "y"
 sourceOutput = "Result"
 targetNode = "z"

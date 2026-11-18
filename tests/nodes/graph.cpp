@@ -65,16 +65,15 @@ TEST_F(GraphCoreTest, Serialisation)
 {
     createGraph();
 
-    DissolveGraph copy;
-    auto serialised = Serialisable::ser(root_);
+    // Serialise the constructed data
+    SerialisedValue serialised = Serialisable::ser(root_);
+    std::cout << serialised << std::endl;
 
+    // Load in reference data and compare
     SerialisedValue contents = toml::parse("graph/simple_addition_graph.toml");
     UnitTest::compareToml("", serialised, contents);
 
-    std::cout << serialised << std::endl;
-    copy.deserialise(serialised);
-    auto repeat = Serialisable::ser(copy);
-
+    SerialisedValue repeat = Serialisable::ser(copy);
     UnitTest::compareToml("", repeat, contents);
 };
 

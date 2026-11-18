@@ -123,7 +123,7 @@ TEST_F(SubGraphTest, RoundTrip)
 
     // Serialised graph TOML
     SerialisedValue graphTOML;
-    ASSERT_NO_THROW(root_.serialise("graph", graphTOML));
+    ASSERT_NO_THROW(graphTOML = Serialisable::ser(root_));
 
     // Deserialise from the stored TOML
     auto deserialisedGraph = std::make_unique<DissolveGraph>();
@@ -131,7 +131,7 @@ TEST_F(SubGraphTest, RoundTrip)
 
     // Complete round trip - re-serialise the result and compare it to the original TOML
     SerialisedValue compareTOML;
-    ASSERT_NO_THROW(deserialisedGraph->serialise("graph", compareTOML));
+    ASSERT_NO_THROW(compareTOML = Serialisable::ser(deserialisedGraph));
     ASSERT_NO_THROW(UnitTest::compareToml("", graphTOML, compareTOML));
 }
 
