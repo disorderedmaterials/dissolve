@@ -274,7 +274,7 @@ void NodeMessages::updateMessages()
 
             const auto &[level, msg] = nodeLocalMessageStore_->at(i);
             latestMessages_.emplace_back(level, msg);
-            latestMessageIndex_ = i + 1;
+            // latestMessageIndex_ = i + 1;
         }
 
         // Check overall status of graph run - log graph summary if graph process result (i.e. that of the runner node) is
@@ -329,7 +329,9 @@ void NodeMessages::updateMessages()
         }
 
         // Pass the latest messages to the list model
-        model_.setMessages(latestMessages_);
+        for (const auto &pair : latestMessages_)
+            model_.append(&pair);
+        latestMessageIndex_ = model_.messageList().size();
     }
     else
     {
@@ -343,12 +345,13 @@ void NodeMessages::updateMessages()
 // Return the message list
 Node::MessageStore &NodeMessageModel::messageList() { return messages_; }
 
-// Set the message list
-void NodeMessageModel::setMessages(const Node::MessageStore &messages)
+//
+const NodeMessageModel::StatusMessagePair *NodeMessageModel::append(const NodeMessageModel::StatusMessagePair *element)
 {
-    beginResetModel();
-    messages_ = messages;
-    endResetModel();
+    beginInsertRows(QModelIndex(), messages_.size(), messages_.size());
+    messages_.push_back(*element);
+    endInsertRows();
+    return element;
 }
 
 /*
