@@ -113,7 +113,7 @@ void DissolveGraph::updatePairPotential(const AtomType &i, const AtomType &j)
 
         if (useCombinationRules_)
         {
-            ShortRangeFunctions::combine(i.interactionPotential(), j.interactionPotential());
+            interactionPotential = ShortRangeFunctions::combine(i.interactionPotential(), j.interactionPotential());
 
             if (interactionPotential.has_value())
                 pairPotentials_.set(nameI, nameJ, {nameI, nameJ, *interactionPotential});
