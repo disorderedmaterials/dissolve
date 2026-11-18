@@ -28,21 +28,6 @@ std::string_view DissolveGraph::summary() const { return "Parent node of all sim
  * Data
  */
 
-std::optional<std::string> DissolveGraph::loadFile(std::filesystem::path name)
-{
-    auto contents = toml::parse(name);
-    try
-    {
-        deserialise(contents);
-    }
-    catch (toml::type_error err)
-    {
-        return std::format("{} in {} at {} through {} ", err.what(), err.location().file_name(), err.location().first_line(),
-                           err.location().last_line());
-    }
-    return {};
-}
-
 // Return the DissolveGraph reference
 DissolveGraph *DissolveGraph::dissolveGraph() { return this; }
 
@@ -50,58 +35,25 @@ DissolveGraph *DissolveGraph::dissolveGraph() { return this; }
  * Files
  */
 
+// Return current input file
+std::filesystem::path DissolveGraph::inputFile() const { return inputFile_; }
+
 // Load TOML input file
-bool DissolveGraph::loadTOML(std::string_view filename)
+std::optional<std::string> DissolveGraph::loadTOML(std::filesystem::path filePath)
 {
-    // If the file name ends in TOML, insist on a TOML parse
-    if (filename.find(".toml") == filename.size() - 5)
-    {
-        try
-        {
-            SerialisedValue contents = toml::parse(std::string(filename));
-            deserialise(contents);
-            return true;
-        }
-        catch (toml::syntax_error &e)
-        {
-            Messenger::error("Syntax error in TOML file (are you sure you meant the .toml extension?).\n\n{}", e.what());
-        }
-        catch (toml::type_error &e)
-        {
-            Messenger::error("Could not load TOML file\n\n{}", e.what());
-        }
-        return false;
-    }
-
-    // Fail if the file starts with restart header
-    {
-        std::ifstream infile{std::string(filename)};
-        std::string firstLine;
-        infile >> firstLine;
-        infile.close();
-        if (firstLine.find("# Restart file") == 0)
-        {
-            Messenger::error("File {} is a restart file and not an input file", filename);
-            return false;
-        }
-    }
-
+    auto contents = toml::parse(filePath);
     try
     {
-        SerialisedValue contents = toml::parse(std::string(filename));
         deserialise(contents);
-        return true;
+        inputFile_ = filePath;
     }
-    catch (toml::syntax_error &e)
+    catch (toml::type_error err)
     {
-        Messenger::error("Not a valid TOML file?\n\n{}", e.what());
+        inputFile_.clear();
+        return std::format("{} in {} at {} through {} ", err.what(), err.location().file_name(), err.location().first_line(),
+                           err.location().last_line());
     }
-    catch (toml::type_error &e)
-    {
-        // The file *was* a TOML file, but it had problems loading
-        Messenger::error("Could not load TOML file\n\n{}", e.what());
-    }
-    return false;
+    return {};
 }
 
 // Save TOML file

@@ -28,7 +28,7 @@ void DissolveModel::setDissolve(Dissolve &dissolve)
 void DissolveModel::update() { Q_EMIT modelsUpdated(); }
 
 // Getter for filename
-QUrl DissolveModel::fileName() const { return QUrl(dissolve_->inputFilename().data()); }
+QUrl DissolveModel::fileName() const { return QUrl(dissolve_->inputFile().c_str()); }
 
 void DissolveModel::loadInput(QUrl filename)
 {

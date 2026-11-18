@@ -3,8 +3,6 @@ add_library(
   compatibility.cpp
   cli.cpp
   dissolve.cpp
-  io.cpp
-  pairPotentials.cpp
   version.cpp
   cli.h
   compatibility.h

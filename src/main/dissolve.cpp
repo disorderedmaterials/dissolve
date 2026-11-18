@@ -33,9 +33,4 @@ void Dissolve::clear()
 
     // Graph
     graphNode_ = std::make_unique<DissolveGraph>();
-
-    // I/O
-    setInputFilename("");
-    restartFilename_.clear();
-    saveRestartTimes_.clear();
 }

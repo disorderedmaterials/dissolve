@@ -38,8 +38,6 @@ class DissolveGraph : public Graph
      * Data
      */
     public:
-    // Load the dissolve simulation from a file
-    std::optional<std::string> loadFile(std::filesystem::path name);
     // Return the DissolveGraph reference
     DissolveGraph *dissolveGraph() override;
 
@@ -47,12 +45,18 @@ class DissolveGraph : public Graph
      * Files
      */
     private:
+    // Current input file
+    std::filesystem::path inputFile_;
+    // Filename of current restart directory
+    std::string restartDirectoryName_;
     // Frequency at which to write restart directory
     int restartDirectoryFrequency_{10};
 
     public:
+    // Return current input file
+    std::filesystem::path inputFile() const;
     // Load TOML input file
-    bool loadTOML(std::string_view filename);
+    std::optional<std::string> loadTOML(std::filesystem::path filePath);
     // Save TOML input file
     bool saveTOML(std::string_view filename) const;
     // Set frequency with which to write various iteration data

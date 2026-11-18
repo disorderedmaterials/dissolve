@@ -41,33 +41,12 @@ class Dissolve
     std::unique_ptr<DissolveGraph> graphNode_;
 
     public:
+    // Return current input file  TO BE DELETED
+    std::filesystem::path inputFile() const;
     // Load TOML input file  TO BE DELETED
     bool loadTOML(std::string_view filename);
     // Save TOML input file  TO BE DELETED
     bool saveTOML(std::string_view filename) const;
     // Prepare for main simulation  TO BE DELETED
     bool prepare();
-
-    /*
-     * Serialisation
-     */
-    private:
-    // Filename of current input file
-    std::string inputFilename_;
-    // Filename of current restart file
-    std::string restartFilename_;
-    // Accumulated timing information for saving restart file
-    SampledDouble saveRestartTimes_;
-
-    public:
-    // Return whether an input filename has been set
-    bool hasInputFilename() const;
-    // Set current input filename
-    void setInputFilename(std::string_view filename);
-    // Return current input filename
-    std::string_view inputFilename() const;
-    // Return restart filename
-    std::string_view restartFilename() const;
-    // Return whether a restart filename has been set
-    bool hasRestartFilename() const;
 };

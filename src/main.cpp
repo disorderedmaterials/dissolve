@@ -38,7 +38,7 @@ int main(int args, char **argv)
 
     // Load input file
     Messenger::banner("Parse Input File");
-    if (auto err = dissolve.loadFile(options.inputFile().value()))
+    if (auto err = dissolve.loadTOML(options.inputFile().value()))
     {
         Messenger::error("{}", *err);
         return 1;
@@ -73,7 +73,7 @@ int main(int args, char **argv)
         if (options.writeInputAndReload())
         {
             Messenger::banner("Reload Input File");
-            if (auto err = dissolve.loadFile(options.inputFile().value()))
+            if (auto err = dissolve.loadTOML(options.inputFile().value()))
             {
                 Messenger::error("{}", *err);
                 return 1;
