@@ -4,7 +4,6 @@
 #include "nodes/analysis/sdf.h"
 #include "nodes/import/dlputilsPDens.h"
 #include "nodes/iterableGraph.h"
-#include "nodes/species.h"
 #include "tests/testGraphFixture.h"
 
 namespace UnitTest
