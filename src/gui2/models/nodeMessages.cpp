@@ -102,21 +102,33 @@ const NodeMessageModel *NodeMessages::model() { return &model_; }
 void NodeMessages::setGraphModel(GraphModel *graphModel)
 {
     graphModel_ = graphModel;
-    QObject::connect(this, &NodeMessages::peeked, this,
+    QObject::connect(
+        this, &NodeMessages::peeked, this,
+        [this]()
+        {
+            if (!sourceNode())
+                return;
+
+            const auto &parentGraph = graphModel_->graph();
+            const auto thisName = sourceNode()->name();
+            if (!parentGraph->findNode(thisName) || parentGraph->name() == thisName)
+                return;
+
+            auto &wrappedNode = graphModel_->wrappedNode(sourceNode()->name());
+            wrappedNode.renderableModel()->update();
+        },
+        Qt::ConnectionType::DirectConnection);
+    // QObject::connect(graphModel_, &GraphModel::graphReconstructionComplete, this, &NodeMessages::peekNode);
+    QObject::connect(graphModel_, &GraphModel::graphReconstructionComplete, this,
                      [this]()
                      {
-                         if (!sourceNode())
-                             return;
-
-                         const auto &parentGraph = graphModel_->graph();
-                         const auto thisName = sourceNode()->name();
-                         if (!parentGraph->findNode(thisName) || parentGraph->name() == thisName)
-                             return;
-
-                         auto &wrappedNode = graphModel_->wrappedNode(sourceNode()->name());
-                         wrappedNode.renderableModel()->update();
-                     });
-    QObject::connect(graphModel_, &GraphModel::graphReconstructionComplete, this, &NodeMessages::peekNode);
+                         const auto graphStatus = graphModel_->graphStatus();
+                         if (std::holds_alternative<GraphModel::GraphGlobalStates>(graphStatus) &&
+                             std::get<GraphModel::GraphGlobalStates>(graphStatus) == GraphModel::GraphGlobalStates::InProgress)
+                             initialise();
+                         peekNode();
+        },
+        Qt::ConnectionType::DirectConnection);
     QObject::connect(graphModel_, &GraphModel::graphRunStarted, this,
                      [this](const auto &runnerNode)
                      {
@@ -137,7 +149,8 @@ void NodeMessages::setGraphModel(GraphModel *graphModel)
                              return;
 
                          initialise();
-                     });
+        },
+        Qt::ConnectionType::DirectConnection);
     QObject::connect(graphModel_, &GraphModel::graphRunComplete, this,
                      [this]()
                      {
@@ -162,7 +175,8 @@ void NodeMessages::setGraphModel(GraphModel *graphModel)
                              return;
 
                          peekNode();
-                     });
+        },
+        Qt::ConnectionType::DirectConnection);
     QObject::connect(graphModel_, &GraphModel::graphChanged, this,
                      [this]()
                      {
@@ -189,7 +203,8 @@ void NodeMessages::setGraphModel(GraphModel *graphModel)
 
                          setIndicatorProperties();
                          Q_EMIT peeked();
-                     });
+        },
+        Qt::ConnectionType::DirectConnection);
 
     // Object has been initialised
     ready_ = true;
@@ -243,8 +258,9 @@ void NodeMessages::initialise()
     // Start the timer to peek the node progress at 250 ms intervals
     if (!peekTimer_)
         peekTimer_ = new QTimer(this);
-    QObject::connect(peekTimer_, &QTimer::timeout, this, &NodeMessages::peekNode);
-    peekTimer_->start(250);
+
+    QObject::connect(peekTimer_, &QTimer::timeout, this, &NodeMessages::peekNode, Qt::ConnectionType::DirectConnection);
+    peekTimer_->start(graphModel_->iterable() ? (graphModel_->iterable()->nIterations() > 1e5 ? 25 : 250) : 250);
 }
 
 // Update all - get latest messages and set node status flags
@@ -274,7 +290,6 @@ void NodeMessages::updateMessages()
 
             const auto &[level, msg] = nodeLocalMessageStore_->at(i);
             latestMessages_.emplace_back(level, msg);
-            // latestMessageIndex_ = i + 1;
         }
 
         // Check overall status of graph run - log graph summary if graph process result (i.e. that of the runner node) is

@@ -11,10 +11,16 @@ Plot1DModel::Plot1DModel(const std::string &name, const std::function<const Data
 }
 
 //
-void Plot1DModel::reset()
+void Plot1DModel::update()
 {
-    beginResetModel();
-    endResetModel();
+    const auto &source = sourceDataGetter_();
+    const auto n = source->nValues();
+    for (int i = 0; i < n; i++)
+    {
+        auto index = this->index(i, 0);
+        Q_EMIT dataChanged(index, index, {Qt::UserRole + X});
+        Q_EMIT dataChanged(index, index, {Qt::UserRole + Y});
+    }
 }
 
 // Number of rows
@@ -79,15 +85,3 @@ QString Plot1DModel::xName() { return QString::fromStdString(xName_); }
 
 //
 QString Plot1DModel::yName() { return QString::fromStdString(yName_); }
-
-//
-double Plot1DModel::xOffsetPercentage()
-{
-    return 0;
-}
-
-//
-double Plot1DModel::yOffsetPercentage()
-{
-    return 0;
-}
