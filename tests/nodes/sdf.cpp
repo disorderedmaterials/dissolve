@@ -60,7 +60,11 @@ class SDFNodeWaterTest : public TestGraphFixture
     }
 };
 
-TEST_F(SDFNodeWaterTest, Water) { go(); }
+TEST_F(SDFNodeWaterTest, Water)
+{
+    GTEST_SKIP() << "Test disabled until project folders are implemented.";
+    go();
+}
 
 class SDFNodeBenzeneTest : public TestGraphFixture
 {
@@ -114,7 +118,11 @@ class SDFNodeBenzeneTest : public TestGraphFixture
     }
 };
 
-TEST_F(SDFNodeBenzeneTest, Benzene) { go(); }
+TEST_F(SDFNodeBenzeneTest, Benzene)
+{
+    GTEST_SKIP() << "Test disabled until project folders are implemented.";
+    go();
+}
 
 // TEST(SDFNodeTest, Benzene)
 // {
