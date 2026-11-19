@@ -244,7 +244,7 @@ Item {
                 Layout.fillHeight: true
                 horizontalAlignment: Text.AlignHCenter
                 rotation: -90
-                text: plotModel.yName()
+                text: plotModel.yName
                 transformOrigin: Item.Center
                 verticalAlignment: Text.AlignVCenter
             }
@@ -262,7 +262,7 @@ Item {
                 Label {
                     Layout.fillWidth: true
                     horizontalAlignment: Text.AlignHCenter
-                    text: plotModel.xName()
+                    text: plotModel.xName
                 }
             }
 
