@@ -13,6 +13,14 @@ class Plot1DModel : public QAbstractListModel
 {
     Q_OBJECT;
 
+    Q_PROPERTY(QString name READ name NOTIFY contentChanged)
+    Q_PROPERTY(double minX READ minX NOTIFY contentChanged)
+    Q_PROPERTY(double minY READ minY NOTIFY contentChanged)
+    Q_PROPERTY(double maxX READ maxX NOTIFY contentChanged)
+    Q_PROPERTY(double maxY READ maxY NOTIFY contentChanged)
+    Q_PROPERTY(QString xName READ xName NOTIFY contentChanged)
+    Q_PROPERTY(QString yName READ yName NOTIFY contentChanged)
+
     public:
     Plot1DModel(const std::string &name, const std::function<const Data1D *()> &sourceDataGetter);
     ~Plot1DModel() = default;
@@ -37,19 +45,7 @@ class Plot1DModel : public QAbstractListModel
     //
     void update();
 
-    /*
-     * QAbstractListModel overrides
-     */
-
-    public:
-    // Number of rows
-    int rowCount(const QModelIndex &parent = QModelIndex()) const override;
-    // Access edge by QModelIndex.  The correct role can be found in the roleNames function.
-    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
-    // Return the mapping between role index and QML value name.  This is required by QAbstractListModel
-    QHash<int, QByteArray> roleNames() const;
-
-    public Q_SLOTS:
+    private:
     //
     QString name();
     //
@@ -64,4 +60,24 @@ class Plot1DModel : public QAbstractListModel
     QString xName();
     //
     QString yName();
+
+    Q_SIGNALS:
+    //
+    void contentChanged();
+
+    private:
+    //
+    void handleDataChanged();
+
+    /*
+     * QAbstractListModel overrides
+     */
+
+    public:
+    // Number of rows
+    int rowCount(const QModelIndex &parent = QModelIndex()) const override;
+    // Access edge by QModelIndex.  The correct role can be found in the roleNames function.
+    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
+    // Return the mapping between role index and QML value name.  This is required by QAbstractListModel
+    QHash<int, QByteArray> roleNames() const;
 };

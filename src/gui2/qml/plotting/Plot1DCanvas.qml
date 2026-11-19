@@ -10,10 +10,10 @@ Item {
     required property var context
     readonly property double graphCornerHeight: context.canvasDimensions["dy"] / 8
     readonly property double graphCornerWidth: context.canvasDimensions["dx"] / 8
-    readonly property double maxX: context.plotModel.maxX()
-    readonly property double maxY: context.plotModel.maxY()
-    readonly property double minX: context.plotModel.minX()
-    readonly property double minY: context.plotModel.minY()
+    readonly property double maxX: context.plotModel.maxX
+    readonly property double maxY: context.plotModel.maxY
+    readonly property double minX: context.plotModel.minX
+    readonly property double minY: context.plotModel.minY
     readonly property double realXAxisLength: Math.abs(maxX - minX)
     readonly property double realYAxisLength: Math.abs(maxY - minY)
     readonly property double xAxisLength: context.canvasDimensions["dx"] - graphCornerWidth
