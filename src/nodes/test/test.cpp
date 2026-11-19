@@ -28,9 +28,6 @@ TestNode::TestNode(Graph *parentGraph) : Node(parentGraph)
     addOutput("Sine", "A test sine data series", sineData_);
     addOutput("Cosine", "A test cosine data series", cosineData_);
 
-    // Options
-    addOption("SleepOnIteration", "The node process will sleep for 2000ms on each iteration", sleepOnIteration_);
-
     // Fill out some test data at construction time
     auto dx = M_PI / 4;
     sineData_.addPoint(0, sin(0));
@@ -42,15 +39,15 @@ TestNode::TestNode(Graph *parentGraph) : Node(parentGraph)
     sineData_.addPoint(6 * dx, sin(6 * dx));
     sineData_.addPoint(7 * dx, sin(7 * dx));
     sineData_.addPoint(8 * dx, sin(8 * dx));
-    cosineData_.addPoint(0, sin(0));
-    cosineData_.addPoint(dx, sin(dx));
-    cosineData_.addPoint(2 * dx, sin(2 * dx));
-    cosineData_.addPoint(3 * dx, sin(3 * dx));
-    cosineData_.addPoint(4 * dx, sin(4 * dx));
-    cosineData_.addPoint(5 * dx, sin(5 * dx));
-    cosineData_.addPoint(6 * dx, sin(6 * dx));
-    cosineData_.addPoint(7 * dx, sin(7 * dx));
-    cosineData_.addPoint(8 * dx, sin(8 * dx));
+    cosineData_.addPoint(0, cos(0));
+    cosineData_.addPoint(dx, cos(dx));
+    cosineData_.addPoint(2 * dx, cos(2 * dx));
+    cosineData_.addPoint(3 * dx, cos(3 * dx));
+    cosineData_.addPoint(4 * dx, cos(4 * dx));
+    cosineData_.addPoint(5 * dx, cos(5 * dx));
+    cosineData_.addPoint(6 * dx, cos(6 * dx));
+    cosineData_.addPoint(7 * dx, cos(7 * dx));
+    cosineData_.addPoint(8 * dx, cos(8 * dx));
 }
 
 /*
@@ -119,16 +116,14 @@ NodeConstants::ProcessResult TestNode::process()
     messageParts_.clear();
     messageParts_.insert(messageParts_.end(), message_.begin(), message_.end());
 
-    iteration_ = number_.asInteger();
-
     // Data plotting
     iteration_++;
-    emplaceSine(iteration_ * (M_PI / 4));
-    emplaceCosine(iteration_ * (M_PI / 4));
-
-    number_ = iteration_;
+    emplaceSine(iteration_ * (M_PI / 4) * 0.2);
+    emplaceCosine(iteration_ * (M_PI / 4) * 0.2);
 
     message("Current iteration: {}", iteration_);
+
+    number_ = number_ + 1;
 
     /*
      * Dynamic outputs

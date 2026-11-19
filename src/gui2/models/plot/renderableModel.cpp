@@ -37,7 +37,7 @@ RenderableModel::RenderableModel(const Node::NodeParameterMap &outputs)
 void RenderableModel::update()
 {
     for (auto &[_, model] : dataSets_)
-        model->reset();
+        model->update();
 }
 
 // Returns bool - true if there are no renderables associated with this node

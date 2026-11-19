@@ -68,6 +68,7 @@
 #include "nodes/structure/setCoordinates.h"
 #include "nodes/structure/species.h"
 #include "nodes/test/test.h"
+#include "nodes/utility/delay.h"
 #include <memory>
 #include <ranges>
 
@@ -155,7 +156,11 @@ const std::map<NodeRegistry::Category, ProducerMap> NodeRegistry::categoricalPro
       {"Species", makeDerivedNode<SpeciesNode>()}}},
     {Test, {{"Test", makeDerivedNode<TestNode>()}}
 
-    }};
+    },
+    {Utility, {{"Delay", makeDerivedNode<DelayNode>()}}
+
+    },
+};
 
 ProducerMap NodeRegistry::producers_;
 
@@ -172,6 +177,7 @@ EnumOptions<NodeRegistry::Category> NodeRegistry::category()
                                                                {Category::Math, "Math"},
                                                                {Category::Structure, "Structure"},
                                                                {Category::Test, "Test"},
+                                                               {Category::Utility, "Utility"},
                                                            });
 }
 EnumOptions<NodeRegistry::Category> getEnumOptions(NodeRegistry::Category) { return NodeRegistry::category(); }

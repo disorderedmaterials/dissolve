@@ -35,7 +35,7 @@ class Plot1DModel : public QAbstractListModel
 
     public:
     //
-    void reset();
+    void update();
 
     /*
      * QAbstractListModel overrides
@@ -64,12 +64,4 @@ class Plot1DModel : public QAbstractListModel
     QString xName();
     //
     QString yName();
-    //
-    double xOffsetPercentage();
-    //
-    double yOffsetPercentage();
-
-    Q_SIGNALS:
-    //
-    void dataChanged();
 };
