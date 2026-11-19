@@ -26,7 +26,7 @@ RenderableModel::RenderableModel(const Node::NodeParameterMap &outputs)
         {
             setData(index(rowCount(), 0), QVariant::fromValue<RenderableModel::RenderableData>(
                                               {name + "/" + "Total", [parameter]() -> const Data1D *
-                                               { return &parameter->getPtr<PartialSet>()->total(); }}));
+                                               { return &parameter->get<PartialSet *>()->total(); }}));
 
             // Do the same for bound and unbound totals and partials...
         }
