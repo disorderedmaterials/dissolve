@@ -19,9 +19,9 @@ class DelayNode : public Node
     //
     Number delay_{2000};
     //
-    Number input_{0};
+    Number input_{0.0};
     //
-    Number output_{0};
+    Number output_{0.0};
     //
     bool print_{true};
 
