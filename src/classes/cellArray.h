@@ -111,7 +111,7 @@ class CellArray
     // Return vector of all unique cell neighbour pairs
     const std::vector<CellNeighbourPair> &getCellNeighbourPairs() const;
     // Return vector of all unique cell neighbour pairs with self cell pairs
-    const std::vector<CellNeighbourPair> getCellNeighbourPairsWithSelf() const;
+    const std::vector<CellNeighbourPair> getNearestNeighbourPairs() const;
     // Return whether minimum image calculation is required between the supplied cells
     bool minimumImageRequired(const Cell &a, const Cell &b) const;
 
