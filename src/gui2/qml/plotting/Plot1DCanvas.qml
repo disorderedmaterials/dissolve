@@ -96,7 +96,7 @@ Item {
                     color: "black"
                 }
             }
-            // Empty space (bottom right corner)
+            // Empty space (bottom left corner)
             Rectangle {
                 Layout.preferredHeight: graphCornerHeight
                 Layout.preferredWidth: graphCornerWidth
@@ -155,10 +155,6 @@ Item {
                 // Data points
                 Repeater {
                     model: context.plotModel
-
-                    onItemAdded: function (index, item) {
-                        console.log("Item added: MODEL: ", context.plotModel, ", INDEX: ", index, ", item: ", item);
-                    }
 
                     delegate: Rectangle {
                         id: dataPoint

@@ -6,12 +6,9 @@
 #include <cmath>
 
 Plot1DModel::Plot1DModel(const std::string &name, const std::function<const Data1D *()> &sourceDataGetter)
-    : name_(name), sourceDataGetter_(sourceDataGetter)
+    : PlotModelBase(1), name_(name), sourceDataGetter_(sourceDataGetter)
 {
 }
-
-//
-void Plot1DModel::update() { handleDataChanged(); }
 
 //
 QString Plot1DModel::name() { return QString::fromStdString(name_); }
@@ -62,11 +59,14 @@ void Plot1DModel::handleDataChanged()
 }
 
 /*
- * QAbstractListModel overrides
+ * QAbstractTableModel overrides
  */
 
 // Number of rows
 int Plot1DModel::rowCount(const QModelIndex &parent) const { return sourceDataGetter_()->nValues(); }
+
+// Number of columns
+int Plot1DModel::columnCount(const QModelIndex &parent) const { return 1; };
 
 // Access edge by QModelIndex.  The correct role can be found in the roleNames function.
 QVariant Plot1DModel::data(const QModelIndex &index, int role) const

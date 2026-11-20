@@ -3,13 +3,14 @@
 
 #pragma once
 
+#include "gui2/models/plot/plotModelBase.h"
 #include "math/data1D.h"
 #include "nodes/node.h"
 #include <QAbstractListModel>
 #include <QVariantList>
 #include <vector>
 
-class Plot1DModel : public QAbstractListModel
+class Plot1DModel : public PlotModelBase
 {
     Q_OBJECT;
 
@@ -41,10 +42,6 @@ class Plot1DModel : public QAbstractListModel
     //
     std::string yName_{"y-axis"};
 
-    public:
-    //
-    void update();
-
     private:
     //
     QString name();
@@ -67,15 +64,17 @@ class Plot1DModel : public QAbstractListModel
 
     private:
     //
-    void handleDataChanged();
+    void handleDataChanged() override;
 
     /*
-     * QAbstractListModel overrides
+     * QAbstractTableModel overrides
      */
 
     public:
     // Number of rows
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
+    // Number of columns
+    int columnCount(const QModelIndex &parent = QModelIndex()) const override;
     // Access edge by QModelIndex.  The correct role can be found in the roleNames function.
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
     // Return the mapping between role index and QML value name.  This is required by QAbstractListModel

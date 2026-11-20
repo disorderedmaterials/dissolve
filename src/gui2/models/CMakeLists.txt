@@ -28,9 +28,9 @@ set(nodeGraphModel_SRCS
 )
 
 # Plot ###
-set(plotModels_MOC_HDRS plot/plot1DModel.h plot/renderableModel.h)
+set(plotModels_MOC_HDRS plot/plotModelBase.h plot/plot2DModel.h plot/plot1DModel.h plot/renderableModel.h)
 
-set(plotModels_SRCS plot/plot1DModel.cpp plot/renderableModel.cpp)
+set(plotModels_SRCS plot/plotModelBase.cpp plot/plot1DModel.cpp plot/plot1DModel.cpp plot/renderableModel.cpp)
 
 # QML Types ###
 set(# QML type register

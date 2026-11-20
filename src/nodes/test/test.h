@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "math/data2D.h"
 #include "classes/configuration.h"
 #include "classes/structure.h"
 #include "nodes/node.h"
@@ -23,9 +24,11 @@ class TestNode : public Node
     //
     int iteration_{0};
     //
-    Data1D sineData_;
+    Data1D sineData1D_;
     //
-    Data1D cosineData_;
+    Data1D cosineData1D_;
+    //
+    Data2D sinusoidalData2D_;
     // Configuration pointer input
     Configuration *configuration_{nullptr};
     // Optional configuration output

@@ -5,6 +5,7 @@
 #include "classes/partialSet.h"
 #include "math/histogram1D.h"
 #include "templates/doubleKeyedMap.h"
+#include <stdexcept>
 
 RenderableModel::RenderableModel(const Node::NodeParameterMap &outputs)
 {
@@ -37,7 +38,7 @@ RenderableModel::RenderableModel(const Node::NodeParameterMap &outputs)
 void RenderableModel::update()
 {
     for (auto &[_, model] : dataSets_)
-        model->update();
+        model->handleDataChanged();
 }
 
 // Returns bool - true if there are no renderables associated with this node
@@ -54,7 +55,7 @@ int RenderableModel::rowCount(const QModelIndex &parent) const { return dataSets
 bool RenderableModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
     const auto renderable = qvariant_cast<RenderableData>(value);
-    auto model = std::make_unique<Plot1DModel>(renderable.name, renderable.lambda);
+    std::unique_ptr<PlotModelBase> model = std::make_unique<Plot1DModel>(renderable.name, renderable.lambda);
     dataSets_.emplace_back(renderable.name, std::move(model));
     return true;
 }
@@ -70,7 +71,16 @@ QVariant RenderableModel::data(const QModelIndex &index, int role) const
         case KEY:
             return QString::fromStdString(dataSets_.at(row).first);
         case DATA:
-            return QVariant::fromValue<Plot1DModel *>(dataSets_.at(row).second.get());
+        {
+            auto *dataSet = dataSets_.at(row).second.get();
+            switch (dataSet->N)
+            {
+                case 1:
+                    return QVariant::fromValue<Plot1DModel *>(static_cast<Plot1DModel *>(dataSet));
+                default:
+                    throw std::runtime_error("Attempted to load renderable dataset with invalid dimensionalty.");
+            }
+        }
     }
     return {};
 }

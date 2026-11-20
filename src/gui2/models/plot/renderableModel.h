@@ -35,7 +35,7 @@ class RenderableModel : public QAbstractListModel
 
     private:
     // Renderable data
-    std::vector<std::pair<std::string, std::unique_ptr<Plot1DModel>>> dataSets_;
+    std::vector<std::pair<std::string, std::unique_ptr<PlotModelBase>>> dataSets_;
 
     public Q_SLOTS:
     // Update all renderable data
