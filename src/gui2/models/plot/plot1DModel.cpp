@@ -6,12 +6,9 @@
 #include <cmath>
 
 Plot1DModel::Plot1DModel(const std::string &name, const std::function<const Data1D *()> &sourceDataGetter)
-    : name_(name), sourceDataGetter_(sourceDataGetter)
+    : PlotModelBase(1), name_(name), sourceDataGetter_(sourceDataGetter)
 {
 }
-
-//
-void Plot1DModel::update() { handleDataChanged(); }
 
 //
 QString Plot1DModel::name() { return QString::fromStdString(name_); }
@@ -62,7 +59,7 @@ void Plot1DModel::handleDataChanged()
 }
 
 /*
- * QAbstractListModel overrides
+ * QAbstractTableModel overrides
  */
 
 // Number of rows

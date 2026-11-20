@@ -4,6 +4,7 @@
 #pragma once
 
 #include "gui2/models/plot/plot1DModel.h"
+#include "gui2/models/plot/plot2DModel.h"
 #include "math/data1D.h"
 #include "nodes/node.h"
 #include <QAbstractListModel>
@@ -19,14 +20,14 @@ class RenderableModel : public QAbstractListModel
     struct RenderableData
     {
         std::string name;
-        std::function<const Data1D *()> lambda;
+        std::variant<std::function<const Data1D *()>, std::function<const Data2D *()>> lambda;
     };
 
     enum Roles
     {
         KEY,
         DATA,
-        TYPE
+        DIMENSIONS
     };
 
     public:
@@ -35,7 +36,7 @@ class RenderableModel : public QAbstractListModel
 
     private:
     // Renderable data
-    std::vector<std::pair<std::string, std::unique_ptr<Plot1DModel>>> dataSets_;
+    std::vector<std::pair<std::string, std::unique_ptr<PlotModelBase>>> dataSets_;
 
     public Q_SLOTS:
     // Update all renderable data

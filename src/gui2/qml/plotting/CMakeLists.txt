@@ -9,6 +9,9 @@ qt6_add_qml_module(
   QML_FILES
   Plot1DContext.qml
   Plot1DCanvas.qml
+  Plot2DContext.qml
+  Plot2DCanvas.qml
+  PlotDelegate.qml
 )
 
 find_package(Qt6 REQUIRED COMPONENTS Core Quick)

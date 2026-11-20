@@ -5,6 +5,7 @@
 
 #include "classes/configuration.h"
 #include "classes/structure.h"
+#include "math/data2D.h"
 #include "nodes/node.h"
 
 // Test Node
@@ -23,9 +24,11 @@ class TestNode : public Node
     //
     int iteration_{0};
     //
-    Data1D sineData_;
+    Data1D sineData1D_;
     //
-    Data1D cosineData_;
+    Data1D cosineData1D_;
+    //
+    Data2D sinusoidalData2D_;
     // Configuration pointer input
     Configuration *configuration_{nullptr};
     // Optional configuration output
@@ -68,6 +71,8 @@ class TestNode : public Node
     void emplaceSine(double phi = 0);
     //
     void emplaceCosine(double phi = 0);
+    //
+    void shiftSinusoid2D(double phi);
 
     /*
      * Processing

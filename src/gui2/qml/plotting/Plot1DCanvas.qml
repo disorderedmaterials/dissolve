@@ -96,7 +96,7 @@ Item {
                     color: "black"
                 }
             }
-            // Empty space (bottom right corner)
+            // Empty space (bottom left corner)
             Rectangle {
                 Layout.preferredHeight: graphCornerHeight
                 Layout.preferredWidth: graphCornerWidth
@@ -156,10 +156,6 @@ Item {
                 Repeater {
                     model: context.plotModel
 
-                    onItemAdded: function (index, item) {
-                        console.log("Item added: MODEL: ", context.plotModel, ", INDEX: ", index, ", item: ", item);
-                    }
-
                     delegate: Rectangle {
                         id: dataPoint
 
@@ -218,12 +214,15 @@ Item {
                                 anchors.fill: parent
                                 spacing: 0
 
+                                // Axis major tick
                                 Rectangle {
                                     Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
                                     Layout.preferredHeight: parent.height / 4
                                     Layout.preferredWidth: 1
                                     color: "black"
                                 }
+
+                                // Axis value
                                 Text {
                                     Layout.fillHeight: true
                                     Layout.fillWidth: true

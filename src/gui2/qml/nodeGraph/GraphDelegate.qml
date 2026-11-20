@@ -7,10 +7,12 @@ import Dissolve
 import DissolveControlsModule
 import DissolveIconsModule
 import DissolvePlottingModule
+import DissolveDelegatesModule
 import "../Dissolve"
 import "../DissolveControlsModule"
 import "../DissolveIconsModule"
 import "../DissolvePlottingModule"
+import "../DissolveDelegatesModule"
 
 NodeBox {
     id: root
@@ -57,10 +59,10 @@ NodeBox {
     }
 
     NodeStatusIndicator {
+        bypass: isAnyIONode
         imageSource: messageStore.indicatorImage
         opacity: messageStore.indicatorOpacity
         summary: messageStore.indicatorSummary
-        bypass: isAnyIONode
     }
     Menu {
         id: nodePopupMenu
@@ -201,107 +203,12 @@ NodeBox {
             id: outputMenuItem
 
             readonly property Menu outputMenu: Menu {
+                id: outputSubMenu
+
                 Repeater {
                     model: renderables
 
-                    // TODO: Potential requirement for a proxy model to filter out empty renderable datasets
-
-                    delegate: MenuItem {
-                        id: renderableItem
-
-                        required property string key
-
-                        // This will need to be dynamic for different plot dimensionalities
-                        readonly property Popup plotPopup: Popup {
-                            id: plotContainer
-
-                            readonly property var canvasDimensions: {
-                                "dx": 430,
-                                "dy": 300
-                            }
-                            readonly property double headerHeight: 20
-                            readonly property bool hovered: plotContainerHoverHandler.hovered
-
-                            height: 1.5 * canvasDimensions["dy"]
-                            width: 1.5 * canvasDimensions["dx"]
-
-                            contentItem: Item {
-                                ColumnLayout {
-                                    anchors.fill: parent
-                                    spacing: 0
-
-                                    Rectangle {
-                                        id: header
-
-                                        Layout.preferredHeight: plotContainer.headerHeight
-                                        Layout.preferredWidth: parent.width
-                                        border.color: "lightgrey"
-                                        border.width: 1
-                                        color: "white"
-                                        radius: 3
-
-                                        RowLayout {
-                                            anchors.fill: parent
-                                            anchors.leftMargin: 3
-                                            anchors.rightMargin: 6
-                                            spacing: 2
-
-                                            Label {
-                                                Layout.fillWidth: true
-                                                color: "grey"
-                                                font.bold: true
-                                                text: qsTr("Plot1D")
-                                            }
-                                        }
-                                    }
-                                    Plot1DContext {
-                                        Layout.fillHeight: true
-                                        Layout.fillWidth: true
-                                        canvasDimensions: plotContainer.canvasDimensions
-                                        plotModel: renderableData
-                                        title: key
-                                    }
-                                }
-                            }
-
-                            HoverHandler {
-                                id: plotContainerHoverHandler
-
-                                onHoveredChanged: {
-                                    if (hovered)
-                                        renderableItem.sharedHoverTimer.stop();
-                                    else
-                                        renderableItem.sharedHoverTimer.restart();
-                                }
-                            }
-                        }
-                        required property var renderableData
-                        readonly property Timer sharedHoverTimer: Timer {
-                            readonly property Popup popup: renderableItem.plotPopup
-
-                            interval: 150
-                            repeat: false
-
-                            onTriggered: {
-                                const noHover = !renderableItem.hovered && !popup.hovered;
-                                if (noHover)
-                                    popup.close();
-                            }
-                        }
-
-                        hoverEnabled: true
-                        text: key
-
-                        onHoveredChanged: {
-                            if (hovered) {
-                                renderableItem.sharedHoverTimer.stop();
-                                const p = renderableItem.mapToItem(renderableItem, renderableItem.width, 0);
-                                plotPopup.x = p.x;
-                                plotPopup.y = p.y;
-                                plotPopup.open();
-                            } else
-                                renderableItem.sharedHoverTimer.restart();
-                        }
+                    delegate: PlotDelegate {
                     }
                 }
             }
@@ -314,7 +221,6 @@ NodeBox {
                 onHoveredChanged: {
                     if (renderables.rowCount() == 0)
                         return;
-
                     if (hovered) {
                         const p = parent.mapToItem(parent, parent.width, 0);
                         parent.outputMenu.x = p.x;
