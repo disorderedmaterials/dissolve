@@ -5,7 +5,6 @@
 #include "analyser/dataOperator1D.h"
 #include "analyser/siteFilter.h"
 #include "analyser/siteSelector.h"
-#include "main/dissolve.h"
 #include "math/integerHistogram1D.h"
 
 QSpeciesNode::QSpeciesNode(Graph *parentGraph) : Node(parentGraph)

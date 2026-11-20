@@ -2,10 +2,10 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "nodes/epsr.h"
-#include "nodes/gr.h"
-#include "nodes/neutronSQ.h"
-#include "nodes/sq.h"
-#include "nodes/xRaySQ.h"
+#include "nodes/correlation/gr.h"
+#include "nodes/correlation/neutronSQ.h"
+#include "nodes/correlation/sq.h"
+#include "nodes/correlation/xRaySQ.h"
 #include "tests/testGraph.h"
 #include <vector>
 

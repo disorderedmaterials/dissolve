@@ -1,9 +1,5 @@
-
-name = "Root"
-type = "Dissolve"
-x = 0
-y = 0
 version = "1.9.0"
+
 [pairPotentials]
 shortRangeTruncation = "Shifted"
 chargeSource = "Automatic"
@@ -11,38 +7,51 @@ coulombTruncation = "Shifted"
 delta = 0.005
 range = 15.0
 
-[nodes]
-[nodes.x]
+[graph]
+name = "Root"
+type = "Dissolve"
+x = 0
+y = 0
+
+[graph.nodes]
+[graph.nodes.x]
 name = "x"
 type = "Add"
 x = 300
 y = 400
 
-[nodes.x.inputs]
-[nodes.x.inputs.X]
+[graph.nodes.x.inputs]
+[graph.nodes.x.inputs.X]
 data = 0
 
-[nodes.x.inputs.Y]
+[graph.nodes.x.inputs.Y]
 data = 0
 
-[nodes.y]
+[graph.nodes.y]
 name = "y"
 type = "Add"
 x = 350
 y = 600
 
-[nodes.y.inputs]
-[nodes.y.inputs.X]
+[graph.nodes.y.inputs]
+[graph.nodes.y.inputs.X]
 data = 0
 
-[nodes.y.inputs.Y]
+[graph.nodes.y.inputs.Y]
 data = 0
 
-[nodes.z]
+[graph.nodes.z]
 name = "z"
 type = "Add"
 x = 750
 y = 500
+
+[graph.nodes.z.inputs]
+[graph.nodes.z.inputs.X]
+data = 0
+
+[graph.nodes.z.inputs.Y]
+data = 0
 
 [[graph.edges]]
 sourceNode = "x"

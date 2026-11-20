@@ -3,7 +3,11 @@
 
 #include "tests/testGraph.h"
 #include "classes/isotopologueSet.h"
-#include "nodes/bragg.h"
+#include "nodes/correlation/bragg.h"
+#include "nodes/correlation/gr.h"
+#include "nodes/correlation/neutronSQ.h"
+#include "nodes/correlation/sq.h"
+#include "nodes/correlation/xRaySQ.h"
 #include "nodes/dissolve.h"
 #include "nodes/forcefield.h"
 #include "nodes/import/species.h"

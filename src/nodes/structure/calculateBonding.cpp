@@ -4,7 +4,6 @@
 #include "nodes/structure/calculateBonding.h"
 #include "classes/cellArray.h"
 #include "data/atomicRadii.h"
-#include "main/dissolve.h"
 #include "templates/parallelDefs.h"
 
 CalculateBondingNode::CalculateBondingNode(Graph *parentGraph) : Node(parentGraph)

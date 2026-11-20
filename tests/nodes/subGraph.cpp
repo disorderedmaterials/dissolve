@@ -127,7 +127,7 @@ TEST_F(SubGraphTest, RoundTrip)
 
     // Deserialise from the stored TOML
     auto deserialisedGraph = std::make_unique<DissolveGraph>();
-    ASSERT_NO_THROW(deserialisedGraph->deserialise(graphTOML["graph"]));
+    ASSERT_NO_THROW(deserialisedGraph->deserialise(graphTOML));
 
     // Complete round trip - re-serialise the result and compare it to the original TOML
     SerialisedValue compareTOML;

@@ -73,6 +73,8 @@ TEST_F(GraphCoreTest, Serialisation)
     SerialisedValue contents = toml::parse("graph/simple_addition_graph.toml");
     UnitTest::compareToml("", serialised, contents);
 
+    DissolveGraph copy;
+    copy.deserialise(serialised);
     SerialisedValue repeat = Serialisable::ser(copy);
     UnitTest::compareToml("", repeat, contents);
 };

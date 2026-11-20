@@ -3,7 +3,6 @@
 
 #include "nodes/analysis/siteRDF.h"
 #include "analyser/dataOperator1D.h"
-#include "main/dissolve.h"
 #include "math/histogram1D.h"
 #include "math/integrator.h"
 #include "math/sampledData1D.h"
