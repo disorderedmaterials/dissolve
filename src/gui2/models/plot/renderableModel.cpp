@@ -96,6 +96,8 @@ QVariant RenderableModel::data(const QModelIndex &index, int role) const
                     throw std::runtime_error("Attempted to load renderable dataset with invalid dimensionalty.");
             }
         }
+        case DIMENSIONS:
+            return dataSets_.at(row).second->N;
     }
     return {};
 }
