@@ -7,10 +7,12 @@ import Dissolve
 import DissolveControlsModule
 import DissolveIconsModule
 import DissolvePlottingModule
+import DissolveDelegatesModule
 import "../Dissolve"
 import "../DissolveControlsModule"
 import "../DissolveIconsModule"
 import "../DissolvePlottingModule"
+import "../DissolveDelegatesModule"
 
 NodeBox {
     id: root
@@ -205,7 +207,9 @@ NodeBox {
                     model: renderables
 
                     // TODO: Potential requirement for a proxy model to filter out empty renderable datasets
-
+                    delegate: PlotDelegate {
+                    }
+                    /*
                     delegate: MenuItem {
                         id: renderableItem
 
@@ -303,6 +307,7 @@ NodeBox {
                                 renderableItem.sharedHoverTimer.restart();
                         }
                     }
+                    */
                 }
             }
 

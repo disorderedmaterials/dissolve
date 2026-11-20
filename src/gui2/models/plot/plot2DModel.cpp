@@ -118,7 +118,7 @@ QVariant Plot2DModel::data(const QModelIndex &index, int role) const
             return sourceDataGetter_()->yAxis()[row];
         }
         case Z:
-            return sourceDataGetter_()->values()[{row, column}];
+            return sourceDataGetter_()->values()[{row, col}];
     }
     return {};
 }

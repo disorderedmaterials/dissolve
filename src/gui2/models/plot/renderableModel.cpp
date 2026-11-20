@@ -16,6 +16,11 @@ RenderableModel::RenderableModel(const Node::NodeParameterMap &outputs)
             setData(index(rowCount(), 0), QVariant::fromValue<RenderableModel::RenderableData>(
                                               {name, [parameter]() -> const Data1D * { return parameter->getPtr<Data1D>(); }}));
 
+        // Handle Data2D source
+        if (parameter->storedDataType() == typeid(Data2D))
+            setData(index(rowCount(), 0), QVariant::fromValue<RenderableModel::RenderableData>(
+                                              {name, [parameter]() -> const Data2D * { return parameter->getPtr<Data2D>(); }}));
+
         // Handle Histogram1D source
         if (parameter->storedDataType() == typeid(Histogram1D))
             setData(index(rowCount(), 0), QVariant::fromValue<RenderableModel::RenderableData>(
@@ -55,7 +60,15 @@ int RenderableModel::rowCount(const QModelIndex &parent) const { return dataSets
 bool RenderableModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
     const auto renderable = qvariant_cast<RenderableData>(value);
-    std::unique_ptr<PlotModelBase> model = std::make_unique<Plot1DModel>(renderable.name, renderable.lambda);
+    std::unique_ptr<PlotModelBase> model = nullptr;
+
+    if (std::holds_alternative<std::function<const Data1D *()>>(renderable.lambda))
+        model = std::make_unique<Plot1DModel>(renderable.name, std::get<std::function<const Data1D *()>>(renderable.lambda));
+    else if (std::holds_alternative<std::function<const Data2D *()>>(renderable.lambda))
+        model = std::make_unique<Plot2DModel>(renderable.name, std::get<std::function<const Data2D *()>>(renderable.lambda));
+    else
+        return false;
+
     dataSets_.emplace_back(renderable.name, std::move(model));
     return true;
 }
@@ -77,6 +90,8 @@ QVariant RenderableModel::data(const QModelIndex &index, int role) const
             {
                 case 1:
                     return QVariant::fromValue<Plot1DModel *>(static_cast<Plot1DModel *>(dataSet));
+                case 2:
+                    return QVariant::fromValue<Plot2DModel *>(static_cast<Plot2DModel *>(dataSet));
                 default:
                     throw std::runtime_error("Attempted to load renderable dataset with invalid dimensionalty.");
             }
@@ -97,6 +112,6 @@ QHash<int, QByteArray> RenderableModel::roleNames() const
     QHash<int, QByteArray> roles;
     roles[Qt::UserRole + (int)KEY] = "key";
     roles[Qt::UserRole + (int)DATA] = "renderableData";
-    roles[Qt::UserRole + (int)TYPE] = "type";
+    roles[Qt::UserRole + (int)DIMENSIONS] = "dimensions";
     return roles;
 }

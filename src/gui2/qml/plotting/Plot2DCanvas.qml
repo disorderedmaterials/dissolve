@@ -18,7 +18,7 @@ Item {
     readonly property double minZ: context.plotModel.minZ
     readonly property double realXAxisLength: Math.abs(maxX - minX)
     readonly property double realYAxisLength: Math.abs(maxY - minY)
-    readonly property double realYAxisLength: Math.abs(maxZ - minZ)
+    readonly property double realZAxisLength: Math.abs(maxZ - minZ)
     readonly property double xAxisLength: context.canvasDimensions["dx"] - graphCornerWidth
     readonly property double yAxisLength: context.canvasDimensions["dy"] - graphCornerHeight
 
@@ -274,7 +274,6 @@ Item {
             Layout.fillHeight: true
             Layout.fillWidth: true
             spacing: 0
-
 
             // Empty space (top right corner)
             Rectangle {
