@@ -8,6 +8,7 @@
 #include "classes/speciesBond.h"
 #include "data/atomicMasses.h"
 #include "templates/algorithms.h"
+#include <stdexcept>
 
 /*
  * Contents
@@ -54,7 +55,14 @@ void Molecule::updateAtoms(std::vector<ConfigurationAtom> &mainAtoms, int offset
 int Molecule::globalAtomOffset() const { return globalAtomOffset_; }
 
 // Return global index of supplied atom
-int Molecule::globalAtomIndex(const ConfigurationAtom *i) const { return globalAtomOffset_ + (i - atoms_[0]); }
+int Molecule::globalAtomIndex(const AtomBase *i) const
+{
+    auto *ii = dynamic_cast<const ConfigurationAtom *>(i);
+    if (ii == nullptr)
+        throw std::runtime_error("Tried to pull an atom from the global index which wasn't a configuration atom.  This should "
+                                 "never happen, so please contact the Dissolve developers.");
+    return globalAtomOffset_ + (ii - atoms_[0]);
+}
 
 // Sets the index of the object within the parent DynamicArray
 void Molecule::setArrayIndex(int index) { arrayIndex_ = index; }

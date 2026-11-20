@@ -8,7 +8,7 @@
 #include "templates/doubleKeyedMap.h"
 
 // Forward Declarations
-class ConfigurationAtom;
+class AtomBase;
 class Molecule;
 class SpeciesAtom;
 
@@ -36,29 +36,27 @@ class PotentialMap
      */
     public:
     // Return energy between Atoms at distance specified
-    double energy(const ConfigurationAtom &i, const ConfigurationAtom &j, double r) const;
+    double energy(const AtomBase &i, const AtomBase &j, double r) const;
     // Return energy between Atoms at distance specified, scaling electrostatic and short-range components
-    double energy(const ConfigurationAtom &i, const ConfigurationAtom &j, double r, double elecScale, double srScale) const;
+    double energy(const AtomBase &i, const AtomBase &j, double r, double elecScale, double srScale) const;
     // Return energy between SpeciesAtoms at distance specified
     double energy(const SpeciesAtom *i, const SpeciesAtom *j, double r) const;
     // Return energy between SpeciesAtoms at distance specified, scaling electrostatic and short-range components
     double energy(const SpeciesAtom *i, const SpeciesAtom *j, double r, double elecScale, double srScale) const;
     // Return analytic energy between Atom types at distance specified
-    double analyticEnergy(const ConfigurationAtom &i, const ConfigurationAtom &j, double r) const;
+    double analyticEnergy(const AtomBase &i, const AtomBase &j, double r) const;
     // Return analytic energy between Atom types at distance specified, scaling electrostatic and short-range components
-    double analyticEnergy(const ConfigurationAtom &i, const ConfigurationAtom &j, double r, double elecScale,
-                          double srScale) const;
+    double analyticEnergy(const AtomBase &i, const AtomBase &j, double r, double elecScale, double srScale) const;
     // Return force between Atoms at distance specified
-    double force(const ConfigurationAtom &i, const ConfigurationAtom &j, double r) const;
+    double force(const AtomBase &i, const AtomBase &j, double r) const;
     // Return force between Atoms at distance specified, scaling electrostatic and short-range components
-    double force(const ConfigurationAtom &i, const ConfigurationAtom &j, double r, double elecScale, double srScale) const;
+    double force(const AtomBase &i, const AtomBase &j, double r, double elecScale, double srScale) const;
     // Return force between SpeciesAtoms at distance specified
     double force(const SpeciesAtom *i, const SpeciesAtom *j, double r) const;
     // Return force between SpeciesAtoms at distance specified, scaling electrostatic and short-range components
     double force(const SpeciesAtom *i, const SpeciesAtom *j, double r, double elecScale, double srScale) const;
     // Return analytic force between Atom types at distance specified
-    double analyticForce(const ConfigurationAtom &i, const ConfigurationAtom &j, double r) const;
+    double analyticForce(const AtomBase &i, const AtomBase &j, double r) const;
     // Return analytic force between Atom types at distance specified, scaling electrostatic and short-range components
-    double analyticForce(const ConfigurationAtom &i, const ConfigurationAtom &j, double r, double elecScale,
-                         double srScale) const;
+    double analyticForce(const AtomBase &i, const AtomBase &j, double r, double elecScale, double srScale) const;
 };

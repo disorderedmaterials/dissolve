@@ -3,13 +3,13 @@
 
 #pragma once
 
+#include "classes/cell.h"
 #include "kernels/common.h"
 #include "kernels/geometry.h"
 #include "templates/flags.h"
 
 // Forward Declarations
-class ConfigurationAtom;
-class Cell;
+class AtomBase;
 class Configuration;
 class Molecule;
 
@@ -29,22 +29,22 @@ class EnergyKernel : public GeometryKernel
      */
     private:
     // Return PairPotential energy between atoms
-    virtual double pairPotentialEnergy(const ConfigurationAtom &i, const ConfigurationAtom &j, double r) const;
+    virtual double pairPotentialEnergy(const AtomBase &i, const AtomBase &j, double r) const;
     // Return PairPotential energy between atoms, scaling electrostatic and van der Waals components
-    virtual double pairPotentialEnergy(const ConfigurationAtom &i, const ConfigurationAtom &j, double r, double elecScale,
-                                       double srScale) const;
+    virtual double pairPotentialEnergy(const AtomBase &i, const AtomBase &j, double r, double elecScale, double srScale) const;
 
     /*
      * PairPotential Terms
      */
     private:
     // Return PairPotential energy of atoms in the supplied cell
-    Kernel::PairPotentialEnergyValue cellEnergy(const Cell &cell, bool includeInter = true, bool includeIntra = true) const;
+    Kernel::PairPotentialEnergyValue cellEnergy(const Cell<AtomBase> &cell, bool includeInter = true,
+                                                bool includeIntra = true) const;
     // Return PairPotential energy between two cells
-    Kernel::PairPotentialEnergyValue cellToCellEnergy(const Cell &cell, const Cell &otherCell, bool applyMim,
-                                                      bool includeInter = true, bool includeIntra = true) const;
+    Kernel::PairPotentialEnergyValue cellToCellEnergy(const Cell<AtomBase> &cell, const Cell<AtomBase> &otherCell,
+                                                      bool applyMim, bool includeInter = true, bool includeIntra = true) const;
     // Return PairPotential energy of atom with world
-    double pairPotentialEnergy(const ConfigurationAtom &i) const;
+    double pairPotentialEnergy(const AtomBase &i) const;
     // Return PairPotential energy of Molecule with world
     Kernel::PairPotentialEnergyValue pairPotentialEnergy(const Molecule &mol, bool includeInter = true,
                                                          bool includeIntra = true) const;
@@ -56,7 +56,7 @@ class EnergyKernel : public GeometryKernel
     // Return total extended energy
     double totalExtendedEnergy() const;
     // Return energy of supplied atom from ad hoc extended terms
-    virtual double extendedEnergy(const ConfigurationAtom &i) const;
+    virtual double extendedEnergy(const AtomBase &i) const;
     // Return energy of supplied molecule from ad hoc extended terms
     virtual double extendedEnergy(const Molecule &mol) const;
 

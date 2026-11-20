@@ -39,9 +39,6 @@ bool AtomBase::isPresence(AtomConstants::Presence presence) const
 // Set atomic charge
 void AtomBase::setQ(double q) { q_ = q; }
 
-// Return atomic charge
-double AtomBase::q() const { return q_; }
-
 // Return index (0->[N-1])
 int AtomBase::index() const { return index_; }
 
@@ -152,8 +149,6 @@ void AtomBase::deserialise(const SerialisedValue &node)
         Deserialisable::deser_or<double>(node, "q", 0));
 }
 
-// Set cell in which the atom exists
-void AtomBase::setCell(Cell *cell) { cell_ = cell; }
+void AtomBase::setCell(Cell<AtomBase> *cell) { cell_ = cell; }
 
-// Return cell in which the atom exists
-Cell *AtomBase::cell() const { return cell_; }
+Cell<AtomBase> *AtomBase::cell() const { return cell_; }

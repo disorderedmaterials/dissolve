@@ -10,7 +10,6 @@
 #include "classes/potentialMap.h"
 #include "classes/species.h"
 #include "templates/algorithms.h"
-#include <iterator>
 #include <numeric>
 
 EnergyKernel::EnergyKernel(const Configuration *cfg, const PotentialMap &potentialMap)
@@ -23,14 +22,13 @@ EnergyKernel::EnergyKernel(const Configuration *cfg, const PotentialMap &potenti
  */
 
 // Return PairPotential energy between atoms
-double EnergyKernel::pairPotentialEnergy(const ConfigurationAtom &i, const ConfigurationAtom &j, double r) const
+double EnergyKernel::pairPotentialEnergy(const AtomBase &i, const AtomBase &j, double r) const
 {
     return potentialMap_.energy(i, j, r);
 }
 
 // Return PairPotential energy between atoms, scaling electrostatic and van der Waals components
-double EnergyKernel::pairPotentialEnergy(const ConfigurationAtom &i, const ConfigurationAtom &j, double r, double elecScale,
-                                         double srScale) const
+double EnergyKernel::pairPotentialEnergy(const AtomBase &i, const AtomBase &j, double r, double elecScale, double srScale) const
 {
     return potentialMap_.energy(i, j, r, elecScale, srScale);
 }
@@ -40,14 +38,15 @@ double EnergyKernel::pairPotentialEnergy(const ConfigurationAtom &i, const Confi
  */
 
 // Return PairPotential energy of atoms in the supplied cell
-Kernel::PairPotentialEnergyValue EnergyKernel::cellEnergy(const Cell &cell, bool includeInter, bool includeIntra) const
+Kernel::PairPotentialEnergyValue EnergyKernel::cellEnergy(const Cell<AtomBase> &cell, bool includeInter,
+                                                          bool includeIntra) const
 {
     Kernel::PairPotentialEnergyValue totalEnergy;
     auto &atoms = cell.atoms();
 
     for (auto i = 0; i < atoms.size(); ++i)
     {
-        auto ii = static_cast<ConfigurationAtom *>(atoms[i]);
+        auto ii = static_cast<AtomBase *>(atoms[i]);
         auto molI = ii->molecule();
         auto &rI = ii->r();
 
@@ -55,7 +54,7 @@ Kernel::PairPotentialEnergyValue EnergyKernel::cellEnergy(const Cell &cell, bool
         for (auto j = i + 1; j < atoms.size(); ++j)
         {
             // Calculate rSquared distance between atoms, and check it against the stored cutoff distance
-            auto jj = static_cast<ConfigurationAtom *>(atoms[j]);
+            auto jj = static_cast<AtomBase *>(atoms[j]);
 
             auto rSq = (rI - jj->r()).magnitudeSq();
             if (rSq > cutoffDistanceSquared_)
@@ -81,7 +80,8 @@ Kernel::PairPotentialEnergyValue EnergyKernel::cellEnergy(const Cell &cell, bool
 }
 
 // Return PairPotential energy between atoms in supplied cells
-Kernel::PairPotentialEnergyValue EnergyKernel::cellToCellEnergy(const Cell &centralCell, const Cell &otherCell, bool applyMim,
+Kernel::PairPotentialEnergyValue EnergyKernel::cellToCellEnergy(const Cell<AtomBase> &centralCell,
+                                                                const Cell<AtomBase> &otherCell, bool applyMim,
                                                                 bool includeInter, bool includeIntra) const
 {
     Kernel::PairPotentialEnergyValue totalEnergy;
@@ -91,13 +91,13 @@ Kernel::PairPotentialEnergyValue EnergyKernel::cellToCellEnergy(const Cell &cent
     // Loop over central cell atoms
     if (applyMim)
     {
-        for (auto ii : centralAtoms | castView<const ConfigurationAtom *>())
+        for (auto ii : centralAtoms | castView<const AtomBase *>())
         {
             auto molI = ii->molecule();
             auto &rI = ii->r();
 
             // Straight loop over other cell atoms
-            for (const auto jj : otherAtoms | castView<const ConfigurationAtom *>())
+            for (const auto jj : otherAtoms | castView<const AtomBase *>())
             {
                 // Calculate rSquared distance between atoms, and check it against the stored cutoff distance
                 auto rSq = box_.minimumDistanceSquared(rI, jj->r());
@@ -123,13 +123,13 @@ Kernel::PairPotentialEnergyValue EnergyKernel::cellToCellEnergy(const Cell &cent
     }
     else
     {
-        for (auto ii : centralAtoms | castView<const ConfigurationAtom *>())
+        for (auto ii : centralAtoms | castView<const AtomBase *>())
         {
             auto &molI = ii->molecule();
             auto &rI = ii->r();
 
             // Straight loop over other cell atoms
-            for (const auto jj : otherAtoms | castView<const ConfigurationAtom *>())
+            for (const auto jj : otherAtoms | castView<const AtomBase *>())
             {
                 // Calculate rSquared distance between atoms, and check it against the stored cutoff distance
                 auto rSq = (rI - jj->r()).magnitudeSq();
@@ -158,12 +158,12 @@ Kernel::PairPotentialEnergyValue EnergyKernel::cellToCellEnergy(const Cell &cent
 }
 
 // Return PairPotential energy of Atom with world
-double EnergyKernel::pairPotentialEnergy(const ConfigurationAtom &i) const
+double EnergyKernel::pairPotentialEnergy(const AtomBase &i) const
 {
     auto &cells = configuration_->cells();
 
     // Get cell neighbours for atom i's cell
-    auto &neighbours = cells.neighbours(*i.cell());
+    auto &neighbours = cells.neighbours(*i.cell()->upcast<ConfigurationAtom>());
 
     return dissolve::transform_reduce(ParallelPolicies::par, neighbours.begin(), neighbours.end(), 0.0, std::plus<>(),
                                       [&i, this](const auto &neighbour)
@@ -173,7 +173,7 @@ double EnergyKernel::pairPotentialEnergy(const ConfigurationAtom &i) const
                                           return std::accumulate(nbrCellAtoms.begin(), nbrCellAtoms.end(), 0.0,
                                                                  [&i, mimRequired, this](const auto innerAcc, const auto *j)
                                                                  {
-                                                                     auto &jj = *static_cast<const ConfigurationAtom *>(j);
+                                                                     auto &jj = *static_cast<const AtomBase *>(j);
 
                                                                      // Calculate rSquared distance between atoms, and check it
                                                                      // against the stored cutoff distance
@@ -200,7 +200,7 @@ Kernel::PairPotentialEnergyValue EnergyKernel::pairPotentialEnergy(const Molecul
     auto &cells = configuration_->cells();
 
     // Create a map of atoms in cells so we can treat all atoms with the same set of neighbours at once
-    std::map<Cell *, std::vector<const ConfigurationAtom *>> locationMap;
+    std::map<Cell<AtomBase> *, std::vector<const AtomBase *>> locationMap;
     for (auto &i : mol.atoms())
         locationMap[i->cell()].push_back(i);
 
@@ -215,7 +215,7 @@ Kernel::PairPotentialEnergyValue EnergyKernel::pairPotentialEnergy(const Molecul
                 const auto &centralCellAtoms = location.second;
 
                 // Get cell neighbours for the cell
-                auto &neighbours = cells.neighbours(*location.first);
+                auto &neighbours = cells.neighbours(*location.first->template upcast<ConfigurationAtom>());
 
                 auto localEnergy = dissolve::transform_reduce(
                     ParallelPolicies::par, neighbours.begin(), neighbours.end(), 0.0, std::plus<>(),
@@ -231,7 +231,7 @@ Kernel::PairPotentialEnergyValue EnergyKernel::pairPotentialEnergy(const Molecul
                                 return acc + std::accumulate(nbrCellAtoms.begin(), nbrCellAtoms.end(), 0.0,
                                                              [&ii, mimRequired, this](const auto innerAcc, const auto *j)
                                                              {
-                                                                 auto &jj = *static_cast<const ConfigurationAtom *>(j);
+                                                                 auto &jj = *static_cast<const AtomBase *>(j);
 
                                                                  // Don't consider atoms within the target molecule here - add
                                                                  // it on afterwards
@@ -297,7 +297,7 @@ double EnergyKernel::totalExtendedEnergy() const
 }
 
 // Return energy of supplied atom from ad hoc extended terms
-double EnergyKernel::extendedEnergy(const ConfigurationAtom &i) const { return 0.0; }
+double EnergyKernel::extendedEnergy(const AtomBase &i) const { return 0.0; }
 
 // Return energy of supplied molecule from ad hoc extended terms
 double EnergyKernel::extendedEnergy(const Molecule &mol) const { return 0.0; }
@@ -318,10 +318,10 @@ Kernel::PairPotentialEnergyValue EnergyKernel::totalPairPotentialEnergy(bool inc
                                       [&](const auto &pair)
                                       {
                                           if (&pair.cell == &pair.neighbour)
-                                              return cellEnergy(pair.cell, includeInter, includeIntra);
+                                              return cellEnergy(*pair.cell.toBase(), includeInter, includeIntra);
                                           else
-                                              return cellToCellEnergy(pair.cell, pair.neighbour, pair.requiresMIM, includeInter,
-                                                                      includeIntra);
+                                              return cellToCellEnergy(*pair.cell.toBase(), *pair.neighbour.toBase(),
+                                                                      pair.requiresMIM, includeInter, includeIntra);
                                       });
 }
 

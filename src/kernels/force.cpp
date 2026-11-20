@@ -21,8 +21,7 @@ ForceKernel::ForceKernel(const Configuration *cfg, const PotentialMap &potential
  */
 
 // Calculate PairPotential forces between Atoms provided
-void ForceKernel::forcesWithoutMim(const ConfigurationAtom &i, int indexI, const ConfigurationAtom &j, int indexJ,
-                                   std::vector<Vector3> &f) const
+void ForceKernel::forcesWithoutMim(const AtomBase &i, int indexI, const AtomBase &j, int indexJ, std::vector<Vector3> &f) const
 {
     auto vij = j.r() - i.r();
     auto distanceSq = vij.magnitudeSq();
@@ -36,8 +35,8 @@ void ForceKernel::forcesWithoutMim(const ConfigurationAtom &i, int indexI, const
 }
 
 // Calculate inter-particle forces between Atoms provided, scaling electrostatic and van der Waals components
-void ForceKernel::forcesWithoutMim(const ConfigurationAtom &i, int indexI, const ConfigurationAtom &j, int indexJ,
-                                   std::vector<Vector3> &f, double elecScale, double srScale) const
+void ForceKernel::forcesWithoutMim(const AtomBase &i, int indexI, const AtomBase &j, int indexJ, std::vector<Vector3> &f,
+                                   double elecScale, double srScale) const
 {
     auto vij = j.r() - i.r();
     auto distanceSq = vij.magnitudeSq();
@@ -51,8 +50,7 @@ void ForceKernel::forcesWithoutMim(const ConfigurationAtom &i, int indexI, const
 }
 
 // Calculate PairPotential forces between Atoms provided
-void ForceKernel::forcesWithMim(const ConfigurationAtom &i, int indexI, const ConfigurationAtom &j, int indexJ,
-                                std::vector<Vector3> &f) const
+void ForceKernel::forcesWithMim(const AtomBase &i, int indexI, const AtomBase &j, int indexJ, std::vector<Vector3> &f) const
 {
     auto vij = box_.minimumVector(i.r(), j.r());
     auto distanceSq = vij.magnitudeSq();
@@ -66,8 +64,8 @@ void ForceKernel::forcesWithMim(const ConfigurationAtom &i, int indexI, const Co
 }
 
 // Calculate inter-particle forces between Atoms provided, scaling electrostatic and van der Waals components
-void ForceKernel::forcesWithMim(const ConfigurationAtom &i, int indexI, const ConfigurationAtom &j, int indexJ,
-                                std::vector<Vector3> &f, double elecScale, double srScale) const
+void ForceKernel::forcesWithMim(const AtomBase &i, int indexI, const AtomBase &j, int indexJ, std::vector<Vector3> &f,
+                                double elecScale, double srScale) const
 {
     auto vij = box_.minimumVector(i.r(), j.r());
     auto distanceSq = vij.magnitudeSq();
@@ -85,8 +83,8 @@ void ForceKernel::forcesWithMim(const ConfigurationAtom &i, int indexI, const Co
  */
 
 // Calculate forces between atoms in supplied cells
-void ForceKernel::cellToCellPairPotentialForces(const Cell *centralCell, const Cell *otherCell, bool applyMim,
-                                                std::vector<Vector3> &f) const
+void ForceKernel::cellToCellPairPotentialForces(const Cell<AtomBase> *centralCell, const Cell<AtomBase> *otherCell,
+                                                bool applyMim, std::vector<Vector3> &f) const
 {
     assert(centralCell && otherCell);
     auto &centralAtoms = centralCell->atoms();
@@ -96,24 +94,24 @@ void ForceKernel::cellToCellPairPotentialForces(const Cell *centralCell, const C
     // Loop over all atom pairs excluding any within the same molecule
     if (applyMim)
     {
-        for (const auto &i : centralAtoms | castView<ConfigurationAtom *>())
+        for (const auto &i : centralAtoms)
         {
             molI = i->molecule();
             auto indexI = molI->globalAtomIndex(i);
 
-            for (auto *j : otherAtoms | castView<ConfigurationAtom *>())
+            for (auto *j : otherAtoms)
                 if (molI != j->molecule())
                     forcesWithMim(*i, indexI, *j, j->molecule()->globalAtomIndex(j), f);
         }
     }
     else
     {
-        for (const auto &i : centralAtoms | castView<ConfigurationAtom *>())
+        for (const auto &i : centralAtoms)
         {
             molI = i->molecule();
             auto indexI = molI->globalAtomIndex(i);
 
-            for (auto *j : otherAtoms | castView<ConfigurationAtom *>())
+            for (auto *j : otherAtoms)
                 if (molI != j->molecule())
                     forcesWithoutMim(*i, indexI, *j, j->molecule()->globalAtomIndex(j), f);
         }
@@ -125,7 +123,7 @@ void ForceKernel::cellToCellPairPotentialForces(const Cell *centralCell, const C
  */
 
 // Calculate extended forces on supplied atom
-void ForceKernel::extendedForces(const ConfigurationAtom &i, Vector3 &fVec) const { return; }
+void ForceKernel::extendedForces(const AtomBase &i, Vector3 &fVec) const { return; }
 
 // Calculate extended forces on supplied molecule
 void ForceKernel::extendedForces(const Molecule &mol, std::vector<Vector3> &f) const { return; }
@@ -160,7 +158,7 @@ void ForceKernel::totalForces(std::vector<Vector3> &ppForceVector, std::vector<V
             auto &fLocal = combinablePP.local();
 
             // Interatomic interactions between atoms in this cell, excluding those within the same molecule
-            dissolve::for_each_pair(ParallelPolicies::seq, cellI->atoms() | castView<ConfigurationAtom *>(),
+            dissolve::for_each_pair(ParallelPolicies::seq, cellI->atoms(),
                                     [&](int indexI, const auto &i, int indexJ, const auto &j)
                                     {
                                         if (indexI == indexJ)
@@ -175,7 +173,7 @@ void ForceKernel::totalForces(std::vector<Vector3> &ppForceVector, std::vector<V
             for (auto it = std::next(neighbours.begin()); it != neighbours.end(); ++it)
             {
                 if (it->cell.index() < cellI->index())
-                    cellToCellPairPotentialForces(cellI, &it->cell, it->requiresMIM, fLocal);
+                    cellToCellPairPotentialForces(cellI->toBase(), it->cell.toBase(), it->requiresMIM, fLocal);
             }
         };
 

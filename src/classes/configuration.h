@@ -7,6 +7,7 @@
 #include "base/units.h"
 #include "base/version.h"
 #include "classes/box.h"
+#include "classes/cell.h"
 #include "classes/cellArray.h"
 #include "classes/configurationAtom.h"
 #include "classes/molecule.h"
@@ -17,7 +18,6 @@
 #include <vector>
 
 // Forward Declarations
-class Cell;
 class EnergyKernel;
 class PotentialMap;
 class ProcessPool;
@@ -148,7 +148,7 @@ class Configuration
     static constexpr double defaultCellDivisionLength_ = 7.0;
     double requestedCellDivisionLength_{defaultCellDivisionLength_};
     // Cell array
-    CellArray cells_;
+    CellArray<ConfigurationAtom> cells_;
 
     public:
     // Set new box definition and recalculate cells
@@ -170,8 +170,8 @@ class Configuration
     // Return requested side length for individual Cell
     double requestedCellDivisionLength() const;
     // Return cell array
-    CellArray &cells();
-    const CellArray &cells() const;
+    CellArray<ConfigurationAtom> &cells();
+    const CellArray<ConfigurationAtom> &cells() const;
     // Scale Box, Cells, and Molecule geometric centres according to current size factor
     void applySizeFactor(const EnergyKernel *kernel);
 

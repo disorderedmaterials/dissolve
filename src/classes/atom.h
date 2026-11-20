@@ -6,10 +6,13 @@
 #include "base/enumOptions.h"
 #include "classes/atomConstants.h"
 #include "classes/bond.h"
+#include "classes/box.h"
 #include "data/elements.h"
 #include "math/vector3.h"
 
-class Cell;
+// Forward Declarations
+template <typename T> class Cell;
+class Molecule;
 
 // Atom Base
 class AtomBase
@@ -29,7 +32,7 @@ class AtomBase
     // Atom type index in parent object
     int atomTypeIndex_{AtomConstants::TypeIndex::Ignore};
     // Cell in which the atom exists
-    Cell *cell_{nullptr};
+    Cell<AtomBase> *cell_{nullptr};
 
     public:
     // Set basic properties
@@ -47,7 +50,7 @@ class AtomBase
     // Set atomic charge
     void setQ(double q);
     // Return atomic charge
-    double q() const;
+    virtual double q() const { return q_; }
     // Return index (0->[N-1])
     int index() const;
     // Set index
@@ -57,9 +60,9 @@ class AtomBase
     // Return associated atom type index
     int atomTypeIndex() const;
     // Set cell in which the atom exists
-    void setCell(Cell *cell);
+    void setCell(Cell<AtomBase> *cell);
     // Return cell in which the atom exists
-    Cell *cell() const;
+    Cell<AtomBase> *cell() const;
 
     /*
      * General Connectivity
@@ -69,6 +72,18 @@ class AtomBase
     virtual int nBonds() const = 0;
     // Return other AtomBases connected to this one via bonds
     virtual std::vector<AtomBase *> connectedAtoms() const = 0;
+    // Return the molecule owning this atom
+    virtual const std::shared_ptr<Molecule> &molecule() const = 0;
+    // Scaled interaction types
+    enum class ScaledInteraction
+    {
+        Excluded,
+        Scaled,
+        NotScaled
+    };
+    using ScaledInteractionDefinition = std::tuple<ScaledInteraction, double, double>;
+    // Return scaling type and factors (electrostatic, van der Waals) to employ with specified Atom
+    virtual AtomBase::ScaledInteractionDefinition scaling(const AtomBase *j) const = 0;
 
     /*
      * Atom Geometry

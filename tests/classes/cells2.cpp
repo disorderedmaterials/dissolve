@@ -67,7 +67,8 @@ class CellsPBCTest : public ::testing::Test
             EXPECT_NEAR(box.minimumDistance(ii->r(), jj->r()), r, 1.0e-6);
 
             // Range check between the central and surrounding atom should always succeed
-            EXPECT_TRUE(configuration_.cells().withinMinimumImageRange(ii->cell(), jj->cell(), r));
+            EXPECT_TRUE(configuration_.cells().withinMinimumImageRange(ii->cell()->upcast<ConfigurationAtom>(),
+                                                                       jj->cell()->upcast<ConfigurationAtom>(), r));
         }
     }
 

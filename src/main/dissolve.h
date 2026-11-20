@@ -12,7 +12,6 @@
 // Forward Declarations
 class ConfigurationAtom;
 class Box;
-class Cell;
 class DissolveGraph;
 class Isotopologue;
 class Molecule;
