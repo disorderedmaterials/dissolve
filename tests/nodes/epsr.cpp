@@ -2,7 +2,6 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "nodes/epsr.h"
-#include "main/dissolve.h"
 #include "nodes/correlation/gr.h"
 #include "nodes/correlation/neutronSQ.h"
 #include "nodes/correlation/sq.h"

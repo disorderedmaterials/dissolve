@@ -7,7 +7,6 @@
 #include "classes/cell.h"
 #include "classes/potentialMap.h"
 #include "classes/species.h"
-#include "main/dissolve.h"
 
 Configuration::Configuration() : box_({1.0, 1.0, 1.0}) {}
 

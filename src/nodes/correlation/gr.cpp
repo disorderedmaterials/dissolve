@@ -3,11 +3,11 @@
 
 #define _USE_MATH_DEFINES
 #include "nodes/correlation/gr.h"
+#include "base/timer.h"
 #include "classes/atomType.h"
 #include "classes/box.h"
 #include "classes/cell.h"
 #include "classes/configurationAtom.h"
-#include "main/dissolve.h"
 #include "math/combinations.h"
 #include "math/filters.h"
 #include "nodes/dissolve.h"

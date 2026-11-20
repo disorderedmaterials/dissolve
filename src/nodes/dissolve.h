@@ -38,15 +38,38 @@ class DissolveGraph : public Graph
      * Data
      */
     public:
-    // Load the dissolve simulation from a file
-    std::optional<std::string> loadFile(std::filesystem::path name);
     // Return the DissolveGraph reference
     DissolveGraph *dissolveGraph() override;
+
+    /*
+     * Files
+     */
+    private:
+    // Current input file
+    std::filesystem::path inputFile_;
+    // Filename of current restart directory
+    std::string restartDirectoryName_;
+    // Frequency at which to write restart directory
+    int restartDirectoryFrequency_{10};
+
+    public:
+    // Return current input file
+    std::filesystem::path inputFile() const;
+    // Load TOML input file
+    std::optional<std::string> loadTOML(std::filesystem::path filePath);
+    // Save TOML input file
+    bool saveTOML(std::string_view filename) const;
+    // Set frequency with which to write various iteration data
+    void setRestartDirectoryFrequency(int n);
+    // Return frequency with which to write restart directory
+    int restartDirectoryFrequency() const;
 
     /*
      * Pair Potentials, Energy and Forces
      */
     private:
+    // Whether pair potentials are updated automatically through combination rules
+    bool useCombinationRules_{true};
     // Generated pair potentials
     DoubleKeyedMap<PairPotential> pairPotentials_{true};
     // Defined pair potential overrides
@@ -59,6 +82,10 @@ class DissolveGraph : public Graph
     void updatePairPotential(const AtomType &i, const AtomType &j);
 
     public:
+    // Set whether pair potentials are updated automatically through combination rules
+    void setUseCombinationRules(bool b);
+    // Return whether pair potentials are updated automatically through combination rules
+    bool useCombinationRules() const;
     // Clear all pair potentials
     void clearPairPotentials();
     // Access a pair potential
@@ -81,9 +108,15 @@ class DissolveGraph : public Graph
     /*
      * Serialisation
      */
+    private:
+    // Express pair potentials as a serialisable value
+    SerialisedValue serialisePairPotentials() const;
+    // Read pair potentials from a serialisable value
+    void deserialisePairPotentials(const SerialisedValue &node);
+
     public:
     // Express as a serialisable value
-    void serialise(std::string tag, SerialisedValue &target) const;
+    void serialise(std::string tag, SerialisedValue &target) const override;
     // Read values from a serialisable value
-    void deserialise(const SerialisedValue &node);
+    void deserialise(const SerialisedValue &node) override;
 };

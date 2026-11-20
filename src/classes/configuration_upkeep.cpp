@@ -5,7 +5,6 @@
 #include "classes/cell.h"
 #include "classes/configuration.h"
 #include "classes/configurationAtom.h"
-#include "main/dissolve.h"
 
 // Rationalise object relationships between atoms, molecules, and cells
 void Configuration::updateObjectRelationships()

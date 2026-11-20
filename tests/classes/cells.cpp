@@ -5,7 +5,6 @@
 #include "classes/configuration.h"
 #include "classes/species.h"
 #include "kernels/energy.h"
-#include "main/dissolve.h"
 #include "math/mathFunc.h"
 #include "tests/testGraph.h"
 

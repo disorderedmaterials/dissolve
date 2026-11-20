@@ -6,7 +6,6 @@
 #include "gui2/models/legacy/atomTypeModel.h"
 #include "gui2/models/legacy/commonTermTreeModel.h"
 #include "gui2/models/legacy/configurationModel.h"
-#include "main/dissolve.h"
 #include "nodes/graph.h"
 #include "templates/optionalRef.h"
 #include <QUrl>

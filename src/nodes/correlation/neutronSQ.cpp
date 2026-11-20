@@ -5,7 +5,6 @@
 #include "nodes/correlation/neutronSQ.h"
 #include "classes/configuration.h"
 #include "classes/neutronWeights.h"
-#include "main/dissolve.h"
 #include "math/filters.h"
 #include "math/ft.h"
 #include "nodes/correlation/sq.h"

@@ -5,7 +5,6 @@
 #include "classes/configuration.h"
 #include "data/ff/library.h"
 #include "generator/generator.h"
-#include "main/dissolve.h"
 #include <string>
 
 namespace UnitTest

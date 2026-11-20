@@ -6,7 +6,6 @@
 #include "base/enumOptions.h"
 #include "classes/configuration.h"
 #include "classes/species.h"
-#include "main/dissolve.h"
 #include "nodes/node.h"
 #include "nodes/number.h"
 

@@ -8,7 +8,6 @@
 #include "generator/box.h"
 #include "generator/generator.h"
 #include "generator/select.h"
-#include "main/dissolve.h"
 #include <string>
 
 namespace UnitTest

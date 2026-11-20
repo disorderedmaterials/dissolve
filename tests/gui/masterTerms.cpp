@@ -5,7 +5,6 @@
 #include "gui2/models/legacy/commonAngleModel.h"
 #include "gui2/models/legacy/commonBondModel.h"
 #include "gui2/models/legacy/commonTorsionModel.h"
-#include "main/dissolve.h"
 #include <QTableView>
 #include <gmock/gmock.h>
 

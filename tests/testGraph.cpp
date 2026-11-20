@@ -3,7 +3,6 @@
 
 #include "tests/testGraph.h"
 #include "classes/isotopologueSet.h"
-#include "main/dissolve.h"
 #include "nodes/correlation/bragg.h"
 #include "nodes/correlation/gr.h"
 #include "nodes/correlation/neutronSQ.h"

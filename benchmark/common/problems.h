@@ -4,7 +4,6 @@
 #pragma once
 
 #include "classes/box.h"
-#include "main/dissolve.h"
 #include "nodes/dissolve.h"
 #include "nodes/import/dlpolyStructure.h"
 #include "nodes/structure/configuration.h"

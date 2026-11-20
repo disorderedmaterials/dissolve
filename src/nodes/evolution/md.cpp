@@ -2,6 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "nodes/evolution/md.h"
+#include "base/timer.h"
 #include "data/atomicMasses.h"
 #include "kernels/energy.h"
 #include "kernels/force.h"

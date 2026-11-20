@@ -2,7 +2,6 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "gui/models/addForcefieldDialogModel.h"
-#include "main/dissolve.h"
 #include "tests/testing.h"
 #include <QTableView>
 #include <gmock/gmock.h>

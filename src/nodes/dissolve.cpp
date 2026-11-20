@@ -6,6 +6,8 @@
 #include "classes/potentialMap.h"
 #include "kernels/energy.h"
 #include "kernels/force.h"
+#include "main/compatibility.h"
+#include "main/version.h"
 
 DissolveGraph::DissolveGraph() : Graph(nullptr) {}
 
@@ -26,23 +28,49 @@ std::string_view DissolveGraph::summary() const { return "Parent node of all sim
  * Data
  */
 
-std::optional<std::string> DissolveGraph::loadFile(std::filesystem::path name)
+// Return the DissolveGraph reference
+DissolveGraph *DissolveGraph::dissolveGraph() { return this; }
+
+/*
+ * Files
+ */
+
+// Return current input file
+std::filesystem::path DissolveGraph::inputFile() const { return inputFile_; }
+
+// Load TOML input file
+std::optional<std::string> DissolveGraph::loadTOML(std::filesystem::path filePath)
 {
-    auto contents = toml::parse(name);
+    auto contents = toml::parse(filePath);
     try
     {
         deserialise(contents);
+        inputFile_ = filePath;
     }
     catch (toml::type_error err)
     {
+        inputFile_.clear();
         return std::format("{} in {} at {} through {} ", err.what(), err.location().file_name(), err.location().first_line(),
                            err.location().last_line());
     }
     return {};
 }
 
-// Return the DissolveGraph reference
-DissolveGraph *DissolveGraph::dissolveGraph() { return this; }
+// Save TOML file
+bool DissolveGraph::saveTOML(std::string_view filename) const
+{
+    std::ofstream outfile;
+    outfile.open(std::string(filename));
+    outfile << Serialisable::ser(*this) << std::endl;
+    outfile.close();
+    return true;
+}
+
+// Set frequency with which to write various iteration data
+void DissolveGraph::setRestartDirectoryFrequency(int n) { restartDirectoryFrequency_ = n; }
+
+// Return frequency with which to write restart file
+int DissolveGraph::restartDirectoryFrequency() const { return restartDirectoryFrequency_; }
 
 /*
  * Pair Potentials, Energy and Forces
@@ -81,12 +109,17 @@ void DissolveGraph::updatePairPotential(const AtomType &i, const AtomType &j)
     // Create the potential if it doesn't already exist
     if (!pairPotentials_.contains(nameI, nameJ))
     {
-        auto interactionPotential = ShortRangeFunctions::combine(i.interactionPotential(), j.interactionPotential());
+        std::optional<InteractionPotential<Functions1D>> interactionPotential;
 
-        if (interactionPotential.has_value())
-            pairPotentials_.set(nameI, nameJ, {nameI, nameJ, *interactionPotential});
-        else
-            pairPotentials_.set(nameI, nameJ, {nameI, nameJ});
+        if (useCombinationRules_)
+        {
+            interactionPotential = ShortRangeFunctions::combine(i.interactionPotential(), j.interactionPotential());
+
+            if (interactionPotential.has_value())
+                pairPotentials_.set(nameI, nameJ, {nameI, nameJ, *interactionPotential});
+            else
+                pairPotentials_.set(nameI, nameJ, {nameI, nameJ});
+        }
 
         auto &pot = pairPotentials_.get({nameI, nameJ});
         pot.setLocalChargeProduct(i.charge() * j.charge());
@@ -98,7 +131,19 @@ void DissolveGraph::updatePairPotential(const AtomType &i, const AtomType &j)
 
     // Apply any relevant overrides
     applyPairPotentialOverrides(pot);
+
+    // Add additional potential
+    // TODO DISSOLVE2
+    //     auto addPotName = std::format("Potential_{}-{}_Additional", at1->name(), at2->name());
+    //     if (processingModuleData_.contains(addPotName, "Dissolve"))
+    //         pp->setAdditionalPotential(processingModuleData_.retrieve<Data1D>(addPotName, "Dissolve"));
 }
+
+// Set whether pair potentials are updated automatically through combination rules
+void DissolveGraph::setUseCombinationRules(bool b) { useCombinationRules_ = b; }
+
+// Return whether pair potentials are updated automatically through combination rules
+bool DissolveGraph::useCombinationRules() const { return useCombinationRules_; }
 
 // Clear all pair potentials
 void DissolveGraph::clearPairPotentials() { pairPotentials_.clear(); }
@@ -169,18 +214,92 @@ std::unique_ptr<ForceKernel> DissolveGraph::createForceKernel(Configuration *cfg
  * Serialisation
  */
 
+// Serialise pair potential
+SerialisedValue DissolveGraph::serialisePairPotentials() const
+{
+    SerialisedValue pairPotentials = Serialisable::table{
+        {"range", PairPotential::range()},
+        {"delta", PairPotential::delta()},
+        {"chargeSource", PairPotential::chargeSources().serialise(PairPotential::chargeSource())},
+        {"coulombTruncation", PairPotential::coulombTruncationSchemes().serialise(PairPotential::coulombTruncationScheme())},
+        {"shortRangeTruncation",
+         PairPotential::shortRangeTruncationSchemes().serialise(PairPotential::shortRangeTruncationScheme())}};
+    if (!useCombinationRules_)
+    {
+        // TODO DISSOLVE2 - Need a serialiser for DoubleKeyedMap
+        // pairPotentials["useCombinationRules"] = false;
+        // Serialisable::vector(pairPotentials_, "potentials", pairPotentials,
+        //                      [](const auto &term)
+        //                      {
+        //                          const auto &[at1, at2, pot] = term;
+        //                          SerialisedValue target;
+        //                          pot->serialise("inner", target);
+        //                          auto &value = target["inner"];
+        //                          value["atomTypeI"] = at1->name();
+        //                          value["atomTypeJ"] = at2->name();
+        //                          return value;
+        //                      });
+    }
+    return pairPotentials;
+}
+
+// Read pair potentials from a serialisable value
+void DissolveGraph::deserialisePairPotentials(const SerialisedValue &node)
+{
+    PairPotential::setRange(toml::find_or<double>(node, "range", 15.0), toml::find_or<double>(node, "delta", 0.005));
+    PairPotential::setChargeSource(
+        PairPotential::chargeSources().deserialise(toml::find_or<std::string>(node, "chargeSource", "Automatic")));
+    PairPotential::setCoulombTruncationScheme(PairPotential::coulombTruncationSchemes().deserialise(
+        toml::find_or<std::string>(node, "coulombTruncation", "Shifted")));
+    PairPotential::setShortRangeTruncationScheme(PairPotential::shortRangeTruncationSchemes().deserialise(
+        toml::find_or<std::string>(node, "shortRangeTruncation", "Shifted")));
+
+    useCombinationRules_ = toml::find_or<bool>(node, "useCombinationRules", true);
+    // if (!useCombinationRules_)
+    // {
+    //     Serialisable::toVector(
+    //         node, "potentials",
+    //         [&](const SerialisedValue &potData)
+    //         {
+    //             // Get atom types
+    //             auto at1 = coreData_.findAtomType(toml::find<std::string>(potData, "atomTypeI"));
+    //             auto at2 = coreData_.findAtomType(toml::find<std::string>(potData, "atomTypeJ"));
+    //             if (!at1 || !at2)
+    //                 throw(toml::type_error("Non-existent atom type(s) used in pair potential.", potData.location()));
+    //             auto *pot = addPairPotential(at1, at2);
+    //             pot->deserialise(potData);
+    //         });
+    // }
+    // TODO DISSOLVE2
+}
+
 // Express as a serialisable value
 void DissolveGraph::serialise(std::string tag, SerialisedValue &target) const
 {
-    Graph::serialise(tag, target);
-    auto &result = target[tag];
-    Serialisable::vector<>(pairPotentialOverrides_, "pairPotentialOverrides", result);
+    auto &node = target[tag];
+
+    node["version"] = Version::semantic();
+
+    node["pairPotentials"] = serialisePairPotentials();
+
+    Graph::serialise("graph", node);
+
+    Serialisable::vector<>(pairPotentialOverrides_, "pairPotentialOverrides", node);
 }
 
 // Read values from a serialisable value
 void DissolveGraph::deserialise(const SerialisedValue &node)
 {
-    Graph::deserialise(node);
+    // Default to current version if no version info is given.
+    auto hasVersion = node.contains("version");
+    if (!hasVersion)
+        Messenger::warn("File does not contain version information.  Assuming the current version: {}", Version::semantic());
+    const SerialisedValue versionNode = hasVersion ? dissolve::backwardsUpgrade(node) : node;
+
+    Deserialisable::optionalOn(node, "graph", [this](const auto node) { Graph::deserialise(node); });
+
+    Deserialisable::optionalOn(node, "pairPotentials", [this](const auto node) { deserialisePairPotentials(node); });
+
     Deserialisable::vector(node, "pairPotentialOverrides",
                            [this](const auto ppOverrideNode) { addPairPotentialOverride()->deserialise(ppOverrideNode); });
 

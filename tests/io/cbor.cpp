@@ -103,18 +103,18 @@ TEST_F(CBORTest, CBORCompare)
 TEST_F(CBORTest, CBORExtractSimple)
 {
     std::ifstream infile("cbor/simple_addition_graph.cbor", std::ios::binary | std::ios::in);
-    auto type = CBOR::extract(std::move(infile), {"type"});
+    auto type = CBOR::extract(std::move(infile), {"version"});
     EXPECT_TRUE(type.is_string());
-    EXPECT_EQ(type.as_string(), "Dissolve");
+    EXPECT_EQ(type.as_string(), "1.9.0");
     infile.close();
 }
 
 TEST_F(CBORTest, CBORExtractComplex)
 {
     std::ifstream infile("cbor/simple_addition_graph.cbor", std::ios::binary | std::ios::in);
-    auto type = CBOR::extract(std::move(infile), {"edges", 1, "sourceNode"});
+    auto type = CBOR::extract(std::move(infile), {"graph", "edges", 1, "targetInput"});
     EXPECT_TRUE(type.is_string());
-    EXPECT_EQ(type.as_string(), "y");
+    EXPECT_EQ(type.as_string(), "Y");
     infile.close();
 }
 } // namespace UnitTest
