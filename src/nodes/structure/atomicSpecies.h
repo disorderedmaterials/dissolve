@@ -29,7 +29,7 @@ class AtomicSpeciesNode : public SpeciesBaseNode
     // Species parameter string
     std::string parameters_{""};
     // Charge on the atom
-    Number q_;
+    Number q_{0.0};
 
     /*
      * Processing

@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "math/data2D.h"
 #include "classes/configuration.h"
 #include "classes/structure.h"
 #include "nodes/node.h"
@@ -18,6 +19,16 @@ class TestNode : public Node
      * Definition
      */
     private:
+    //
+    bool sleepOnIteration_{false};
+    //
+    int iteration_{0};
+    //
+    Data1D sineData1D_;
+    //
+    Data1D cosineData1D_;
+    //
+    Data2D sinusoidalData2D_;
     // Configuration pointer input
     Configuration *configuration_{nullptr};
     // Optional configuration output
@@ -54,6 +65,12 @@ class TestNode : public Node
     }
     // Return the variant
     TestVariant variant();
+
+    private:
+    //
+    void emplaceSine(double phi = 0);
+    //
+    void emplaceCosine(double phi = 0);
 
     /*
      * Processing

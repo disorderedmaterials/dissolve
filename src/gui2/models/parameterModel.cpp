@@ -127,7 +127,7 @@ QVariant ParameterModel::data(const QModelIndex &index, int role) const
             return QString::fromStdString("Unrepresentable");
         case TYPE:
             if (it->second->storedDataType() == typeid(Number))
-                return "number";
+                return it->second->get<Number>().isInteger() ? "integer" : "number";
             if (it->second->storedDataType() == typeid(std::optional<Number>))
                 return "optional number";
             if (it->second->storedDataType() == typeid(bool))

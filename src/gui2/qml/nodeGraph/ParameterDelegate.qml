@@ -31,6 +31,25 @@ DelegateChooser {
         }
     }
     DelegateChoice {
+        roleValue: "integer"
+
+        TextField {
+            text: param
+            width: 30
+
+            validator: IntValidator {
+            }
+
+            onActiveFocusChanged: {
+                if (activeFocus) {
+                    selectAll();
+                } else {
+                    param = Number(text);
+                }
+            }
+        }
+    }
+    DelegateChoice {
         roleValue: "number"
 
         TextField {

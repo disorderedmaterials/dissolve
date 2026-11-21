@@ -111,6 +111,26 @@ class ParameterBase
     // Resolver function for data
     DataResolver dataResolver_{[&](const std::map<std::string, const Species *> &reachableSpecies) {}};
 
+    private:
+    // Check the validity of the parameter data
+    template <typename DataClass> Parameter<DataClass> *checkData()
+    {
+        // Requested DataClass must always match the storedDataType_, regardless of the underlying parameter type.
+        // Note: We check by name() here rather than comparing type_index objects since, on OSX, it is possible for the same
+        // type to obtain different hash values within type_index (thus breaking comparison) if the object is only forward-
+        // declared rather than being fully in scope. There is no easy way around this, and it doesn't affect other platforms,
+        // so here we just revert to the name comparison.
+        if (std::strcmp(std::type_index(typeid(DataClass)).name(), storedDataType_.name()) != 0)
+            throw(std::runtime_error(std::format("ParameterBase::get() called with wrong type ({} vs {}), name = {}\n",
+                                                 std::type_index(typeid(DataClass)).name(), storedDataType_.name(), name_)));
+
+        // Upcast to Parameter<T> (common base of all parameter types)
+        auto cast = dynamic_cast<Parameter<DataClass> *>(this);
+        if (!cast)
+            throw(std::runtime_error(std::format("ParameterBase::get() failed to cast, name = {}.\n", name_)));
+        return cast;
+    }
+
     public:
     // Return whether the contained data is an instance of std::vector
     virtual bool isVector() const { return false; }
@@ -135,23 +155,9 @@ class ParameterBase
     // Set type's representation as a raw int (only valid for int and enum)
     virtual void setFromInt(int value) { return; }
     // Get the parameter's value
-    template <typename DataClass> DataClass get()
-    {
-        // Requested DataClass must always match the storedDataType_, regardless of the underlying parameter type.
-        // Note: We check by name() here rather than comparing type_index objects since, on OSX, it is possible for the same
-        // type to obtain different hash values within type_index (thus breaking comparison) if the object is only forward-
-        // declared rather than being fully in scope. There is no easy way around this, and it doesn't affect other platforms,
-        // so here we just revert to the name comparison.
-        if (std::strcmp(std::type_index(typeid(DataClass)).name(), storedDataType_.name()) != 0)
-            throw(std::runtime_error(std::format("ParameterBase::get() called with wrong type ({} vs {}), name = {}\n",
-                                                 std::type_index(typeid(DataClass)).name(), storedDataType_.name(), name_)));
-
-        // Upcast to Parameter<T> (common base of all parameter types)
-        auto cast = dynamic_cast<Parameter<DataClass> *>(this);
-        if (!cast)
-            throw(std::runtime_error(std::format("ParameterBase::get() failed to cast, name = {}.\n", name_)));
-        return cast->getData();
-    }
+    template <typename DataClass> DataClass get() { return checkData<DataClass>()->getData(); }
+    // Get a pointer to the parameter
+    template <typename DataClass> DataClass *getPtr() { return checkData<DataClass>()->getPtrData(); }
     // Set the parameter's value
     template <typename DataClass> void set(const DataClass &data)
     {
@@ -346,6 +352,8 @@ template <typename DataClass> class Parameter : public ParameterBase, public std
     // Getter for target data, defaulting so simple return of data_ reference member
     using DataGetter = std::function<DataClass()>;
     DataGetter dataGetter_{[&]() { return data_; }};
+    using DataPtrGetter = std::function<DataClass *()>;
+    DataPtrGetter dataPtrGetter_{[&]() { return &data_; }};
     // Setter for target data, defaulting to simple 1-to-1 copy as long as equality fails
     using DataSetter = std::function<void(const DataClass &value)>;
     DataSetter dataSetter_{[&](const DataClass &value) { data_ = value; }};
@@ -556,6 +564,8 @@ template <typename DataClass> class Parameter : public ParameterBase, public std
     }
     // Return the parameter value
     virtual DataClass getData() { return dataGetter_(); }
+    // Return the parameter pointer
+    virtual DataClass *getPtrData() { return dataPtrGetter_(); }
     // Create a parameter link (input - data proxy - output) for this parameter type
     ParameterLink createParameterLink(std::string_view newName, std::string_view newDescription) const override
     {

@@ -329,11 +329,13 @@ if(GUI)
       QuickPlotplugin
       # Icons (.svg)
       icons_moduleplugin
+      # Dissolve2 core plugins
       dialogs_moduleplugin
       controls_moduleplugin
       nodeGraph_moduleplugin
       periodicTable_moduleplugin
       delegates_moduleplugin
+      plotting_moduleplugin
   )
 
   # Main Dissolve GUI

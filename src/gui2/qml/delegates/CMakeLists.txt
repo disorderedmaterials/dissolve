@@ -8,6 +8,7 @@ qt6_add_qml_module(
   1.0
   QML_FILES
   RangedVector3Delegate.qml
+  PlotMenuItem.qml
 )
 
 find_package(Qt6 REQUIRED COMPONENTS Core)
