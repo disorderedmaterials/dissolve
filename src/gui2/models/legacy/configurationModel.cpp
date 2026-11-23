@@ -4,7 +4,6 @@
 #include "gui2/models/legacy/configurationModel.h"
 #include "data/elements.h"
 #include "nodes/structure/configuration.h"
-#include <iostream>
 #include <qstring.h>
 #include <qvariant.h>
 
@@ -52,42 +51,76 @@ void ConfigurationModel::setName(QString name)
     auto it = std::find_if(nodes.begin(), nodes.end(), [this](const ConfigurationNode *x) { return x->name() == name_; });
     if (it != nodes.end())
     {
-        atoms_.config = &(*it)->configuration();
-        atoms_.reset();
+        molecules_.config = &(*it)->configuration();
+        molecules_.reset();
     }
 }
 
 void ConfigurationModel::reset()
 {
     beginResetModel();
+    molecules_.reset();
     endResetModel();
 }
 
-const ConfigurationAtomsModel *ConfigurationModel::atoms() const { return &atoms_; }
+const ConfigurationMoleculesModel *ConfigurationModel::molecules() const { return &molecules_; }
+
+int ConfigurationMoleculesModel::rowCount(const QModelIndex &parent) const { return atoms_.size(); }
+
+QHash<int, QByteArray> ConfigurationMoleculesModel::roleNames() const
+{
+    QHash<int, QByteArray> roles;
+    roles[ConfigurationMoleculesModelRoles::Atoms] = "atoms";
+    roles[ConfigurationMoleculesModelRoles::Bonds] = "bonds";
+    return roles;
+}
+
+QVariant ConfigurationMoleculesModel::data(const QModelIndex &index, int role) const
+{
+    switch (role)
+    {
+        case ConfigurationMoleculesModel::ConfigurationMoleculesModelRoles::Atoms:
+            return QVariant::fromValue(atoms_[index.row()].get());
+        case ConfigurationMoleculesModel::ConfigurationMoleculesModelRoles::Bonds:
+            return {};
+    }
+    return {};
+}
+
+void ConfigurationMoleculesModel::reset()
+{
+    beginResetModel();
+    atoms_.clear();
+    if (config)
+        for (auto &mol : config->molecules())
+            atoms_.emplace_back(std::make_shared<ConfigurationAtomsModel>(mol.get()));
+    endResetModel();
+}
+
+ConfigurationAtomsModel::ConfigurationAtomsModel(Molecule *mol) : mol_(mol) {}
 
 int ConfigurationAtomsModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
-    std::cout << "Tried to count atoms." << std::endl;
-    if (config == nullptr)
+    if (mol_ == nullptr)
         return 0;
-    return config->nAtoms();
+    return mol_->nAtoms();
 }
 
 QVariant ConfigurationAtomsModel::data(const QModelIndex &index, int role) const
 {
-    auto &atom = config->atom(index.row());
+    auto *atom = mol_->atom(index.row());
 
     switch (role)
     {
         case ConfigurationAtomsModel::ConfigurationAtomsModelRoles::Element:
-            return QString::fromUtf8(Elements::symbol(atom.Z()).data());
+            return QString::fromUtf8(Elements::symbol(atom->Z()).data());
         case ConfigurationAtomsModel::ConfigurationAtomsModelRoles::X:
-            return QVariant::fromValue(atom.r().x);
+            return QVariant::fromValue(atom->r().x);
         case ConfigurationAtomsModel::ConfigurationAtomsModelRoles::Y:
-            return QVariant::fromValue(atom.r().y);
+            return QVariant::fromValue(atom->r().y);
         case ConfigurationAtomsModel::ConfigurationAtomsModelRoles::Z:
-            return QVariant::fromValue(atom.r().z);
+            return QVariant::fromValue(atom->r().z);
     }
     return {};
 }

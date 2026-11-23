@@ -468,23 +468,23 @@ ApplicationWindow {
 
 
                 scale: 100.0
-                atomModel: configModel.atoms
-                bondModel: ListModel {
-                    ListElement {
-                        rx: 0.5
-                        ry: 0.0
-                        rz: 0.5
-                        theta: 90
-                        phi: 45
-                    }
-                    ListElement {
-                        rx: -0.5
-                        ry: 0.0
-                        rz: 0.5
-                        theta: 90
-                        phi: -45
-                    }
-                }
+                molecules: configModel.molecules
+                // bondModel: ListModel {
+                //     ListElement {
+                //         rx: 0.5
+                //         ry: 0.0
+                //         rz: 0.5
+                //         theta: 90
+                //         phi: 45
+                //     }
+                //     ListElement {
+                //         rx: -0.5
+                //         ry: 0.0
+                //         rz: 0.5
+                //         theta: 90
+                //         phi: -45
+                //     }
+                // }
             }
         }
     }

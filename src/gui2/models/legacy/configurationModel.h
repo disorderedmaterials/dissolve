@@ -20,8 +20,33 @@ class ConfigurationAtomsModel : public QAbstractListModel
         Element = Qt::UserRole + 3,
     };
 
+    private:
+    Molecule *mol_ = nullptr;
+
+    public:
+    ConfigurationAtomsModel(Molecule *mol);
+    int rowCount(const QModelIndex &parent = QModelIndex()) const override;
+    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
+    QHash<int, QByteArray> roleNames() const override;
+    void reset();
+};
+
+Q_DECLARE_METATYPE(ConfigurationAtomsModel);
+
+class ConfigurationMoleculesModel : public QAbstractListModel
+{
+    Q_OBJECT
+
+    enum ConfigurationMoleculesModelRoles
+    {
+        Atoms = Qt::UserRole + 0,
+        Bonds = Qt::UserRole + 1,
+    };
+
     public:
     Configuration *config = nullptr;
+    std::vector<std::shared_ptr<ConfigurationAtomsModel>> atoms_;
+
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
     QHash<int, QByteArray> roleNames() const override;
@@ -34,7 +59,7 @@ class ConfigurationModel : public QAbstractListModel
     // The main graph
     Q_PROPERTY(Graph *graph READ graph WRITE setGraph);
     Q_PROPERTY(QString name READ name WRITE setName);
-    Q_PROPERTY(const ConfigurationAtomsModel *atoms READ atoms);
+    Q_PROPERTY(const ConfigurationMoleculesModel *molecules READ molecules);
 
     private:
     // Root graph that we pull nodes from
@@ -44,7 +69,7 @@ class ConfigurationModel : public QAbstractListModel
     // We use a string instead of an int because the user might add
     // new configuration and change the order
     std::string name_;
-    ConfigurationAtomsModel atoms_;
+    ConfigurationMoleculesModel molecules_;
 
     public:
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
@@ -57,5 +82,5 @@ class ConfigurationModel : public QAbstractListModel
     void setName(QString name);
 
     Q_INVOKABLE void reset();
-    const ConfigurationAtomsModel *atoms() const;
+    const ConfigurationMoleculesModel *molecules() const;
 };

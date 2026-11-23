@@ -7,8 +7,7 @@ import QtQuick3D.Helpers
 View3D {
     id: configurationView
 
-    required property variant atomModel;
-    required property variant bondModel;
+    required property variant molecules;
     required property real scale;
 
     camera: cameraOrthographicLeft
@@ -46,49 +45,54 @@ View3D {
     }
 
     Repeater3D {
-        id: atomRepeater
-        model: configurationView.atomModel
-        delegate: Model {
-            required property string element
-            required property real rx
-            required property real ry
-            required property real rz
-            //! [3dcube]
-            id: sphere
-            source: "#Sphere"
-            materials: PrincipledMaterial {
-                baseColor: element == "C" ? "red" : "blue"
+        id: moleculeRepeater
+        model: configurationView.molecules
+        delegate: Repeater3D {
+            id: atomRepeater
+            required property var atoms
+            model: atomRepeater.atoms
+            delegate: Model {
+                required property string element
+                required property real rx
+                required property real ry
+                required property real rz
+                //! [3dcube]
+                id: sphere
+                source: "#Sphere"
+                materials: PrincipledMaterial {
+                    baseColor: element == "C" ? "red" : "blue"
+                }
+                x: configurationView.scale * rx
+                y: configurationView.scale * ry
+                z: configurationView.scale * rz
+                eulerRotation.y: 90
+                //! [3dcube]
             }
-            x: configurationView.scale * rx
-            y: configurationView.scale * ry
-            z: configurationView.scale * rz
-            eulerRotation.y: 90
-            //! [3dcube]
         }
     }
 
-    Repeater3D {
-        id: bondRepeater
-        model: configurationView.bondModel
-        delegate: Model {
-            required property real rx
-            required property real ry
-            required property real rz
-            required property real theta
-            required property real phi
-            //! [3dcube]
-            id: cylinder
-            source: "#Cylinder"
-            materials: PrincipledMaterial {
-                baseColor: "black"
-            }
-            scale: Qt.vector3d(0.1, 1.0, 0.1)
-            x: configurationView.scale * rx
-            y: configurationView.scale * ry
-            z: configurationView.scale * rz
-            eulerRotation.x: theta
-            eulerRotation.y: phi
-            //! [3dcube]
-        }
-    }
+    // Repeater3D {
+    //     id: bondRepeater
+    //     model: configurationView.bondModel
+    //     delegate: Model {
+    //         required property real rx
+    //         required property real ry
+    //         required property real rz
+    //         required property real theta
+    //         required property real phi
+    //         //! [3dcube]
+    //         id: cylinder
+    //         source: "#Cylinder"
+    //         materials: PrincipledMaterial {
+    //             baseColor: "black"
+    //         }
+    //         scale: Qt.vector3d(0.1, 1.0, 0.1)
+    //         x: configurationView.scale * rx
+    //         y: configurationView.scale * ry
+    //         z: configurationView.scale * rz
+    //         eulerRotation.x: theta
+    //         eulerRotation.y: phi
+    //         //! [3dcube]
+    //     }
+    // }
 }
