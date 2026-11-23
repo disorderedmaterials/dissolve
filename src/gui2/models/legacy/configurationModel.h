@@ -33,6 +33,31 @@ class ConfigurationAtomsModel : public QAbstractListModel
 
 Q_DECLARE_METATYPE(ConfigurationAtomsModel);
 
+class ConfigurationBondsModel : public QAbstractListModel
+{
+
+    enum ConfigurationBondsModelRoles
+    {
+        X = Qt::UserRole + 0,
+        Y = Qt::UserRole + 1,
+        Z = Qt::UserRole + 2,
+        THETA = Qt::UserRole + 3,
+        PHI = Qt::UserRole + 4,
+    };
+
+    private:
+    Molecule *mol_ = nullptr;
+
+    public:
+    ConfigurationBondsModel(Molecule *mol);
+    int rowCount(const QModelIndex &parent = QModelIndex()) const override;
+    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
+    QHash<int, QByteArray> roleNames() const override;
+    void reset();
+};
+
+Q_DECLARE_METATYPE(ConfigurationBondsModel);
+
 class ConfigurationMoleculesModel : public QAbstractListModel
 {
     Q_OBJECT
@@ -46,6 +71,7 @@ class ConfigurationMoleculesModel : public QAbstractListModel
     public:
     Configuration *config = nullptr;
     std::vector<std::shared_ptr<ConfigurationAtomsModel>> atoms_;
+    std::vector<std::shared_ptr<ConfigurationBondsModel>> bonds_;
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;

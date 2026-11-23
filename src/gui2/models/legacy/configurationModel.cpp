@@ -2,6 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "gui2/models/legacy/configurationModel.h"
+#include "classes/species.h"
 #include "data/elements.h"
 #include "nodes/structure/configuration.h"
 #include <qstring.h>
@@ -82,7 +83,7 @@ QVariant ConfigurationMoleculesModel::data(const QModelIndex &index, int role) c
         case ConfigurationMoleculesModel::ConfigurationMoleculesModelRoles::Atoms:
             return QVariant::fromValue(atoms_[index.row()].get());
         case ConfigurationMoleculesModel::ConfigurationMoleculesModelRoles::Bonds:
-            return {};
+            return QVariant::fromValue(bonds_[index.row()].get());
     }
     return {};
 }
@@ -91,9 +92,13 @@ void ConfigurationMoleculesModel::reset()
 {
     beginResetModel();
     atoms_.clear();
+    bonds_.clear();
     if (config)
         for (auto &mol : config->molecules())
+        {
             atoms_.emplace_back(std::make_shared<ConfigurationAtomsModel>(mol.get()));
+            bonds_.emplace_back(std::make_shared<ConfigurationBondsModel>(mol.get()));
+        }
     endResetModel();
 }
 
@@ -138,5 +143,54 @@ QHash<int, QByteArray> ConfigurationAtomsModel::roleNames() const
     roles[ConfigurationAtomsModelRoles::Y] = "ry";
     roles[ConfigurationAtomsModelRoles::Z] = "rz";
     roles[ConfigurationAtomsModelRoles::Element] = "element";
+    return roles;
+}
+
+ConfigurationBondsModel::ConfigurationBondsModel(Molecule *mol) : mol_(mol) {}
+
+int ConfigurationBondsModel::rowCount(const QModelIndex &parent) const
+{
+    Q_UNUSED(parent);
+    if (mol_ == nullptr)
+        return 0;
+    return mol_->species()->bonds().size();
+}
+
+QVariant ConfigurationBondsModel::data(const QModelIndex &index, int role) const
+{
+    auto bond = mol_->species()->bonds()[index.row()];
+    auto base = mol_->atom(bond.i()->index())->r();
+    auto delta = mol_->atom(bond.i()->index())->r() - mol_->atom(bond.j()->index())->r();
+
+    switch (role)
+    {
+        case ConfigurationBondsModel::ConfigurationBondsModelRoles::X:
+            return QVariant::fromValue(base.x);
+        case ConfigurationBondsModel::ConfigurationBondsModelRoles::Y:
+            return QVariant::fromValue(base.y);
+        case ConfigurationBondsModel::ConfigurationBondsModelRoles::Z:
+            return QVariant::fromValue(base.z);
+        case ConfigurationBondsModel::ConfigurationBondsModelRoles::THETA:
+            return 90.0;
+        case ConfigurationBondsModel::ConfigurationBondsModelRoles::PHI:
+            return 0.0;
+    }
+    return {};
+}
+
+void ConfigurationBondsModel::reset()
+{
+    beginResetModel();
+    endResetModel();
+}
+
+QHash<int, QByteArray> ConfigurationBondsModel::roleNames() const
+{
+    QHash<int, QByteArray> roles;
+    roles[ConfigurationBondsModelRoles::X] = "rx";
+    roles[ConfigurationBondsModelRoles::Y] = "ry";
+    roles[ConfigurationBondsModelRoles::Z] = "rz";
+    roles[ConfigurationBondsModelRoles::THETA] = "theta";
+    roles[ConfigurationBondsModelRoles::PHI] = "phi";
     return roles;
 }

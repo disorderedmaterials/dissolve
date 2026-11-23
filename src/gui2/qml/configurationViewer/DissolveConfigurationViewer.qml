@@ -71,6 +71,35 @@ View3D {
         }
     }
 
+    Repeater3D {
+        model: configurationView.molecules
+        delegate: Repeater3D {
+            id: bondRepeater
+            required property var bonds
+            model: bondRepeater.bonds
+            delegate: Model {
+                required property real rx
+                required property real ry
+                required property real rz
+                required property real theta
+                required property real phi
+                //! [3dcube]
+                id: cylinder
+                source: "#Cylinder"
+                materials: PrincipledMaterial {
+                    baseColor: "black"
+                }
+                scale: Qt.vector3d(0.1, 1.0, 0.1)
+                x: configurationView.scale * rx
+                y: configurationView.scale * ry
+                z: configurationView.scale * rz
+                eulerRotation.x: theta
+                eulerRotation.y: phi
+                //! [3dcube]
+            }
+        }
+    }
+
     // Repeater3D {
     //     id: bondRepeater
     //     model: configurationView.bondModel
