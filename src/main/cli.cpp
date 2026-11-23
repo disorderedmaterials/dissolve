@@ -114,7 +114,7 @@ int GUIOptions::parse(const int args, char **argv)
     CLI::App app{std::format("Dissolve-{} version {}, Copyright (C) 2026 Team Dissolve and contributors.\n", Version::appType(),
                              Version::info())};
     // Add positionals
-    app.add_option("inputFile", inputFile_, "Input file to load")->check(CLI::ExistingFile)->required();
+    app.add_option("inputFile", inputFile_, "Input file to load")->check(CLI::ExistingFile);
 
     // Tweak formatting
     app.get_formatter()->label("TEXT:FILE", "<filename>");
