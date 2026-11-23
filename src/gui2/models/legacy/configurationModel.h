@@ -37,7 +37,7 @@ class ConfigurationModel : public QAbstractListModel
 
     private:
     // Root graph that we pull nodes from
-    Graph *root_;
+    Graph *root_ = nullptr;
     // Name of configuration we are viewing
     //
     // We use a string instead of an int because the user might add

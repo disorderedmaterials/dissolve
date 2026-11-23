@@ -13,6 +13,8 @@
 int ConfigurationModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
+    if (root_ == nullptr)
+        return 0;
     return root_->findType<ConfigurationNode>().size();
 }
 
