@@ -2,8 +2,10 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "gui2/models/legacy/configurationModel.h"
+#include "data/elements.h"
 #include "nodes/structure/configuration.h"
 #include <iostream>
+#include <qstring.h>
 #include <qvariant.h>
 
 /*
@@ -79,7 +81,7 @@ QVariant ConfigurationAtomsModel::data(const QModelIndex &index, int role) const
     switch (role)
     {
         case ConfigurationAtomsModel::ConfigurationAtomsModelRoles::Element:
-            return QVariant::fromValue(atom.Z());
+            return QString::fromUtf8(Elements::symbol(atom.Z()).data());
         case ConfigurationAtomsModel::ConfigurationAtomsModelRoles::X:
             return QVariant::fromValue(atom.r().x);
         case ConfigurationAtomsModel::ConfigurationAtomsModelRoles::Y:

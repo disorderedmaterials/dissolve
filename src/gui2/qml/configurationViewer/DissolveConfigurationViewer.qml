@@ -57,7 +57,7 @@ View3D {
             id: sphere
             source: "#Sphere"
             materials: PrincipledMaterial {
-                baseColor: element == "O" ? "red" : "blue"
+                baseColor: element == "C" ? "red" : "blue"
             }
             x: configurationView.scale * rx
             y: configurationView.scale * ry
