@@ -133,16 +133,14 @@ class CIFNodeTest : public ::testing::Test
         return testing::AssertionSuccess();
     }
     // Test Box definition
-    void testBox(const Configuration *cfg, const Vector3 &lengths, const Vector3 &angles, int nAtoms)
+    void testBox(const Box &box, const Vector3 &lengths, const Vector3 &angles)
     {
-        ASSERT_TRUE(cfg);
-        EXPECT_EQ(cfg->nAtoms(), nAtoms);
-        EXPECT_NEAR(cfg->box().axisLengths().x, lengths.x, 1.0e-6);
-        EXPECT_NEAR(cfg->box().axisLengths().y, lengths.y, 1.0e-6);
-        EXPECT_NEAR(cfg->box().axisLengths().z, lengths.z, 1.0e-6);
-        EXPECT_NEAR(cfg->box().axisAngles().x, angles.x, 1.0e-6);
-        EXPECT_NEAR(cfg->box().axisAngles().y, angles.y, 1.0e-6);
-        EXPECT_NEAR(cfg->box().axisAngles().z, angles.z, 1.0e-6);
+        EXPECT_NEAR(box.axisLengths().x, lengths.x, 1.0e-6);
+        EXPECT_NEAR(box.axisLengths().y, lengths.y, 1.0e-6);
+        EXPECT_NEAR(box.axisLengths().z, lengths.z, 1.0e-6);
+        EXPECT_NEAR(box.axisAngles().x, angles.x, 1.0e-6);
+        EXPECT_NEAR(box.axisAngles().y, angles.y, 1.0e-6);
+        EXPECT_NEAR(box.axisAngles().z, angles.z, 1.0e-6);
     }
     // Test molecular species information provided
     void testDetectedMolecularStructure(const std::map<std::string, Structure> &structures, const MolecularSpeciesInfo &info)
@@ -151,32 +149,6 @@ class CIFNodeTest : public ::testing::Test
         EXPECT_EQ(structures.at(std::get<0>(info)).instances().size(), std::get<1>(info));
         EXPECT_EQ(structures.at(std::get<0>(info)).nAtoms(), std::get<2>(info));
     }
-    /*
-    // Check instance consistency with reference coordinates
-    void testInstanceConsistency(const CIFMolecularSpecies &molSp, const Species &referenceCoordinates)
-    {
-        // Get the box from the reference species
-        const auto &box = referenceCoordinates.box();
-
-        // Loop over instances and ensure their stored atoms overlap exactly with one in the reference system
-        for (const auto &instance : molSp.instances())
-        {
-            for (auto &&[instanceAtom, speciesAtom] : zip(instance.localAtoms(), molSp.species()->atoms()))
-            {
-                // Locate the atom in the reference system at the instance atom coordinates
-                auto instanceR = instanceAtom.r();
-                auto spAtomIt = std::find_if(referenceCoordinates.atoms().begin(), referenceCoordinates.atoms().end(),
-                                                [box, instanceR](const auto &refAtom)
-                                                { return box.minimumDistance(refAtom.r(), instanceR) < 0.01; });
-                std::cout << std::format("{}  {} {} {}", Elements::symbol(speciesAtom.Z()), instanceAtom.r().x,
-                                            instanceAtom.r().y, instanceAtom.r().z)
-                            << std::endl;
-                ASSERT_NE(spAtomIt, referenceCoordinates.atoms().end());
-                EXPECT_EQ(spAtomIt->Z(), speciesAtom.Z());
-            }
-        }
-    }
-    */
 };
 
 TEST_F(CIFNodeTest, Parse)
@@ -266,45 +238,30 @@ TEST_F(CIFNodeTest, NaClO3Molecular)
 
 TEST_F(CIFNodeTest, CuBTC)
 {
-    // Load the CIF file
-    auto cif = std::string("CuBTC-7108574.cif");
+    setUp("CuBTC-7108574.cif");
 
-    EXPECT_TRUE(testGraph_.appendNode("ImportCIFStructure"));
-    testGraph_.fetchHead()->setOption("FilePath", std::filesystem::path("cif/" + cif));
-    ASSERT_TRUE(testGraph_.appendNode("CalculateBonding"));
-    testGraph_.fetchHead()->setOption("Clear", true);
-    ASSERT_TRUE(testGraph_.appendNode("DetectMolecules"));
-    testGraph_.addEdge({"ImportCIFStructure", "Structure", "CalculateBonding", "Structure"});
-    testGraph_.addEdge({"CalculateBonding", "Structure", "DetectMolecules", "Structure"});
+    ASSERT_EQ(detectMoleculesNode_->run(), NodeConstants::ProcessResult::Success);
 
-    ASSERT_EQ(testGraph_.findNode("ImportCIFStructure")->run(), NodeConstants::ProcessResult::Success);
-
-    // Check basic info
-    auto detectMoleculesNode = static_cast<DetectMoleculesNode *>(testGraph_.findNode("DetectMolecules"));
-    ASSERT_EQ(detectMoleculesNode->run(), NodeConstants::ProcessResult::Success);
-
-    auto detectedMoleculeStructures = detectMoleculesNode->detectedStructures();
+    auto detectedMoleculeStructures = detectMoleculesNode_->detectedStructures();
     EXPECT_EQ(detectedMoleculeStructures.size(), 2);
+    testDetectedMolecularStructure(detectMoleculesNode_->detectedStructures(), {"Cu48O192C288H96", 1, 624});
+    testDetectedMolecularStructure(detectMoleculesNode_->detectedStructures(), {"O", 48, 1});
 
     EXPECT_EQ(testGraph_.findNode("ImportCIFStructure")->findOption("SpaceGroupID")->get<SpaceGroups::SpaceGroupId>(),
               SpaceGroups::SpaceGroup_225);
 
-    /* TODO: Handle supercell configurations
+    auto supercell = calculateBondingNode_->getOutputValue<Structure>("Structure");
     constexpr auto A = 26.3336;
-    // testBox(detectMoleculesNode->getOutputValue<Configuration *>("SupercellConfiguration"), {A, A, A}, {90, 90, 90},
-    672);
+    testBox(supercell.box(), {A, A, A}, {90, 90, 90});
+    ASSERT_EQ(supercell.nAtoms(), 672);
 
-    // Check basic formula (which includes bound water oxygens - with no H - at this point) and using O group
-
+    // Check basic formula (which includes bound water oxygens with no H) and using O group
     // 16 basic formula units per unit cell
     constexpr auto N = 16;
     EmpiricalFormula::EmpiricalFormulaMap cellFormulaH = {
         {Elements::Cu, 3 * N}, {Elements::C, 18 * N}, {Elements::H, 6 * N}, {Elements::O, 15 * N}};
-    EXPECT_EQ(EmpiricalFormula::formula(detectMoleculesNode->getOutputValue<Configuration
-    *>("SupercellConfiguration")->atoms(),
-                                        [](const auto &i) { return i.speciesAtom()->Z(); }),
+    EXPECT_EQ(EmpiricalFormula::formula(supercell.atoms(), [](const auto &i) { return i->Z(); }),
               EmpiricalFormula::formula(cellFormulaH));
-              */
 }
 /*
 TEST_F(CIFNodeTest, CuBTCActiveAssemblies)
