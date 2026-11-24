@@ -4,18 +4,18 @@
 #include "classes/neutronWeights.h"
 #include "classes/atomType.h"
 #include "classes/isotopologueSet.h"
-#include "classes/species.h"
+#include "nodes/structure/speciesBase.h"
 #include "data/isotopes.h"
 #include "templates/algorithms.h"
 
-NeutronWeights::NeutronWeights(const std::map<const Species *, double> &speciesPopulations,
+NeutronWeights::NeutronWeights(const std::map<const SpeciesBaseNode *, double> &speciesPopulations,
                                const IsotopologueSet &isotopologues)
 {
     initialise(speciesPopulations, isotopologues);
 };
 
 // Initialise the neutron weights instance
-void NeutronWeights::initialise(const std::map<const Species *, double> &speciesPopulations,
+void NeutronWeights::initialise(const std::map<const SpeciesBaseNode *, double> &speciesPopulations,
                                 const IsotopologueSet &isotopologues)
 {
     boundCoherentSquareOfAverage_ = 0.0;
@@ -69,7 +69,7 @@ void NeutronWeights::operator=(const NeutronWeights &source)
  */
 
 // Calculate weighting matrices based on current AtomType / Isotope information
-void NeutronWeights::calculateWeightingMatrices(const std::map<const Species *, double> &speciesPopulations,
+void NeutronWeights::calculateWeightingMatrices(const std::map<const SpeciesBaseNode *, double> &speciesPopulations,
                                                 const IsotopologueSet &isotopologues)
 {
     // Create weights matrices and calculate average scattering lengths

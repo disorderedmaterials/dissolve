@@ -5,11 +5,11 @@
 #include "base/serialiserLibrary.h"
 #include "classes/atomType.h"
 #include "classes/box.h"
-#include "classes/species.h"
+#include "nodes/structure/speciesBase.h"
 #include "classes/speciesBond.h"
 #include <algorithm>
 
-SpeciesAtom::SpeciesAtom(Species *parent) : parent_(parent) {}
+SpeciesAtom::SpeciesAtom(SpeciesBaseNode *parent) : parent_(parent) {}
 
 /*
  * Properties

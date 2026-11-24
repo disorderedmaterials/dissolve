@@ -3,7 +3,7 @@
 
 #include "data/ff/uff/uff.h"
 #include "classes/atomType.h"
-#include "classes/species.h"
+#include "nodes/structure/speciesBase.h"
 #include "data/elements.h"
 #include "math/mathFunc.h"
 

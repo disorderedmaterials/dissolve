@@ -4,7 +4,7 @@
 #include "classes/molecule.h"
 #include "classes/box.h"
 #include "classes/configurationAtom.h"
-#include "classes/species.h"
+#include "nodes/structure/speciesBase.h"
 #include "classes/speciesBond.h"
 #include "data/atomicMasses.h"
 #include "templates/algorithms.h"
@@ -15,14 +15,14 @@
  */
 
 // Set Species that this Molecule represents
-void Molecule::setSpecies(const Species *sp)
+void Molecule::setSpecies(const SpeciesBaseNode *sp)
 {
     species_ = sp;
     atoms_.reserve(sp->nAtoms());
 }
 
 // Return Species that this Molecule represents
-const Species *Molecule::species() const { return species_; }
+const SpeciesBaseNode *Molecule::species() const { return species_; }
 
 // Add Atom to Molecule
 void Molecule::addAtom(ConfigurationAtom *atom)

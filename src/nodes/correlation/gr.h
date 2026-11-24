@@ -7,7 +7,7 @@
 #include "classes/configuration.h"
 #include "classes/histogramSet.h"
 #include "classes/partialSet.h"
-#include "classes/species.h"
+#include "nodes/structure/speciesBase.h"
 #include "math/function1D.h"
 #include "math/history.h"
 #include "nodes/node.h"

@@ -111,7 +111,7 @@ TEST(NeutronSQNodeTest, WaterMethanol)
     ASSERT_TRUE(sqNode->setOption<WindowFunction::Form>("WindowFunction", WindowFunction::Form::Lorch0));
 
     // Add in NeutronSQ
-    std::vector<std::tuple<std::string, std::vector<std::tuple<const Species *, std::string, double>>>> samples = {
+    std::vector<std::tuple<std::string, std::vector<std::tuple<const SpeciesBaseNode *, std::string, double>>>> samples = {
         {"HHH", {{testGraph.findSpecies("Water"), "Natural", 1.0}, {testGraph.findSpecies("Methanol"), "Natural", 1.0}}},
         {"H5H",
          {{testGraph.findSpecies("Water"), "Natural", 1.0},

@@ -6,14 +6,14 @@
 #include <QAbstractTableModel>
 #include <QModelIndex>
 
-class Species;
+class SpeciesBaseNode;
 
 class SpeciesAtomModel : public QAbstractTableModel
 {
     Q_OBJECT
 
     private:
-    Species *species_;
+    SpeciesBaseNode *species_;
 
     Q_SIGNALS:
     void atomTypeChanged();
@@ -23,7 +23,7 @@ class SpeciesAtomModel : public QAbstractTableModel
     public:
     SpeciesAtomModel();
 
-    void setSpecies(Species *species);
+    void setSpecies(SpeciesBaseNode *species);
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
 

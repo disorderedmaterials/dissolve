@@ -22,7 +22,7 @@ class CommonImproperModel : public CommonTermModel
     void modelsUpdated();
 
     public:
-    explicit CommonImproperModel(Species *species);
+    explicit CommonImproperModel(SpeciesBaseNode *species);
 
     private:
     // Source term data

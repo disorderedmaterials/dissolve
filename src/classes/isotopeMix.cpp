@@ -4,7 +4,7 @@
 #include "classes/isotopeMix.h"
 #include "classes/atomType.h"
 #include "classes/isotopologueSet.h"
-#include "classes/species.h"
+#include "nodes/structure/speciesBase.h"
 #include "data/elements.h"
 #include "data/isotopes.h"
 
@@ -33,7 +33,7 @@ double IsotopeMix::population(const AtomType *atomType) const { return populatio
 double IsotopeMix::fraction(const AtomType *atomType) const { return population(atomType) / totalPopulation_; }
 
 // Create mix from Isotopologues
-void IsotopeMix::create(const std::map<const Species *, double> &speciesPopulations, const IsotopologueSet &isotopologues)
+void IsotopeMix::create(const std::map<const SpeciesBaseNode *, double> &speciesPopulations, const IsotopologueSet &isotopologues)
 {
     mix_.clear();
     populations_.clear();

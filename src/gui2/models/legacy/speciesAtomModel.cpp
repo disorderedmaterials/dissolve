@@ -1,11 +1,11 @@
 #include "gui2/models/legacy/speciesAtomModel.h"
-#include "classes/species.h"
+#include "nodes/structure/speciesBase.h"
 #include "data/elements.h"
 #include <memory>
 
 SpeciesAtomModel::SpeciesAtomModel() {}
 
-void SpeciesAtomModel::setSpecies(Species *species) { species_ = species; }
+void SpeciesAtomModel::setSpecies(SpeciesBaseNode *species) { species_ = species; }
 
 int SpeciesAtomModel::rowCount(const QModelIndex &parent) const
 {

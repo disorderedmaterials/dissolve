@@ -2,13 +2,13 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/speciesAngle.h"
-#include "classes/species.h"
+#include "nodes/structure/speciesBase.h"
 #include "classes/speciesAtom.h"
 #include "math/mathFunc.h"
 
 SpeciesAngle::SpeciesAngle() : SpeciesIntra(nullptr, AngleFunctions::Form::None) {}
 
-SpeciesAngle::SpeciesAngle(Species *parent, SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k)
+SpeciesAngle::SpeciesAngle(SpeciesBaseNode *parent, SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k)
     : SpeciesIntra(parent, AngleFunctions::Form::None), i_(i), j_(j), k_(k)
 {
 }

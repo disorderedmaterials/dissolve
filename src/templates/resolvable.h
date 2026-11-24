@@ -7,7 +7,7 @@
 #include <string>
 
 // Forward Declarations
-class Species;
+class SpeciesBaseNode;
 
 // Resolvable
 template <class T> class Resolvable
@@ -46,5 +46,5 @@ class ResolvableContext
 
     public:
     // Resolve internal resolvable name references with supplied data
-    virtual void resolve(const std::map<std::string, const Species *> &speciesInScope) = 0;
+    virtual void resolve(const std::map<std::string, const SpeciesBaseNode *> &speciesInScope) = 0;
 };

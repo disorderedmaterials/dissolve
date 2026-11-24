@@ -89,10 +89,10 @@ template <SystemType systemType> class GraphProblem : public DissolveGraph
 
     private:
     Configuration *configuration_{nullptr};
-    Species *species_{nullptr};
+    SpeciesBaseNode *species_{nullptr};
 
     public:
     Configuration *configuration() { return configuration_; }
-    Species *species() { return species_; };
+    SpeciesBaseNode *species() { return species_; };
 };
 } // namespace Benchmarks

@@ -6,7 +6,7 @@
 #include "classes/configuration.h"
 #include "classes/configurationAtom.h"
 #include "classes/molecule.h"
-#include "classes/species.h"
+#include "nodes/structure/speciesBase.h"
 #include "math/mathFunc.h"
 #include "templates/algorithms.h"
 

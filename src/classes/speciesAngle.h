@@ -10,14 +10,14 @@
 
 // Forward Declarations
 class SpeciesAtom;
-class Species;
+class SpeciesBaseNode;
 
 // SpeciesAngle Definition
 class SpeciesAngle : public SpeciesIntra<SpeciesAngle, AngleFunctions>
 {
     public:
     SpeciesAngle();
-    SpeciesAngle(Species *parent, SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k);
+    SpeciesAngle(SpeciesBaseNode *parent, SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k);
     ~SpeciesAngle() override;
 
     /*

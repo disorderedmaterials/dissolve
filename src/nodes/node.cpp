@@ -364,7 +364,7 @@ SerialisedValue Node::serialiseState() const
 void Node::deserialiseState(const SerialisedValue &node)
 {
     // Obtain resolvable data
-    std::map<std::string, const Species *> reachableSpecies;
+    std::map<std::string, const SpeciesBaseNode *> reachableSpecies;
     for (auto &node : ancestors<SpeciesNode>())
         reachableSpecies[std::string(node->name())] = &node->species();
 
@@ -445,7 +445,7 @@ void Node::deserialise(const SerialisedValue &node)
 // Resolve internal resolvable name references with supplied data
 void Node::resolve()
 {
-    std::map<std::string, const Species *> reachableSpecies;
+    std::map<std::string, const SpeciesBaseNode *> reachableSpecies;
     for (auto &node : ancestors<SpeciesNode>())
         reachableSpecies[std::string(node->name())] = &node->species();
 

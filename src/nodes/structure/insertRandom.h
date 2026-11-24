@@ -42,7 +42,7 @@ class InsertRandomNode : public Node
 
     private:
     // Source Species
-    const Species *species_;
+    const SpeciesBaseNode *species_;
     // Target configuration to insert into
     Configuration *configuration_{nullptr};
     // The default box action if none is specified

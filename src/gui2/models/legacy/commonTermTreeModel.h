@@ -17,7 +17,7 @@ class MasterTermTreeModel : public QAbstractItemModel
     Q_OBJECT
 
     public:
-    explicit MasterTermTreeModel(Species *species);
+    explicit MasterTermTreeModel(SpeciesBaseNode *species);
 
     public:
     // Term models
@@ -30,10 +30,10 @@ class MasterTermTreeModel : public QAbstractItemModel
     CommonTermModel &modelForTopLevelRow(int row);
 
     public:
-    void setBondQueryFunction(std::function<bool(std::string_view termName, Species *sp)> func);
-    void setAngleQueryFunction(std::function<bool(std::string_view termName, Species *sp)> func);
-    void setTorsionQueryFunction(std::function<bool(std::string_view termName, Species *sp)> func);
-    void setImproperQueryFunction(std::function<bool(std::string_view termName, Species *sp)> func);
+    void setBondQueryFunction(std::function<bool(std::string_view termName, SpeciesBaseNode *sp)> func);
+    void setAngleQueryFunction(std::function<bool(std::string_view termName, SpeciesBaseNode *sp)> func);
+    void setTorsionQueryFunction(std::function<bool(std::string_view termName, SpeciesBaseNode *sp)> func);
+    void setImproperQueryFunction(std::function<bool(std::string_view termName, SpeciesBaseNode *sp)> func);
     void prefixNames(QList<QModelIndex> indices, QString prefix);
     void suffixNames(QList<QModelIndex> indices, QString suffix);
 

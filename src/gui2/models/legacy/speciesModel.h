@@ -44,7 +44,7 @@ class SpeciesModel : public QObject
     // Improper Model
     SpeciesImproperModel impropers_;
     // Return object represented by specified model index
-    const Species *rawData(const QModelIndex &index) const;
+    const SpeciesBaseNode *rawData(const QModelIndex &index) const;
 
     public:
     enum class SpeciesUserRole
@@ -74,7 +74,7 @@ class SpeciesModel : public QObject
     // Improper information
     SpeciesImproperModel *impropers();
     // Set vector containing checked items
-    void setCheckStateData(std::vector<const Species *> &checkedItemsVector);
+    void setCheckStateData(std::vector<const SpeciesBaseNode *> &checkedItemsVector);
     // Refresh model data
     void reset();
     GraphModel *graphModel();

@@ -3,7 +3,7 @@
 
 #include "classes/neutronWeights.h"
 #include "classes/isotopologueSet.h"
-#include "classes/species.h"
+#include "nodes/structure/speciesBase.h"
 #include "tests/tempFile.h"
 #include "tests/testing.h"
 
@@ -11,7 +11,7 @@ namespace UnitTest
 {
 TEST(NeutronWeightsTest, Simple)
 {
-    std::map<const Species *, double> speciesPopulations;
+    std::map<const SpeciesBaseNode *, double> speciesPopulations;
     IsotopologueSet isotopologues;
     Species N2;
     N2.load("species/n2.toml");
@@ -37,7 +37,7 @@ TEST(NeutronWeightsTest, Simple)
 
 TEST(NeutronWeightsTest, Water)
 {
-    std::map<const Species *, double> speciesPopulations;
+    std::map<const SpeciesBaseNode *, double> speciesPopulations;
     IsotopologueSet isotopologues;
     Species H2O;
     H2O.load("species/water.toml");
@@ -62,7 +62,7 @@ TEST(NeutronWeightsTest, Water)
 
 TEST(NeutronWeightsTest, D2O)
 {
-    std::map<const Species *, double> speciesPopulations;
+    std::map<const SpeciesBaseNode *, double> speciesPopulations;
     IsotopologueSet isotopologues;
     Species H2O;
     H2O.load("species/water.toml");
@@ -86,7 +86,7 @@ TEST(NeutronWeightsTest, D2O)
 
 TEST(NeutronWeightsTest, NullWater)
 {
-    std::map<const Species *, double> speciesPopulations;
+    std::map<const SpeciesBaseNode *, double> speciesPopulations;
     IsotopologueSet isotopologues;
     Species H2O;
     H2O.load("species/water.toml");
@@ -115,7 +115,7 @@ TEST(NeutronWeightsTest, NullWater)
 
 TEST(NeutronWeightsTest, Mix)
 {
-    std::map<const Species *, double> speciesPopulations;
+    std::map<const SpeciesBaseNode *, double> speciesPopulations;
     IsotopologueSet isotopologues;
     Species H2O;
     H2O.load("species/water.toml");

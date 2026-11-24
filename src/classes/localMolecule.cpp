@@ -3,9 +3,9 @@
 
 #include "classes/localMolecule.h"
 #include "classes/empiricalFormula.h"
-#include "classes/species.h"
+#include "nodes/structure/speciesBase.h"
 
-LocalMolecule::LocalMolecule(const Species *copyFrom)
+LocalMolecule::LocalMolecule(const SpeciesBaseNode *copyFrom)
 {
     setSpecies(copyFrom);
     for (auto &&[local, i] : zip(localAtoms_, copyFrom->atoms()))
@@ -41,7 +41,7 @@ void LocalMolecule::copyData(const LocalMolecule &object)
 }
 
 // Set Species that this Molecule represents
-void LocalMolecule::setSpecies(const Species *sp)
+void LocalMolecule::setSpecies(const SpeciesBaseNode *sp)
 {
     species_ = sp;
 

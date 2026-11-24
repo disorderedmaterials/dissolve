@@ -2,7 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "data/ff/zhao2010/zhao2010.h"
-#include "classes/species.h"
+#include "nodes/structure/speciesBase.h"
 
 /*
  * Implements forcefield found in "A force field for dynamic Cu-BTC metal-organic framework", L. Zhao & Q. Yang, Q. Ma, C.

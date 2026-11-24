@@ -10,14 +10,14 @@
 
 // Forward Declarations
 class SpeciesAtom;
-class Species;
+class SpeciesBaseNode;
 
 // SpeciesTorsion Definition
 class SpeciesTorsion : public SpeciesIntra<SpeciesTorsion, TorsionFunctions>
 {
     public:
     SpeciesTorsion();
-    SpeciesTorsion(Species *parent, SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l);
+    SpeciesTorsion(SpeciesBaseNode *parent, SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l);
     ~SpeciesTorsion() override;
 
     /*

@@ -10,7 +10,7 @@
 
 // Forward Declarations
 class ConfigurationAtom;
-class Species;
+class SpeciesBaseNode;
 class SpeciesAtom;
 
 // Species Kernel
@@ -18,14 +18,14 @@ class SpeciesKernel : public GeometryKernel
 {
     private:
     friend class KernelProducer;
-    SpeciesKernel(const Species *sp, const PotentialMap &potentialMap);
+    SpeciesKernel(const SpeciesBaseNode *sp, const PotentialMap &potentialMap);
 
     public:
     ~SpeciesKernel() = default;
 
     private:
     // Target species
-    const Species *species_{nullptr};
+    const SpeciesBaseNode *species_{nullptr};
 
     /*
      * Components

@@ -22,7 +22,7 @@ class CommonAngleModel : public CommonTermModel
     void modelsUpdated();
 
     public:
-    explicit CommonAngleModel(Species *species);
+    explicit CommonAngleModel(SpeciesBaseNode *species);
 
     private:
     // Source term data

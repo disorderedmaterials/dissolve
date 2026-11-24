@@ -3,7 +3,7 @@
 
 #include "nodes/import/cifClasses.h"
 #include "classes/empiricalFormula.h"
-#include "classes/species.h"
+#include "nodes/structure/speciesBase.h"
 
 /*
  * CIF Symmetry-Unique Atom

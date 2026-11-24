@@ -3,17 +3,17 @@
 
 #include "classes/isotopologue.h"
 #include "classes/atomType.h"
-#include "classes/species.h"
+#include "nodes/structure/speciesBase.h"
 #include "data/isotopes.h"
 
-Isotopologue::Isotopologue(const Species *parent, std::string name) : parent_(parent), name_(name) {}
+Isotopologue::Isotopologue(const SpeciesBaseNode *parent, std::string name) : parent_(parent), name_(name) {}
 
 /*
  * Basic Information
  */
 
 // Return parent Species
-const Species *Isotopologue::parent() const { return parent_; }
+const SpeciesBaseNode *Isotopologue::parent() const { return parent_; }
 
 // Set name of Isotopologue
 void Isotopologue::setName(std::string_view name) { name_ = DissolveSys::niceName(name); }

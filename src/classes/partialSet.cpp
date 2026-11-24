@@ -4,14 +4,14 @@
 #include "classes/partialSet.h"
 #include "classes/atomType.h"
 #include "classes/configuration.h"
-#include "classes/species.h"
+#include "nodes/structure/speciesBase.h"
 #include "math/interpolator.h"
 #include "nodes/export/data.h"
 #include "templates/algorithms.h"
 #include <filesystem>
 
 // Initialise
-void PartialSet::initialise(const KeyedVector<const Species *, int> &speciesPopulations, bool triangular)
+void PartialSet::initialise(const KeyedVector<const SpeciesBaseNode *, int> &speciesPopulations, bool triangular)
 {
     // Take integer species populations and convert to real
     realSpeciesPopulations_.clear();
@@ -46,7 +46,7 @@ void PartialSet::initialise(const KeyedVector<const Species *, int> &speciesPopu
 }
 
 // Initialise from supplied real species populations
-void PartialSet::initialise(const KeyedVector<const Species *, double> &realSpeciesPopulations, bool triangular)
+void PartialSet::initialise(const KeyedVector<const SpeciesBaseNode *, double> &realSpeciesPopulations, bool triangular)
 {
     // Take integer species populations and convert to real
     realSpeciesPopulations_.clear();
@@ -134,7 +134,7 @@ void PartialSet::reset()
 }
 
 // Species populations
-const ResolvableKeyedVector<const Species *, double> &PartialSet::realSpeciesPopulations() const
+const ResolvableKeyedVector<const SpeciesBaseNode *, double> &PartialSet::realSpeciesPopulations() const
 {
     return realSpeciesPopulations_;
 }
@@ -486,7 +486,7 @@ void PartialSet::deserialise(SerialisedValue node)
 }
 
 // Resolve internal resolvable name references with supplied data
-void PartialSet::resolve(const std::map<std::string, const Species *> &speciesInScope)
+void PartialSet::resolve(const std::map<std::string, const SpeciesBaseNode *> &speciesInScope)
 {
     for (auto &resolvableSpecies : std::views::keys(realSpeciesPopulations_))
     {

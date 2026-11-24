@@ -2,7 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "tests/testing.h"
-#include "classes/species.h"
+#include "nodes/structure/speciesBase.h"
 #include "kernels/energy.h"
 #include "kernels/force.h"
 #include "nodes/import/xyData.h"
@@ -97,7 +97,7 @@ namespace UnitTest
 }
 
 // Test species atom type
-[[nodiscard]] testing::AssertionResult testSpeciesAtomType(Species *sp, const std::map<int, std::string> &namesById)
+[[nodiscard]] testing::AssertionResult testSpeciesAtomType(SpeciesBaseNode *sp, const std::map<int, std::string> &namesById)
 {
     for (auto &[atomIndex, atomTypeName] : namesById)
     {

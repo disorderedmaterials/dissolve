@@ -3,7 +3,7 @@
 
 #include "classes/speciesSites.h"
 #include "base/serialiserLibrary.h"
-#include "classes/species.h"
+#include "nodes/structure/speciesBase.h"
 
 SpeciesSites::SpeciesSites(const std::vector<const SpeciesSite *> &sites)
 {
@@ -41,12 +41,12 @@ void SpeciesSites::remove(const SpeciesSite *site)
 }
 
 // Return vector of all Isotopologues
-ResolvableKeyedVector<const Species *, ResolvableKeyedVector<const SpeciesSite *, double>> &SpeciesSites::sites()
+ResolvableKeyedVector<const SpeciesBaseNode *, ResolvableKeyedVector<const SpeciesSite *, double>> &SpeciesSites::sites()
 {
     return sites_;
 }
 
-const ResolvableKeyedVector<const Species *, ResolvableKeyedVector<const SpeciesSite *, double>> &SpeciesSites::sites() const
+const ResolvableKeyedVector<const SpeciesBaseNode *, ResolvableKeyedVector<const SpeciesSite *, double>> &SpeciesSites::sites() const
 {
     return sites_;
 }
@@ -92,7 +92,7 @@ void SpeciesSites::deserialise(const SerialisedValue &node)
 }
 
 // Resolve internal resolvable name references with supplied data
-void SpeciesSites::resolve(const std::map<std::string, const Species *> &speciesInScope)
+void SpeciesSites::resolve(const std::map<std::string, const SpeciesBaseNode *> &speciesInScope)
 {
     for (auto &[resolvableSpecies, siteWeight] : sites_)
     {

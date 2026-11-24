@@ -2,7 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "base/sysFunc.h"
-#include "classes/species.h"
+#include "nodes/structure/speciesBase.h"
 #include <cstring>
 
 // Add a new SpeciesSite to this Species

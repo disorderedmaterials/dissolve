@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "classes/species.h"
+#include "nodes/structure/speciesBase.h"
 #include "classes/speciesAngle.h"
 #include "classes/speciesBond.h"
 #include "classes/speciesTorsion.h"

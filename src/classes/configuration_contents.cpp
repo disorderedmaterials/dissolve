@@ -5,7 +5,7 @@
 #include "classes/box.h"
 #include "classes/cell.h"
 #include "classes/configuration.h"
-#include "classes/species.h"
+#include "nodes/structure/speciesBase.h"
 #include "math/mathFunc.h"
 #include <memory>
 #include <numeric>
@@ -48,7 +48,7 @@ void Configuration::empty()
 }
 
 // Return Species populations within the Configuration
-const KeyedVector<const Species *, int> &Configuration::speciesPopulations() const { return speciesPopulations_; }
+const KeyedVector<const SpeciesBaseNode *, int> &Configuration::speciesPopulations() const { return speciesPopulations_; }
 
 // Return atom type populations for this Configuration
 KeyedVector<const AtomType *, int> Configuration::atomTypePopulations() const
@@ -140,7 +140,7 @@ int Configuration::version() const { return version_; }
 void Configuration::notifyAtomicPositionsChanged() { ++version_; }
 
 // Add Molecule to Configuration based on the supplied Species
-std::shared_ptr<Molecule> Configuration::addMolecule(const Species *sp,
+std::shared_ptr<Molecule> Configuration::addMolecule(const SpeciesBaseNode *sp,
                                                      OptionalReferenceWrapper<const std::vector<Vector3>> sourceCoordinates)
 {
     // Create the new Molecule object and set its Species pointer
@@ -195,7 +195,7 @@ std::shared_ptr<Molecule> Configuration::copyMolecule(const Molecule &sourceMole
 }
 
 // Remove all Molecules of the target Species from the Configuration
-void Configuration::removeMolecules(const Species *sp)
+void Configuration::removeMolecules(const SpeciesBaseNode *sp)
 {
     molecules_.erase(std::remove_if(molecules_.begin(), molecules_.end(),
                                     [&, sp](auto &mol)

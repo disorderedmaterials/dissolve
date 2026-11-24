@@ -7,7 +7,7 @@
 #include "classes/configurationAtom.h"
 #include "classes/molecule.h"
 #include "classes/pairPotential.h"
-#include "classes/species.h"
+#include "nodes/structure/speciesBase.h"
 
 PotentialMap::PotentialMap(const std::vector<const AtomType *> &atomTypes, const DoubleKeyedMap<PairPotential> &pairPotentials)
 {

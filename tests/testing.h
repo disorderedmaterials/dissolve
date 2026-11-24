@@ -58,7 +58,7 @@ void exportMermaidGraph(Graph &graph);
 [[nodiscard]] testing::AssertionResult testVector3(std::string_view quantity, const Vector3 &A, const Vector3 &B,
                                                    double threshold = 1.0e-6);
 // Test species atom type
-[[nodiscard]] testing::AssertionResult testSpeciesAtomType(Species *sp, const std::map<int, std::string> &namesById);
+[[nodiscard]] testing::AssertionResult testSpeciesAtomType(SpeciesBaseNode *sp, const std::map<int, std::string> &namesById);
 // Test interaction parameters
 template <class Intra>
 [[nodiscard]] testing::AssertionResult

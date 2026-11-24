@@ -5,7 +5,7 @@
 
 // Forward Declarations
 class Forcefield;
-class Species;
+class SpeciesBaseNode;
 
 // Forcefield Recipe
 struct ForcefieldRecipe

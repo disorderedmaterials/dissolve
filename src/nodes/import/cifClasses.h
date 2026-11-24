@@ -4,14 +4,14 @@
 #pragma once
 
 #include "classes/localMolecule.h"
-#include "classes/species.h"
+#include "nodes/structure/speciesBase.h"
 #include "data/elements.h"
 #include "math/vector3.h"
 #include <algorithm>
 #include <vector>
 
 // Forward Declarations
-class Species;
+class SpeciesBaseNode;
 
 // CIF Symmetry-Unique Atom
 class CIFSymmetryAtom

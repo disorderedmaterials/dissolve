@@ -2,7 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/site.h"
-#include "classes/species.h"
+#include "nodes/structure/speciesBase.h"
 #include <gtest/gtest.h>
 
 namespace UnitTest

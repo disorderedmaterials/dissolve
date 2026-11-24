@@ -3,13 +3,13 @@
 
 #include "classes/speciesTorsion.h"
 #include "base/serialiserLibrary.h"
-#include "classes/species.h"
+#include "nodes/structure/speciesBase.h"
 #include "classes/speciesAtom.h"
 #include "math/mathFunc.h"
 
 SpeciesTorsion::SpeciesTorsion() : SpeciesIntra(nullptr, TorsionFunctions::Form::None) {}
 
-SpeciesTorsion::SpeciesTorsion(Species *parent, SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l)
+SpeciesTorsion::SpeciesTorsion(SpeciesBaseNode *parent, SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l)
     : SpeciesIntra(parent, TorsionFunctions::Form::None), i_(i), j_(j), k_(k), l_(l)
 {
 }

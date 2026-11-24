@@ -8,7 +8,7 @@
 #include <vector>
 
 // Forward Declarations
-class Species;
+class SpeciesBaseNode;
 
 // Local Molecule Definition
 class LocalMolecule : public Molecule
@@ -16,7 +16,7 @@ class LocalMolecule : public Molecule
     public:
     LocalMolecule() = default;
     virtual ~LocalMolecule() = default;
-    LocalMolecule(const Species *copyFrom);
+    LocalMolecule(const SpeciesBaseNode *copyFrom);
     LocalMolecule(const LocalMolecule &copyFrom);
     LocalMolecule(LocalMolecule &&moveFrom);
     LocalMolecule &operator=(const LocalMolecule &copyFrom);
@@ -36,7 +36,7 @@ class LocalMolecule : public Molecule
 
     public:
     // Set Species that this Molecule represents
-    void setSpecies(const Species *sp) override;
+    void setSpecies(const SpeciesBaseNode *sp) override;
     // Return nth local atom
     ConfigurationAtom &localAtom(int n);
     const ConfigurationAtom &localAtom(int n) const;

@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "classes/species.h"
+#include "nodes/structure/speciesBase.h"
 #include <QAbstractItemModel>
 #include <QModelIndex>
 

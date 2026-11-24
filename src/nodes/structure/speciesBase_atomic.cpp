@@ -2,7 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/atomType.h"
-#include "classes/species.h"
+#include "nodes/structure/speciesBase.h"
 #include "data/atomicMasses.h"
 #include <numeric>
 

@@ -3,7 +3,7 @@
 
 #include "classes/box.h"
 #include "classes/fragment.h"
-#include "classes/species.h"
+#include "nodes/structure/speciesBase.h"
 #include "classes/structure.h"
 
 // Finalise all relationships between intramolecular data

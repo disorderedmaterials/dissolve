@@ -22,7 +22,7 @@ class CommonTorsionModel : public CommonTermModel
     void modelsUpdated();
 
     public:
-    explicit CommonTorsionModel(Species *species);
+    explicit CommonTorsionModel(SpeciesBaseNode *species);
 
     private:
     // Source term data

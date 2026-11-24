@@ -2,7 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/empiricalFormula.h"
-#include "classes/species.h"
+#include "nodes/structure/speciesBase.h"
 #include <gtest/gtest.h>
 
 TEST(EmpiricalFormulaTest, Order)

@@ -21,7 +21,7 @@ class PartialSet : ResolvableContext
      */
     private:
     // Species populations
-    ResolvableKeyedVector<const Species *, double> realSpeciesPopulations_;
+    ResolvableKeyedVector<const SpeciesBaseNode *, double> realSpeciesPopulations_;
     // Fingerprint for these partials (e.g. reflecting Configuration indices at which they were calculated)
     std::string fingerprint_;
     // Pair matrix, containing full atom-atom partial
@@ -39,15 +39,15 @@ class PartialSet : ResolvableContext
 
     public:
     // Initialise from supplied species populations
-    void initialise(const KeyedVector<const Species *, int> &speciesPopulations, bool triangular = true);
+    void initialise(const KeyedVector<const SpeciesBaseNode *, int> &speciesPopulations, bool triangular = true);
     // Initialise from supplied real species populations
-    void initialise(const KeyedVector<const Species *, double> &realSpeciesPopulations, bool triangular = true);
+    void initialise(const KeyedVector<const SpeciesBaseNode *, double> &realSpeciesPopulations, bool triangular = true);
     // Initialise based on supplied PartialSet, templating all data
     void initialise(const PartialSet &partialSet);
     // Reset partial arrays
     void reset();
     // Return real species populations
-    const ResolvableKeyedVector<const Species *, double> &realSpeciesPopulations() const;
+    const ResolvableKeyedVector<const SpeciesBaseNode *, double> &realSpeciesPopulations() const;
     // Return fractional atom type populations
     KeyedVector<const AtomType *, double> atomTypeFractions() const;
     // Set new fingerprint
@@ -119,5 +119,5 @@ class PartialSet : ResolvableContext
     // Read values from a serialisable value
     void deserialise(SerialisedValue node);
     // Resolve internal resolvable name references with supplied data
-    void resolve(const std::map<std::string, const Species *> &speciesInScope) override;
+    void resolve(const std::map<std::string, const SpeciesBaseNode *> &speciesInScope) override;
 };

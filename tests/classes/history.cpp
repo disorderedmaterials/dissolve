@@ -93,7 +93,7 @@ TEST(History, CustomClassWithInitialiser)
     const auto avgLength = 3;
     auto Ar = graph.createAtomicSpecies(Elements::Ar);
 
-    KeyedVector<const Species *, int> pop;
+    KeyedVector<const SpeciesBaseNode *, int> pop;
     pop.add(Ar, 100);
 
     History<PartialSet> a(

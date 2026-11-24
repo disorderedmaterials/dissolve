@@ -19,7 +19,7 @@ class CommonBondModel : public CommonTermModel
     void modelsUpdated();
 
     public:
-    explicit CommonBondModel(Species *species);
+    explicit CommonBondModel(SpeciesBaseNode *species);
 
     private:
     // Source term data

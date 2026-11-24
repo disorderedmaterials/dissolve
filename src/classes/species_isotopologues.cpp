@@ -2,7 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "base/sysFunc.h"
-#include "classes/species.h"
+#include "nodes/structure/speciesBase.h"
 
 // Update current Isotopologues
 void Species::updateIsotopologues()

@@ -3,7 +3,7 @@
 
 #include "classes/localMolecule.h"
 #include "classes/potentialMap.h"
-#include "classes/species.h"
+#include "nodes/structure/speciesBase.h"
 #include <gtest/gtest.h>
 
 namespace UnitTest

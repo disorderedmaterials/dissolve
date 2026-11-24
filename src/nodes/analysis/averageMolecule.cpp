@@ -3,7 +3,7 @@
 
 #include "nodes/analysis/averageMolecule.h"
 #include "classes/configuration.h"
-#include "classes/species.h"
+#include "nodes/structure/speciesBase.h"
 #include "classes/speciesSite.h"
 
 AverageMoleculeNode::AverageMoleculeNode(Graph *parentGraph) : Node(parentGraph)

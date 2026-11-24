@@ -46,7 +46,7 @@ TEST(SpeciesModel, Basic)
 
     ASSERT_NE(node, nullptr);
 
-    auto species = node->findOutput("Species")->get<const Species *>();
+    auto species = node->findOutput("Species")->get<const SpeciesBaseNode *>();
 
     // Stage 3: Confirm that species was created correctly
     ASSERT_NE(species, nullptr);

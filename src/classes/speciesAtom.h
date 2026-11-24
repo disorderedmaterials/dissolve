@@ -13,7 +13,7 @@
 
 // Forward Declarations
 class AtomType;
-class Species;
+class SpeciesBaseNode;
 class SpeciesAngle;
 class SpeciesBond;
 class SpeciesImproper;
@@ -23,20 +23,20 @@ class SpeciesTorsion;
 class SpeciesAtom : public Atom<const SpeciesBond>
 {
     public:
-    SpeciesAtom(Species *parent);
+    SpeciesAtom(SpeciesBaseNode *parent);
 
     /*
      * Properties
      */
     private:
     // Parent Species
-    Species *parent_{nullptr};
+    SpeciesBaseNode *parent_{nullptr};
     // Assigned AtomType
     const AtomType *atomType_{nullptr};
 
     public:
     // Return parent Species
-    Species *parent() const;
+    SpeciesBaseNode *parent() const;
     // Set AtomType of Atom
     void setAtomType(const AtomType *at);
     // Return AtomType of Atom

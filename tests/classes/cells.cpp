@@ -3,7 +3,7 @@
 
 #include "classes/atomType.h"
 #include "classes/configuration.h"
-#include "classes/species.h"
+#include "nodes/structure/speciesBase.h"
 #include "kernels/energy.h"
 #include "math/mathFunc.h"
 #include "tests/testGraph.h"

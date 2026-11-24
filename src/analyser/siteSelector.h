@@ -10,7 +10,7 @@
 // Forward Declarations
 class Configuration;
 class SiteStack;
-class Species;
+class SpeciesBaseNode;
 class SpeciesSite;
 
 // Site Selector
