@@ -5,7 +5,7 @@
 #include "nodes/dissolve.h"
 
 // Return the current filename
-QUrl DissolveModel::fileName() const { return QUrl(dissolveGraph_->inputFile().c_str()); }
+QUrl DissolveModel::fileName() const { return QUrl(QString(dissolveGraph_->inputFile().c_str())); }
 
 void DissolveModel::loadInput(QUrl filename)
 {
