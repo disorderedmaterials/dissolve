@@ -178,7 +178,7 @@ Node *TestGraph::createConfiguration(std::string name, const std::vector<std::pa
                                   InsertRandomNode::BoxScalingType::None);
 }
 // Append a set coordinates node with a structure import input
-Node *TestGraph::appendSetCoordinates(std::string_view importNodeType, std::string filePath, std::string sourceOutpuName)
+Node *TestGraph::appendSetCoordinates(std::string_view importNodeType, std::string filePath, std::string sourceOutputName)
 {
     const auto cfgSourceNode = fetchHead();
 
@@ -190,7 +190,7 @@ Node *TestGraph::appendSetCoordinates(std::string_view importNodeType, std::stri
     EXPECT_TRUE(currentGraph_->addEdge({std::string(structureNode->name()), "Structure", "SetCoordinates", "Structure"}));
 
     EXPECT_TRUE(
-        currentGraph_->addEdge({std::string(cfgSourceNode->name()), sourceOutpuName, "SetCoordinates", "Configuration"}));
+        currentGraph_->addEdge({std::string(cfgSourceNode->name()), sourceOutputName, "SetCoordinates", "Configuration"}));
 
     return head<SetCoordinatesNode>();
 }
