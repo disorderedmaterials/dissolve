@@ -5,6 +5,7 @@
 #include "classes/species.h"
 #include "data/elements.h"
 #include "nodes/structure/configuration.h"
+#include "qvectornd.h"
 #include <qstring.h>
 #include <qvariant.h>
 
@@ -120,12 +121,8 @@ QVariant MoleculeAtomsModel::data(const QModelIndex &index, int role) const
     {
         case MoleculeAtomsModel::ConfigurationAtomsModelRoles::Element:
             return QString::fromUtf8(Elements::symbol(atom->Z()).data());
-        case MoleculeAtomsModel::ConfigurationAtomsModelRoles::X:
-            return QVariant::fromValue(atom->r().x);
-        case MoleculeAtomsModel::ConfigurationAtomsModelRoles::Y:
-            return QVariant::fromValue(atom->r().y);
-        case MoleculeAtomsModel::ConfigurationAtomsModelRoles::Z:
-            return QVariant::fromValue(atom->r().z);
+        case MoleculeAtomsModel::ConfigurationAtomsModelRoles::R:
+            return QVector3D(atom->r().x, atom->r().y, atom->r().z);
     }
     return {};
 }
@@ -139,10 +136,8 @@ void MoleculeAtomsModel::reset()
 QHash<int, QByteArray> MoleculeAtomsModel::roleNames() const
 {
     QHash<int, QByteArray> roles;
-    roles[ConfigurationAtomsModelRoles::X] = "rx";
-    roles[ConfigurationAtomsModelRoles::Y] = "ry";
-    roles[ConfigurationAtomsModelRoles::Z] = "rz";
     roles[ConfigurationAtomsModelRoles::Element] = "element";
+    roles[ConfigurationAtomsModelRoles::R] = "r";
     return roles;
 }
 
@@ -161,22 +156,13 @@ QVariant MoleculeBondsModel::data(const QModelIndex &index, int role) const
     auto bond = mol_->species()->bonds()[index.row()];
     auto ii = mol_->atom(bond.i()->index())->r();
     auto jj = mol_->atom(bond.j()->index())->r();
-    auto delta = mol_->atom(bond.i()->index())->r() - mol_->atom(bond.j()->index())->r();
 
     switch (role)
     {
-        case MoleculeBondsModel::ConfigurationBondsModelRoles::X:
-            return QVariant::fromValue(ii.x);
-        case MoleculeBondsModel::ConfigurationBondsModelRoles::Y:
-            return QVariant::fromValue(ii.y);
-        case MoleculeBondsModel::ConfigurationBondsModelRoles::Z:
-            return QVariant::fromValue(ii.z);
-        case MoleculeBondsModel::ConfigurationBondsModelRoles::X2:
-            return QVariant::fromValue(jj.x);
-        case MoleculeBondsModel::ConfigurationBondsModelRoles::Y2:
-            return QVariant::fromValue(jj.y);
-        case MoleculeBondsModel::ConfigurationBondsModelRoles::Z2:
-            return QVariant::fromValue(jj.z);
+        case MoleculeBondsModel::ConfigurationBondsModelRoles::R:
+            return QVector3D(ii.x, ii.y, ii.z);
+        case MoleculeBondsModel::ConfigurationBondsModelRoles::R2:
+            return QVector3D(jj.x, jj.y, jj.z);
     }
     return {};
 }
@@ -190,11 +176,7 @@ void MoleculeBondsModel::reset()
 QHash<int, QByteArray> MoleculeBondsModel::roleNames() const
 {
     QHash<int, QByteArray> roles;
-    roles[ConfigurationBondsModelRoles::X] = "rx";
-    roles[ConfigurationBondsModelRoles::Y] = "ry";
-    roles[ConfigurationBondsModelRoles::Z] = "rz";
-    roles[ConfigurationBondsModelRoles::X2] = "qx";
-    roles[ConfigurationBondsModelRoles::Y2] = "qy";
-    roles[ConfigurationBondsModelRoles::Z2] = "qz";
+    roles[ConfigurationBondsModelRoles::R] = "r";
+    roles[ConfigurationBondsModelRoles::R2] = "r2";
     return roles;
 }

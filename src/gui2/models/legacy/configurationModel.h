@@ -15,10 +15,8 @@ class MoleculeAtomsModel : public QAbstractListModel
 
     enum ConfigurationAtomsModelRoles
     {
-        X = Qt::UserRole + 0,
-        Y = Qt::UserRole + 1,
-        Z = Qt::UserRole + 2,
-        Element = Qt::UserRole + 3,
+        R = Qt::UserRole + 0,
+        Element = Qt::UserRole + 1,
     };
 
     private:
@@ -40,12 +38,8 @@ class MoleculeBondsModel : public QAbstractListModel
 
     enum ConfigurationBondsModelRoles
     {
-        X = Qt::UserRole + 0,
-        Y = Qt::UserRole + 1,
-        Z = Qt::UserRole + 2,
-        X2 = Qt::UserRole + 3,
-        Y2 = Qt::UserRole + 4,
-        Z2 = Qt::UserRole + 5,
+        R = Qt::UserRole + 0,
+        R2 = Qt::UserRole + 1,
     };
 
     private:

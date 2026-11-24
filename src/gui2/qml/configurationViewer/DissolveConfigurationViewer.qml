@@ -61,16 +61,12 @@ View3D {
                 id: sphere
 
                 required property string element
-                required property real rx
-                required property real ry
-                required property real rz
+                required property vector3d r
 
                 eulerRotation.y: 90
+                position: r.times(configurationView.scale)
                 scale: Qt.vector3d(0.2, 0.2, 0.2)
                 source: "#Sphere"
-                x: configurationView.scale * rx
-                y: configurationView.scale * ry
-                z: configurationView.scale * rz
 
                 materials: PrincipledMaterial {
                     // TODO: More advanced colour controls
@@ -90,17 +86,13 @@ View3D {
             model: bondRepeater.bonds
 
             delegate: Model {
-                required property real qx
-                required property real qy
-                required property real qz
-                required property real rx
-                required property real ry
-                required property real rz
+                required property vector3d r
+                required property vector3d r2
 
                 //! [3dcube]
                 geometry: ProceduralMesh {
                     indexes: [0, 1]
-                    positions: [Qt.vector3d(configurationView.scale * rx, configurationView.scale * ry, configurationView.scale * rz), Qt.vector3d(configurationView.scale * qx, configurationView.scale * qy, configurationView.scale * qz)]
+                    positions: [r.times(configurationView.scale), r2.times(configurationView.scale)]
                     primitiveMode: ProceduralMesh.Lines
                 }
                 materials: PrincipledMaterial {
