@@ -9,7 +9,8 @@
 #include <QAbstractTableModel>
 #include <QModelIndex>
 
-class ConfigurationAtomsModel : public QAbstractListModel
+// List the atoms in a molecule
+class MoleculeAtomsModel : public QAbstractListModel
 {
 
     enum ConfigurationAtomsModelRoles
@@ -24,16 +25,17 @@ class ConfigurationAtomsModel : public QAbstractListModel
     Molecule *mol_ = nullptr;
 
     public:
-    ConfigurationAtomsModel(Molecule *mol);
+    MoleculeAtomsModel(Molecule *mol);
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
     QHash<int, QByteArray> roleNames() const override;
     void reset();
 };
 
-Q_DECLARE_METATYPE(ConfigurationAtomsModel);
+Q_DECLARE_METATYPE(MoleculeAtomsModel);
 
-class ConfigurationBondsModel : public QAbstractListModel
+// List the bonds in a molecule
+class MoleculeBondsModel : public QAbstractListModel
 {
 
     enum ConfigurationBondsModelRoles
@@ -50,15 +52,16 @@ class ConfigurationBondsModel : public QAbstractListModel
     Molecule *mol_ = nullptr;
 
     public:
-    ConfigurationBondsModel(Molecule *mol);
+    MoleculeBondsModel(Molecule *mol);
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
     QHash<int, QByteArray> roleNames() const override;
     void reset();
 };
 
-Q_DECLARE_METATYPE(ConfigurationBondsModel);
+Q_DECLARE_METATYPE(MoleculeBondsModel);
 
+// List the molecules in a configurations, providing models for the atoms and bonds
 class ConfigurationMoleculesModel : public QAbstractListModel
 {
     Q_OBJECT
@@ -71,8 +74,8 @@ class ConfigurationMoleculesModel : public QAbstractListModel
 
     public:
     Configuration *config = nullptr;
-    std::vector<std::shared_ptr<ConfigurationAtomsModel>> atoms_;
-    std::vector<std::shared_ptr<ConfigurationBondsModel>> bonds_;
+    std::vector<std::shared_ptr<MoleculeAtomsModel>> atoms_;
+    std::vector<std::shared_ptr<MoleculeBondsModel>> bonds_;
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
@@ -80,6 +83,8 @@ class ConfigurationMoleculesModel : public QAbstractListModel
     void reset();
 };
 
+// List the Configuration nodes in a graph, providing access to the
+// molecule models for each configuration
 class ConfigurationModel : public QAbstractListModel
 {
     Q_OBJECT

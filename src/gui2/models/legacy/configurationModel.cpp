@@ -96,15 +96,15 @@ void ConfigurationMoleculesModel::reset()
     if (config)
         for (auto &mol : config->molecules())
         {
-            atoms_.emplace_back(std::make_shared<ConfigurationAtomsModel>(mol.get()));
-            bonds_.emplace_back(std::make_shared<ConfigurationBondsModel>(mol.get()));
+            atoms_.emplace_back(std::make_unique<MoleculeAtomsModel>(mol.get()));
+            bonds_.emplace_back(std::make_unique<MoleculeBondsModel>(mol.get()));
         }
     endResetModel();
 }
 
-ConfigurationAtomsModel::ConfigurationAtomsModel(Molecule *mol) : mol_(mol) {}
+MoleculeAtomsModel::MoleculeAtomsModel(Molecule *mol) : mol_(mol) {}
 
-int ConfigurationAtomsModel::rowCount(const QModelIndex &parent) const
+int MoleculeAtomsModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
     if (mol_ == nullptr)
@@ -112,31 +112,31 @@ int ConfigurationAtomsModel::rowCount(const QModelIndex &parent) const
     return mol_->nAtoms();
 }
 
-QVariant ConfigurationAtomsModel::data(const QModelIndex &index, int role) const
+QVariant MoleculeAtomsModel::data(const QModelIndex &index, int role) const
 {
     auto *atom = mol_->atom(index.row());
 
     switch (role)
     {
-        case ConfigurationAtomsModel::ConfigurationAtomsModelRoles::Element:
+        case MoleculeAtomsModel::ConfigurationAtomsModelRoles::Element:
             return QString::fromUtf8(Elements::symbol(atom->Z()).data());
-        case ConfigurationAtomsModel::ConfigurationAtomsModelRoles::X:
+        case MoleculeAtomsModel::ConfigurationAtomsModelRoles::X:
             return QVariant::fromValue(atom->r().x);
-        case ConfigurationAtomsModel::ConfigurationAtomsModelRoles::Y:
+        case MoleculeAtomsModel::ConfigurationAtomsModelRoles::Y:
             return QVariant::fromValue(atom->r().y);
-        case ConfigurationAtomsModel::ConfigurationAtomsModelRoles::Z:
+        case MoleculeAtomsModel::ConfigurationAtomsModelRoles::Z:
             return QVariant::fromValue(atom->r().z);
     }
     return {};
 }
 
-void ConfigurationAtomsModel::reset()
+void MoleculeAtomsModel::reset()
 {
     beginResetModel();
     endResetModel();
 }
 
-QHash<int, QByteArray> ConfigurationAtomsModel::roleNames() const
+QHash<int, QByteArray> MoleculeAtomsModel::roleNames() const
 {
     QHash<int, QByteArray> roles;
     roles[ConfigurationAtomsModelRoles::X] = "rx";
@@ -146,9 +146,9 @@ QHash<int, QByteArray> ConfigurationAtomsModel::roleNames() const
     return roles;
 }
 
-ConfigurationBondsModel::ConfigurationBondsModel(Molecule *mol) : mol_(mol) {}
+MoleculeBondsModel::MoleculeBondsModel(Molecule *mol) : mol_(mol) {}
 
-int ConfigurationBondsModel::rowCount(const QModelIndex &parent) const
+int MoleculeBondsModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
     if (mol_ == nullptr)
@@ -156,7 +156,7 @@ int ConfigurationBondsModel::rowCount(const QModelIndex &parent) const
     return mol_->species()->bonds().size();
 }
 
-QVariant ConfigurationBondsModel::data(const QModelIndex &index, int role) const
+QVariant MoleculeBondsModel::data(const QModelIndex &index, int role) const
 {
     auto bond = mol_->species()->bonds()[index.row()];
     auto ii = mol_->atom(bond.i()->index())->r();
@@ -165,29 +165,29 @@ QVariant ConfigurationBondsModel::data(const QModelIndex &index, int role) const
 
     switch (role)
     {
-        case ConfigurationBondsModel::ConfigurationBondsModelRoles::X:
+        case MoleculeBondsModel::ConfigurationBondsModelRoles::X:
             return QVariant::fromValue(ii.x);
-        case ConfigurationBondsModel::ConfigurationBondsModelRoles::Y:
+        case MoleculeBondsModel::ConfigurationBondsModelRoles::Y:
             return QVariant::fromValue(ii.y);
-        case ConfigurationBondsModel::ConfigurationBondsModelRoles::Z:
+        case MoleculeBondsModel::ConfigurationBondsModelRoles::Z:
             return QVariant::fromValue(ii.z);
-        case ConfigurationBondsModel::ConfigurationBondsModelRoles::X2:
+        case MoleculeBondsModel::ConfigurationBondsModelRoles::X2:
             return QVariant::fromValue(jj.x);
-        case ConfigurationBondsModel::ConfigurationBondsModelRoles::Y2:
+        case MoleculeBondsModel::ConfigurationBondsModelRoles::Y2:
             return QVariant::fromValue(jj.y);
-        case ConfigurationBondsModel::ConfigurationBondsModelRoles::Z2:
+        case MoleculeBondsModel::ConfigurationBondsModelRoles::Z2:
             return QVariant::fromValue(jj.z);
     }
     return {};
 }
 
-void ConfigurationBondsModel::reset()
+void MoleculeBondsModel::reset()
 {
     beginResetModel();
     endResetModel();
 }
 
-QHash<int, QByteArray> ConfigurationBondsModel::roleNames() const
+QHash<int, QByteArray> MoleculeBondsModel::roleNames() const
 {
     QHash<int, QByteArray> roles;
     roles[ConfigurationBondsModelRoles::X] = "rx";

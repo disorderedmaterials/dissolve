@@ -426,8 +426,11 @@ ApplicationWindow {
             }
         }
         Item {
+            id: configurationTab
+
             ConfigurationModel {
                 id: configModel
+
                 graph: dissolve.graph
                 name: configurationPicker.currentText
             }
@@ -435,56 +438,43 @@ ApplicationWindow {
             // tabs to ensure that we have the latest graph setup.
             Connections {
                 function onCurrentIndexChanged() {
-                    configModel.reset()
+                    configModel.reset();
                 }
+
                 target: applicationTabStack
             }
 
             // Tool Bar
             Rectangle {
                 id: configToolBar
+
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.top: parent.top
+                height: configurationPicker.height + 5
 
-                height: configurationPicker.height+5
+                Text {
+                    id: configName
 
-                Text { id: configName; text: "Configuration" }
+                    text: "Configuration"
+                }
                 ComboBox {
                     id: configurationPicker
-                    anchors.top: parent.top
+
                     anchors.left: configName.right
+                    anchors.top: parent.top
                     editable: true
                     model: configModel
                     textRole: "display"
                 }
             }
-            id: configurationTab;
             DissolveConfigurationViewer {
-                anchors.top: configToolBar.bottom
                 anchors.bottom: parent.bottom
                 anchors.left: parent.left
                 anchors.right: parent.right
-
-
-                scale: 100.0
+                anchors.top: configToolBar.bottom
                 molecules: configModel.molecules
-                // bondModel: ListModel {
-                //     ListElement {
-                //         rx: 0.5
-                //         ry: 0.0
-                //         rz: 0.5
-                //         theta: 90
-                //         phi: 45
-                //     }
-                //     ListElement {
-                //         rx: -0.5
-                //         ry: 0.0
-                //         rz: 0.5
-                //         theta: 90
-                //         phi: -45
-                //     }
-                // }
+                scale: 100.0
             }
         }
     }
