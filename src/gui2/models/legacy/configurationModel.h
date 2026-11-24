@@ -41,8 +41,9 @@ class ConfigurationBondsModel : public QAbstractListModel
         X = Qt::UserRole + 0,
         Y = Qt::UserRole + 1,
         Z = Qt::UserRole + 2,
-        THETA = Qt::UserRole + 3,
-        PHI = Qt::UserRole + 4,
+        X2 = Qt::UserRole + 3,
+        Y2 = Qt::UserRole + 4,
+        Z2 = Qt::UserRole + 5,
     };
 
     private:

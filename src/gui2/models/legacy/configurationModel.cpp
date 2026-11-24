@@ -159,21 +159,24 @@ int ConfigurationBondsModel::rowCount(const QModelIndex &parent) const
 QVariant ConfigurationBondsModel::data(const QModelIndex &index, int role) const
 {
     auto bond = mol_->species()->bonds()[index.row()];
-    auto base = mol_->atom(bond.i()->index())->r();
+    auto ii = mol_->atom(bond.i()->index())->r();
+    auto jj = mol_->atom(bond.j()->index())->r();
     auto delta = mol_->atom(bond.i()->index())->r() - mol_->atom(bond.j()->index())->r();
 
     switch (role)
     {
         case ConfigurationBondsModel::ConfigurationBondsModelRoles::X:
-            return QVariant::fromValue(base.x);
+            return QVariant::fromValue(ii.x);
         case ConfigurationBondsModel::ConfigurationBondsModelRoles::Y:
-            return QVariant::fromValue(base.y);
+            return QVariant::fromValue(ii.y);
         case ConfigurationBondsModel::ConfigurationBondsModelRoles::Z:
-            return QVariant::fromValue(base.z);
-        case ConfigurationBondsModel::ConfigurationBondsModelRoles::THETA:
-            return 90.0;
-        case ConfigurationBondsModel::ConfigurationBondsModelRoles::PHI:
-            return 0.0;
+            return QVariant::fromValue(ii.z);
+        case ConfigurationBondsModel::ConfigurationBondsModelRoles::X2:
+            return QVariant::fromValue(jj.x);
+        case ConfigurationBondsModel::ConfigurationBondsModelRoles::Y2:
+            return QVariant::fromValue(jj.y);
+        case ConfigurationBondsModel::ConfigurationBondsModelRoles::Z2:
+            return QVariant::fromValue(jj.z);
     }
     return {};
 }
@@ -190,7 +193,8 @@ QHash<int, QByteArray> ConfigurationBondsModel::roleNames() const
     roles[ConfigurationBondsModelRoles::X] = "rx";
     roles[ConfigurationBondsModelRoles::Y] = "ry";
     roles[ConfigurationBondsModelRoles::Z] = "rz";
-    roles[ConfigurationBondsModelRoles::THETA] = "theta";
-    roles[ConfigurationBondsModelRoles::PHI] = "phi";
+    roles[ConfigurationBondsModelRoles::X2] = "qx";
+    roles[ConfigurationBondsModelRoles::Y2] = "qy";
+    roles[ConfigurationBondsModelRoles::Z2] = "qz";
     return roles;
 }

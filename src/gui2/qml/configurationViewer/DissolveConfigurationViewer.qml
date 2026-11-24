@@ -60,8 +60,9 @@ View3D {
                 id: sphere
                 source: "#Sphere"
                 materials: PrincipledMaterial {
-                    baseColor: element == "C" ? "red" : "blue"
+                    baseColor: element == "C" ? "green" : "gray"
                 }
+                scale: Qt.vector3d(0.2, 0.2, 0.2)
                 x: configurationView.scale * rx
                 y: configurationView.scale * ry
                 z: configurationView.scale * rz
@@ -81,20 +82,18 @@ View3D {
                 required property real rx
                 required property real ry
                 required property real rz
-                required property real theta
-                required property real phi
+                required property real qx
+                required property real qy
+                required property real qz
                 //! [3dcube]
-                id: cylinder
-                source: "#Cylinder"
+                geometry: ProceduralMesh {
+                    positions: [Qt.vector3d(configurationView.scale * rx, configurationView.scale * ry, configurationView.scale * rz), Qt.vector3d(configurationView.scale * qx, configurationView.scale * qy, configurationView.scale * qz)]
+                    indexes: [0, 1]
+                    primitiveMode: ProceduralMesh.Lines
+                }
                 materials: PrincipledMaterial {
                     baseColor: "black"
                 }
-                scale: Qt.vector3d(0.1, 1.0, 0.1)
-                x: configurationView.scale * rx
-                y: configurationView.scale * ry
-                z: configurationView.scale * rz
-                eulerRotation.x: theta
-                eulerRotation.y: phi
                 //! [3dcube]
             }
         }
