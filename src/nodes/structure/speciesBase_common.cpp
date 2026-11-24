@@ -170,7 +170,7 @@ CommonImproper &Species::addCommonImproper(std::string_view name)
     return *commonImpropers_.emplace_back(std::make_shared<CommonImproper>(name));
 }
 
-// Remove specified common Improper
+// Remove specified common improper
 void Species::removeCommonImproper(const std::shared_ptr<CommonImproper> &improper)
 {
     for (auto &i : impropers_)

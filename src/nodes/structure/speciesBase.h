@@ -3,8 +3,26 @@
 
 #pragma once
 
-#include "classes/species.h"
+#include "base/serialiser.h"
+#include "classes/box.h"
+#include "classes/isotopologue.h"
+#include "classes/speciesAngle.h"
+#include "classes/speciesAtom.h"
+#include "classes/speciesBond.h"
+#include "classes/speciesImproper.h"
+#include "classes/speciesSite.h"
+#include "classes/speciesTorsion.h"
+#include "classes/structure.h"
+#include "templates/keyedVector.h"
+#include <memory>
+#include <vector>
 #include "nodes/node.h"
+
+// Forward Declarations
+class CommonBond;
+class CommonAngle;
+class CommonTorsion;
+class CommonImproper;
 
 class SpeciesBaseNode : public Node
 {
@@ -16,14 +34,292 @@ class SpeciesBaseNode : public Node
      * Data
      */
     protected:
-    // Species object
-    Species species_;
+    // Clear Data
+    void clear();
+
 
     /*
-     * Accessors
+     * Basic Information
+     */
+    private:
+    // Name of the Species
+    std::string name_;
+
+    public:
+    // Set name of the Species
+    void setName(std::string_view name);
+    // Return the name of the Species
+    std::string_view name() const;
+    // Check set-up of Species
+    bool checkSetUp() const;
+    // Print Species information
+    void print() const;
+
+    /*
+     * Atomic Information
+     */
+    private:
+    // List of atoms in the Species
+    std::vector<SpeciesAtom> atoms_;
+    // Atom types for the species
+    std::vector<std::shared_ptr<AtomType>> atomTypes_;
+    // Flag stating whether local Atom type indices are up-to-date
+    bool typeIndicesValid_{false};
+    // Positional instances of the species
+    std::vector<std::vector<Vector3>> instances_;
+
+    public:
+    // Return the number of atoms in the species (or only those with the specified presence)
+    int nAtoms(AtomConstants::Presence withPresence = AtomConstants::Presence::Any) const;
+    // Return the nth atom in the Species
+    SpeciesAtom &atom(int n);
+    const SpeciesAtom &atom(int n) const;
+    // Return a reference to the vector of atoms
+    const std::vector<SpeciesAtom> &atoms() const;
+    std::vector<SpeciesAtom> &atoms();
+    // Return total atomic mass of Species
+    double mass() const;
+    // Add new atom type to atom types
+    AtomType *addAtomType(Elements::Element Z, std::string_view name = "");
+    // Find and return the named atom type
+    AtomType *findAtomType(std::string_view name) const;
+    // Return atom types in the species
+    std::vector<std::shared_ptr<AtomType>> &atomTypes();
+    const std::vector<std::shared_ptr<AtomType>> &atomTypes() const;
+    std::vector<const AtomType *> atomTypesRaw() const;
+    // Calculate and return atom type populations
+    KeyedVector<const AtomType *, int> atomTypePopulations() const;
+    // Return atom type index map
+    std::map<const AtomType *, int> atomTypeIndexMap() const;
+    // Clear AtomType assignments for all atoms
+    void clearAtomTypes();
+    // Simplify atom types, merging together those with identical parameters
+    int simplifyAtomTypes();
+    // Return total charge of species from local/atomtype atomic charges
+    double totalCharge(bool useAtomTypes) const;
+    // Update type indices per Atom
+    void updateTypeIndexing();
+    // Return positional instances
+    const std::vector<std::vector<Vector3>> &instances() const;
+    // Return as a Structure
+    Structure asStructure(bool includeInstances = false) const;
+
+    /*
+     * Intramolecular Data
+     */
+    private:
+    // Array of bonds between atoms in the Species
+    std::vector<SpeciesBond> bonds_;
+    // Array of angles between atoms in the Species
+    std::vector<SpeciesAngle> angles_;
+    // Array of torsions between atoms in the Species
+    std::vector<SpeciesTorsion> torsions_;
+    // Array of impropers between atoms in the Species
+    std::vector<SpeciesImproper> impropers_;
+
+    public:
+    // Return vector of SpeciesBond
+    std::vector<SpeciesBond> &bonds();
+    const std::vector<SpeciesBond> &bonds() const;
+    // Return the SpeciesBond between the specified SpeciesAtoms / indices, if it exists
+    OptionalReferenceWrapper<const SpeciesBond> getBond(const SpeciesAtom *i, const SpeciesAtom *j) const;
+    OptionalReferenceWrapper<const SpeciesBond> getBond(int i, int j) const;
+    // Remove bonds crossing periodic boundaries
+    void removePeriodicBonds();
+    // Return vector of SpeciesAngle
+    std::vector<SpeciesAngle> &angles();
+    const std::vector<SpeciesAngle> &angles() const;
+    // Return the SpeciesAngle between the specified SpeciesAtoms / indices, if it exists
+    OptionalReferenceWrapper<const SpeciesAngle> getAngle(const SpeciesAtom *i, const SpeciesAtom *j,
+                                                          const SpeciesAtom *k) const;
+    OptionalReferenceWrapper<const SpeciesAngle> getAngle(int i, int j, int k) const;
+    // Return vector of SpeciesTorsion
+    std::vector<SpeciesTorsion> &torsions();
+    const std::vector<SpeciesTorsion> &torsions() const;
+    // Return the SpeciesTorsion between the specified SpeciesAtoms / indices, if it exists
+    OptionalReferenceWrapper<const SpeciesTorsion> getTorsion(const SpeciesAtom *i, const SpeciesAtom *j, const SpeciesAtom *k,
+                                                              const SpeciesAtom *l) const;
+    OptionalReferenceWrapper<const SpeciesTorsion> getTorsion(int i, int j, int k, int l) const;
+    // Return vector of SpeciesImproper
+    std::vector<SpeciesImproper> &impropers();
+    const std::vector<SpeciesImproper> &impropers() const;
+    // Add a new improper term between the specified atoms
+    SpeciesImproper &addImproper(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l);
+    // Return the SpeciesImproper between the specified SpeciesAtoms /indices, if it exists
+    OptionalReferenceWrapper<const SpeciesImproper> getImproper(const SpeciesAtom *i, const SpeciesAtom *j,
+                                                                const SpeciesAtom *k, const SpeciesAtom *l) const;
+    OptionalReferenceWrapper<const SpeciesImproper> getImproper(int i, int j, int k, int l) const;
+    // Clear forcefield data from intramolecular terms
+    void clearIntramolecularForcefieldTerms();
+
+    /*
+     * Intramolecular Common Terms
+     */
+    private:
+    // Common bond terms
+    std::vector<std::shared_ptr<CommonBond>> commonBonds_;
+    // Common angle terms
+    std::vector<std::shared_ptr<CommonAngle>> commonAngles_;
+    // Common torsion terms
+    std::vector<std::shared_ptr<CommonTorsion>> commonTorsions_;
+    // Common improper terms
+    std::vector<std::shared_ptr<CommonImproper>> commonImpropers_;
+
+    public:
+    // Add new common bond parameters
+    CommonBond &addCommonBond(std::string_view name, std::optional<int> insertAtIndex = {});
+    // Remove specified common bond
+    void removeCommonBond(const std::shared_ptr<CommonBond> &bond);
+    // Return list of common bond parameters
+    std::vector<std::shared_ptr<CommonBond>> &commonBonds();
+    const std::vector<std::shared_ptr<CommonBond>> &commonBonds() const;
+    // Return whether named common bond parameters exist
+    OptionalReferenceWrapper<CommonBond> getCommonBond(std::string_view name);
+    OptionalReferenceWrapper<const CommonBond> getCommonBond(std::string_view name) const;
+    // Add new common angle parameters
+    CommonAngle &addCommonAngle(std::string_view name);
+    // Remove specified common angle
+    void removeCommonAngle(const std::shared_ptr<CommonAngle> &angle);
+    // Return list of common angle parameters
+    std::vector<std::shared_ptr<CommonAngle>> &commonAngles();
+    const std::vector<std::shared_ptr<CommonAngle>> &commonAngles() const;
+    // Return whether named common angle parameters exist
+    OptionalReferenceWrapper<CommonAngle> getCommonAngle(std::string_view name);
+    OptionalReferenceWrapper<const CommonAngle> getCommonAngle(std::string_view name) const;
+    // Add new common torsion parameters
+    CommonTorsion &addCommonTorsion(std::string_view name);
+    // Remove specified common torsion
+    void removeCommonTorsion(const std::shared_ptr<CommonTorsion> &torsion);
+    // Return list of common torsion parameters
+    std::vector<std::shared_ptr<CommonTorsion>> &commonTorsions();
+    const std::vector<std::shared_ptr<CommonTorsion>> &commonTorsions() const;
+    // Return whether named common torsion parameters exist
+    OptionalReferenceWrapper<CommonTorsion> getCommonTorsion(std::string_view name);
+    OptionalReferenceWrapper<const CommonTorsion> getCommonTorsion(std::string_view name) const;
+    // Add new common improper parameters
+    CommonImproper &addCommonImproper(std::string_view name);
+    // Remove specified common impropers
+    void removeCommonImproper(const std::shared_ptr<CommonImproper> &improper);
+    // Return list of common improper parameters
+    std::vector<std::shared_ptr<CommonImproper>> &commonImpropers();
+    const std::vector<std::shared_ptr<CommonImproper>> &commonImpropers() const;
+    // Return whether named common improper parameters exist
+    OptionalReferenceWrapper<CommonImproper> getCommonImproper(std::string_view name);
+    OptionalReferenceWrapper<const CommonImproper> getCommonImproper(std::string_view name) const;
+    // Clear all common terms
+    void clearCommonTerms();
+    // Detach common term links for all interaction types, copying parameters to local SpeciesIntra
+    void detachFromCommonTerms();
+    // Reduce intramolecular terms to common terms
+    void reduceToCommonTerms();
+
+    /*
+     * Box Definition (if any)
+     */
+    private:
+    // Periodic Box
+    Box box_;
+
+    public:
+    // Return periodic box
+    Box &box();
+    const Box &box() const;
+    // Remove Box definition and revert to single image
+    void removeBox();
+
+    /*
+     * Isotopologues
+     */
+    private:
+    // Natural Isotopologue
+    Isotopologue naturalIsotopologue_;
+    // List of isotopic variants defined for this species
+    std::vector<std::unique_ptr<Isotopologue>> isotopologues_;
+
+    public:
+    // Update current Isotopologues
+    void updateIsotopologues();
+    // Return natural (empty) Isotopologue
+    const Isotopologue *naturalIsotopologue() const;
+    // Add a new Isotopologue to this Species
+    Isotopologue *addIsotopologue(std::string_view baseName);
+    // Remove specified Isotopologue from this Species
+    void removeIsotopologue(Isotopologue *iso);
+    // Return number of defined Isotopologues
+    int nIsotopologues() const;
+    // Return nth Isotopologue in the list
+    Isotopologue *isotopologue(int n);
+    // Return Isotopologue List
+    const std::vector<std::unique_ptr<Isotopologue>> &isotopologues() const;
+    // Return whether the specified Isotopologue exists
+    bool hasIsotopologue(const Isotopologue *iso) const;
+    // Search for Isotopologue by name
+    const Isotopologue *findIsotopologue(std::string_view name) const;
+
+    /*
+     * Sites
+     */
+    private:
+    // Defined sites
+    std::vector<std::unique_ptr<SpeciesSite>> sites_;
+
+    public:
+    // Add a new SpeciesSite to this Species
+    SpeciesSite *addSite(std::string_view name = "");
+    // Remove specified SpeciesSite
+    void removeSite(SpeciesSite *site);
+    // Return number of defined SpeciesSites
+    int nSites() const;
+    // Return SpeciesSite List
+    const std::vector<std::unique_ptr<SpeciesSite>> &sites() const;
+    std::vector<std::unique_ptr<SpeciesSite>> &sites();
+    // Generate unique site name with base name provided
+    std::string uniqueSiteName(std::string_view base, const SpeciesSite *exclude = nullptr) const;
+    // Search for SpeciesSite by name
+    const SpeciesSite *findSite(std::string_view name, const SpeciesSite *exclude = nullptr) const;
+    SpeciesSite *findSite(std::string_view name, const SpeciesSite *exclude = nullptr);
+
+    /*
+     * Transforms
      */
     public:
-    // Return the species object
-    Species &species();
-    const Species &species() const;
+    // Calculate and return centre of geometry
+    Vector3 centreOfGeometry(const Box &box) const;
+    // Set centre of geometry
+    void setCentre(const Box &box, const Vector3 newCentre);
+    // Centre coordinates at origin
+    void centreAtOrigin();
+    // Apply random noise to atoms
+    void randomiseCoordinates(double maxDisplacement);
+
+    /*
+     * Creation
+     */
+    private:
+    // Whether the attached atoms lists have been created
+    bool attachedAtomListsGenerated_{false};
+
+    private:
+    // Finalise all relationships between intramolecular data
+    void finaliseIntramolecularData(bool recalculateAnglesAndTorsions = true);
+
+    public:
+    // Create atomic species
+    void createAtomic(Elements::Element Z,
+                      InteractionPotential<ShortRangeFunctions> potential = {ShortRangeFunctions::Form::Undefined, ""});
+    // Load from specified TOML file
+    void load(std::string_view tomlFile);
+    // Create from structure
+    void create(const Structure &structure);
+    // Return whether the attached atoms lists have been created
+    bool attachedAtomListsGenerated() const;
+
+    /*
+     * Serialisation
+     */
+    public:
+    // Express as a serialisable value
+    void serialise(std::string tag, SerialisedValue &target) const;
+    // Read values from a serialisable value
+    void deserialise(const SerialisedValue &node);
 };

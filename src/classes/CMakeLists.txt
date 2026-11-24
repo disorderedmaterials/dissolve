@@ -40,13 +40,6 @@ add_library(
   speciesAngle.cpp
   speciesAtom.cpp
   speciesBond.cpp
-  species.cpp
-  species_atomic.cpp
-  species_common.cpp
-  species_intra.cpp
-  species_isotopologues.cpp
-  species_site.cpp
-  species_transform.cpp
   speciesImproper.cpp
   speciesRing.cpp
   speciesSite.cpp
@@ -93,7 +86,6 @@ add_library(
   site.h
   siteReference.h
   siteStack.h
-  species.h
   speciesAngle.h
   speciesAtom.h
   speciesBond.h
