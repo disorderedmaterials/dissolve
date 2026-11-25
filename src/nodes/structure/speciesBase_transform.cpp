@@ -7,7 +7,7 @@
 #include "nodes/structure/speciesBase.h"
 
 // Finalise all relationships between intramolecular data
-void Species::finaliseIntramolecularData(bool recalculateAnglesAndTorsions)
+void SpeciesBaseNode::finaliseIntramolecularData(bool recalculateAnglesAndTorsions)
 {
     // Set bond pointers in individual atoms
     for (const auto &bond : bonds_)
@@ -208,7 +208,7 @@ void Species::finaliseIntramolecularData(bool recalculateAnglesAndTorsions)
 }
 
 // Calculate and return centre of geometry
-Vector3 Species::centreOfGeometry(const Box &box) const
+Vector3 SpeciesBaseNode::centreOfGeometry(const Box &box) const
 {
     if (atoms_.size() == 0)
         return Vector3();
@@ -222,7 +222,7 @@ Vector3 Species::centreOfGeometry(const Box &box) const
 }
 
 // Set centre of geometry of species
-void Species::setCentre(const Box &box, const Vector3 newCentre)
+void SpeciesBaseNode::setCentre(const Box &box, const Vector3 newCentre)
 {
     // Calculate Molecule centre of geometry
     Vector3 newR;
@@ -238,7 +238,7 @@ void Species::setCentre(const Box &box, const Vector3 newCentre)
 }
 
 // Centre coordinates at origin
-void Species::centreAtOrigin()
+void SpeciesBaseNode::centreAtOrigin()
 {
     Vector3 centre;
     for (const auto &i : atoms_)
@@ -249,7 +249,7 @@ void Species::centreAtOrigin()
 }
 
 // Apply random noise to atoms
-void Species::randomiseCoordinates(double maxDisplacement)
+void SpeciesBaseNode::randomiseCoordinates(double maxDisplacement)
 {
     for (auto &i : atoms_)
         i += Vector3::randomUnit() * maxDisplacement;
@@ -260,7 +260,7 @@ void Species::randomiseCoordinates(double maxDisplacement)
  */
 
 // Create atomic species
-void Species::createAtomic(Elements::Element Z, InteractionPotential<ShortRangeFunctions> potential)
+void SpeciesBaseNode::createAtomic(Elements::Element Z, InteractionPotential<ShortRangeFunctions> potential)
 {
     clear();
 
@@ -286,7 +286,7 @@ void Species::createAtomic(Elements::Element Z, InteractionPotential<ShortRangeF
 }
 
 // Load from specified TOML file
-void Species::load(std::string_view tomlFile)
+void SpeciesBaseNode::load(std::string_view tomlFile)
 {
     clear();
 
@@ -296,7 +296,7 @@ void Species::load(std::string_view tomlFile)
 }
 
 // Create from structure and forcefield
-void Species::create(const Structure &structure)
+void SpeciesBaseNode::create(const Structure &structure)
 {
     clear();
 
@@ -325,4 +325,4 @@ void Species::create(const Structure &structure)
 }
 
 // Return whether the attached atoms lists have been created
-bool Species::attachedAtomListsGenerated() const { return attachedAtomListsGenerated_; }
+bool SpeciesBaseNode::attachedAtomListsGenerated() const { return attachedAtomListsGenerated_; }

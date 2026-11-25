@@ -9,12 +9,12 @@
 #include <algorithm>
 
 // Return vector of SpeciesBond
-std::vector<SpeciesBond> &Species::bonds() { return bonds_; }
+std::vector<SpeciesBond> &SpeciesBaseNode::bonds() { return bonds_; }
 
-const std::vector<SpeciesBond> &Species::bonds() const { return bonds_; }
+const std::vector<SpeciesBond> &SpeciesBaseNode::bonds() const { return bonds_; }
 
 // Return the SpeciesBond between the specified SpeciesAtoms, if it exists
-OptionalReferenceWrapper<const SpeciesBond> Species::getBond(const SpeciesAtom *i, const SpeciesAtom *j) const
+OptionalReferenceWrapper<const SpeciesBond> SpeciesBaseNode::getBond(const SpeciesAtom *i, const SpeciesAtom *j) const
 {
     auto it = std::find_if(bonds_.begin(), bonds_.end(), [i, j](auto &bond) { return bond.matches(i, j); });
     if (it == bonds_.end())
@@ -22,13 +22,13 @@ OptionalReferenceWrapper<const SpeciesBond> Species::getBond(const SpeciesAtom *
 
     return *it;
 }
-OptionalReferenceWrapper<const SpeciesBond> Species::getBond(int i, int j) const
+OptionalReferenceWrapper<const SpeciesBond> SpeciesBaseNode::getBond(int i, int j) const
 {
     return getBond(&atoms_.at(i), &atoms_.at(j));
 }
 
 // Remove bonds crossing periodic boundaries
-void Species::removePeriodicBonds()
+void SpeciesBaseNode::removePeriodicBonds()
 {
     if (box_.type() == Box::BoxType::None)
         return;
@@ -45,13 +45,13 @@ void Species::removePeriodicBonds()
 }
 
 // Return vector of SpeciesAngle
-std::vector<SpeciesAngle> &Species::angles() { return angles_; }
+std::vector<SpeciesAngle> &SpeciesBaseNode::angles() { return angles_; }
 
-const std::vector<SpeciesAngle> &Species::angles() const { return angles_; }
+const std::vector<SpeciesAngle> &SpeciesBaseNode::angles() const { return angles_; }
 
 // Return the SpeciesAngle between the specified SpeciesAtoms, if it exists
-OptionalReferenceWrapper<const SpeciesAngle> Species::getAngle(const SpeciesAtom *i, const SpeciesAtom *j,
-                                                               const SpeciesAtom *k) const
+OptionalReferenceWrapper<const SpeciesAngle> SpeciesBaseNode::getAngle(const SpeciesAtom *i, const SpeciesAtom *j,
+                                                                       const SpeciesAtom *k) const
 {
     auto it = std::find_if(angles_.begin(), angles_.end(), [i, j, k](auto &angle) { return angle.matches(i, j, k); });
     if (it == angles_.end())
@@ -59,19 +59,19 @@ OptionalReferenceWrapper<const SpeciesAngle> Species::getAngle(const SpeciesAtom
 
     return *it;
 }
-OptionalReferenceWrapper<const SpeciesAngle> Species::getAngle(int i, int j, int k) const
+OptionalReferenceWrapper<const SpeciesAngle> SpeciesBaseNode::getAngle(int i, int j, int k) const
 {
     return getAngle(&atoms_.at(i), &atoms_.at(j), &atoms_.at(k));
 }
 
 // Return vector of SpeciesTorsions
-std::vector<SpeciesTorsion> &Species::torsions() { return torsions_; }
+std::vector<SpeciesTorsion> &SpeciesBaseNode::torsions() { return torsions_; }
 
-const std::vector<SpeciesTorsion> &Species::torsions() const { return torsions_; }
+const std::vector<SpeciesTorsion> &SpeciesBaseNode::torsions() const { return torsions_; }
 
 // Return the SpeciesTorsion between the specified SpeciesAtoms, if it exists
-OptionalReferenceWrapper<const SpeciesTorsion> Species::getTorsion(const SpeciesAtom *i, const SpeciesAtom *j,
-                                                                   const SpeciesAtom *k, const SpeciesAtom *l) const
+OptionalReferenceWrapper<const SpeciesTorsion> SpeciesBaseNode::getTorsion(const SpeciesAtom *i, const SpeciesAtom *j,
+                                                                           const SpeciesAtom *k, const SpeciesAtom *l) const
 {
     auto it =
         std::find_if(torsions_.begin(), torsions_.end(), [i, j, k, l](auto &torsion) { return torsion.matches(i, j, k, l); });
@@ -80,18 +80,18 @@ OptionalReferenceWrapper<const SpeciesTorsion> Species::getTorsion(const Species
 
     return *it;
 }
-OptionalReferenceWrapper<const SpeciesTorsion> Species::getTorsion(int i, int j, int k, int l) const
+OptionalReferenceWrapper<const SpeciesTorsion> SpeciesBaseNode::getTorsion(int i, int j, int k, int l) const
 {
     return getTorsion(&atoms_.at(i), &atoms_.at(j), &atoms_.at(k), &atoms_.at(l));
 }
 
 // Return vector of SpeciesImproper
-std::vector<SpeciesImproper> &Species::impropers() { return impropers_; }
+std::vector<SpeciesImproper> &SpeciesBaseNode::impropers() { return impropers_; }
 
-const std::vector<SpeciesImproper> &Species::impropers() const { return impropers_; }
+const std::vector<SpeciesImproper> &SpeciesBaseNode::impropers() const { return impropers_; }
 
 // Add a new improper term between the specified atoms
-SpeciesImproper &Species::addImproper(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l)
+SpeciesImproper &SpeciesBaseNode::addImproper(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l)
 {
     auto &improper = impropers_.emplace_back(this, i, j, k, l);
 
@@ -105,8 +105,8 @@ SpeciesImproper &Species::addImproper(SpeciesAtom *i, SpeciesAtom *j, SpeciesAto
 }
 
 // Return the SpeciesImproper between the specified SpeciesAtoms, if it exists
-OptionalReferenceWrapper<const SpeciesImproper> Species::getImproper(const SpeciesAtom *i, const SpeciesAtom *j,
-                                                                     const SpeciesAtom *k, const SpeciesAtom *l) const
+OptionalReferenceWrapper<const SpeciesImproper> SpeciesBaseNode::getImproper(const SpeciesAtom *i, const SpeciesAtom *j,
+                                                                             const SpeciesAtom *k, const SpeciesAtom *l) const
 {
     auto it = std::find_if(impropers_.begin(), impropers_.end(),
                            [i, j, k, l](auto &improper) { return improper.matches(i, j, k, l); });
@@ -115,13 +115,13 @@ OptionalReferenceWrapper<const SpeciesImproper> Species::getImproper(const Speci
 
     return *it;
 }
-OptionalReferenceWrapper<const SpeciesImproper> Species::getImproper(int i, int j, int k, int l) const
+OptionalReferenceWrapper<const SpeciesImproper> SpeciesBaseNode::getImproper(int i, int j, int k, int l) const
 {
     return getImproper(&atoms_.at(i), &atoms_.at(j), &atoms_.at(k), &atoms_.at(l));
 }
 
 // Clear intramolecular forcefield terms
-void Species::clearIntramolecularForcefieldTerms()
+void SpeciesBaseNode::clearIntramolecularForcefieldTerms()
 {
     for (auto &b : bonds_)
         b.setInteractionFormAndParameters(BondFunctions::Form::None, std::vector<double>());
@@ -136,8 +136,8 @@ void Species::clearIntramolecularForcefieldTerms()
 }
 
 // Return periodic box
-Box &Species::box() { return box_; }
-const Box &Species::box() const { return box_; }
+Box &SpeciesBaseNode::box() { return box_; }
+const Box &SpeciesBaseNode::box() const { return box_; }
 
 // Remove Box definition and revert to nonperiodic
-void Species::removeBox() { box_ = Box(); }
+void SpeciesBaseNode::removeBox() { box_ = Box(); }

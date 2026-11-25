@@ -3,7 +3,7 @@
 
 #include "classes/neutronWeights.h"
 #include "classes/isotopologueSet.h"
-#include "nodes/structure/speciesBase.h"
+#include "nodes/structure/species.h"
 #include "tests/tempFile.h"
 #include "tests/testing.h"
 
@@ -13,7 +13,7 @@ TEST(NeutronWeightsTest, Simple)
 {
     std::map<const SpeciesBaseNode *, double> speciesPopulations;
     IsotopologueSet isotopologues;
-    Species N2;
+    SpeciesNode N2(nullptr);
     N2.load("species/n2.toml");
     auto atN = N2.findAtomType("N");
     ASSERT_TRUE(atN);
@@ -39,7 +39,7 @@ TEST(NeutronWeightsTest, Water)
 {
     std::map<const SpeciesBaseNode *, double> speciesPopulations;
     IsotopologueSet isotopologues;
-    Species H2O;
+    SpeciesNode H2O(nullptr);
     H2O.load("species/water.toml");
     auto atOW = H2O.findAtomType("OW");
     ASSERT_TRUE(atOW);
@@ -64,7 +64,7 @@ TEST(NeutronWeightsTest, D2O)
 {
     std::map<const SpeciesBaseNode *, double> speciesPopulations;
     IsotopologueSet isotopologues;
-    Species H2O;
+    SpeciesNode H2O(nullptr);
     H2O.load("species/water.toml");
     auto atOW = H2O.findAtomType("OW");
     ASSERT_TRUE(atOW);
@@ -88,7 +88,7 @@ TEST(NeutronWeightsTest, NullWater)
 {
     std::map<const SpeciesBaseNode *, double> speciesPopulations;
     IsotopologueSet isotopologues;
-    Species H2O;
+    SpeciesNode H2O(nullptr);
     H2O.load("species/water.toml");
     auto atOW = H2O.findAtomType("OW");
     ASSERT_TRUE(atOW);
@@ -117,14 +117,14 @@ TEST(NeutronWeightsTest, Mix)
 {
     std::map<const SpeciesBaseNode *, double> speciesPopulations;
     IsotopologueSet isotopologues;
-    Species H2O;
+    SpeciesNode H2O(nullptr);
     H2O.load("species/water.toml");
     auto atOW = H2O.findAtomType("OW");
     ASSERT_TRUE(atOW);
     auto atHW = H2O.findAtomType("HW");
     ASSERT_TRUE(atHW);
 
-    Species N2;
+    SpeciesNode N2(nullptr);
     N2.load("species/n2.toml");
     auto atN = N2.findAtomType("N");
     ASSERT_TRUE(atN);

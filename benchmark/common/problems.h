@@ -42,8 +42,7 @@ template <SystemType systemType> class GraphProblem : public DissolveGraph
         auto &[speciesString, speciesPopulation, referenceCoordinates] = systemTypes[systemType];
 
         // Create the species node
-        auto *speciesNode = dynamic_cast<SpeciesNode *>(createNode("Species"));
-        species_ = &speciesNode->species();
+        species_ = dynamic_cast<SpeciesNode *>(createNode("Species"));
 
         if (speciesString.ends_with(".toml"))
             species_->load(speciesString);

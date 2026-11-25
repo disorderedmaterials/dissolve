@@ -10,20 +10,19 @@ namespace UnitTest
 TEST(SPCFwAssignmentTest, Water)
 {
     TestGraph testGraph;
-    auto *speciesNode = testGraph.createSpeciesFromStructureAndForcefield("Water", "ImportXYZStructure", "xyz/water.xyz",
-                                                                          ForcefieldLibrary::forcefield("SPC/Fw"));
+    auto *species = testGraph.createSpeciesFromStructureAndForcefield("Water", "ImportXYZStructure", "xyz/water.xyz",
+                                                                      ForcefieldLibrary::forcefield("SPC/Fw"));
 
-    ASSERT_TRUE(speciesNode);
-    auto &species = speciesNode->species();
-    ASSERT_EQ(speciesNode->run(), NodeConstants::ProcessResult::Success);
+    ASSERT_TRUE(species);
+    ASSERT_EQ(species->run(), NodeConstants::ProcessResult::Success);
 
-    ASSERT_EQ(species.bonds().size(), 2);
-    ASSERT_EQ(species.angles().size(), 1);
-    ASSERT_EQ(species.torsions().size(), 0);
-    ASSERT_EQ(species.impropers().size(), 0);
+    ASSERT_EQ(species->bonds().size(), 2);
+    ASSERT_EQ(species->angles().size(), 1);
+    ASSERT_EQ(species->torsions().size(), 0);
+    ASSERT_EQ(species->impropers().size(), 0);
 
-    EXPECT_TRUE(testSpeciesAtomType(&species, {{0, "OW"}, {1, "HW"}, {2, "HW"}}));
-    EXPECT_TRUE(testSpeciesBond(species.getBond(0, 1), {BondFunctions::Form::Harmonic, "k=4431.53 eq=1"}));
-    EXPECT_TRUE(testSpeciesAngle(species.getAngle(1, 0, 2), {AngleFunctions::Form::Harmonic, "k=317.5656 eq=113.24"}));
+    EXPECT_TRUE(testSpeciesAtomType(species, {{0, "OW"}, {1, "HW"}, {2, "HW"}}));
+    EXPECT_TRUE(testSpeciesBond(species->getBond(0, 1), {BondFunctions::Form::Harmonic, "k=4431.53 eq=1"}));
+    EXPECT_TRUE(testSpeciesAngle(species->getAngle(1, 0, 2), {AngleFunctions::Form::Harmonic, "k=317.5656 eq=113.24"}));
 }
 }; // namespace UnitTest

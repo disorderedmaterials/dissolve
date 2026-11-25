@@ -4,10 +4,9 @@
 #include "gui2/models/legacy/commonAngleModel.h"
 #include "gui2/models/legacy/commonBondModel.h"
 #include "gui2/models/legacy/commonTorsionModel.h"
-#include "nodes/structure/speciesBase.h"
+#include "nodes/structure/species.h"
 #include <QTableView>
 #include <gmock/gmock.h>
-
 #include <vector>
 
 namespace UnitTest
@@ -25,7 +24,7 @@ std::vector<Qt::ItemDataRole> roles = {Qt::DisplayRole, Qt::EditRole};
 
 TEST_F(MasterTermsTableModelTest, CommonBonds)
 {
-    Species species;
+    SpeciesNode species(nullptr);
     auto &b1 = species.addCommonBond("CA-CA");
     b1.setInteractionFormAndParameters(BondFunctions::Form::Harmonic, "k=3924.590   eq=1.400");
     auto &b2 = species.addCommonBond("CA-HA");
@@ -67,7 +66,7 @@ TEST_F(MasterTermsTableModelTest, CommonBonds)
 
 TEST_F(MasterTermsTableModelTest, CommonAngles)
 {
-    Species species;
+    SpeciesNode species(nullptr);
     auto &a1 = species.addCommonAngle("CA-CA-CA");
     a1.setInteractionFormAndParameters(AngleFunctions::Form::Harmonic, "k=527.184   eq=120.000");
     auto &a2 = species.addCommonAngle("CA-CA-HA");
@@ -110,7 +109,7 @@ TEST_F(MasterTermsTableModelTest, CommonAngles)
 
 TEST_F(MasterTermsTableModelTest, CommonTorsions)
 {
-    Species species;
+    SpeciesNode species(nullptr);
     auto &t1 = species.addCommonTorsion("CA-CA-CA-CA");
     t1.setInteractionFormAndParameters(TorsionFunctions::Form::Cos3, "0.000    30.334     0.000");
     auto &t2 = species.addCommonTorsion("CA-CA-CA-HA");

@@ -5,7 +5,7 @@
 #include "classes/configuration.h"
 #include "classes/pairPotential.h"
 #include "math/mathFunc.h"
-#include "nodes/structure/speciesBase.h"
+#include "nodes/structure/species.h"
 #include <gtest/gtest.h>
 
 namespace UnitTest
@@ -13,7 +13,7 @@ namespace UnitTest
 class CellsPBCTest : public ::testing::Test
 {
     public:
-    CellsPBCTest()
+    CellsPBCTest() : probe_{nullptr}
     {
         PairPotential::setRange(9.0);
         PairPotential::setChargeSource(PairPotential::ChargeSource::AtomTypes);
@@ -24,7 +24,7 @@ class CellsPBCTest : public ::testing::Test
     }
 
     protected:
-    Species probe_;
+    SpeciesNode probe_;
     Configuration configuration_;
 
     protected:

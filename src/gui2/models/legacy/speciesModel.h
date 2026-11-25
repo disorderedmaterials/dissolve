@@ -86,8 +86,4 @@ class SpeciesModel : public QObject
     void speciesChanged();
     // The name has changed
     void nameChanged();
-
-    public Q_SLOTS:
-    // Finalise the node
-    void create();
 };

@@ -5,17 +5,17 @@
 #include "nodes/structure/speciesBase.h"
 
 // Update current Isotopologues
-void Species::updateIsotopologues()
+void SpeciesBaseNode::updateIsotopologues()
 {
     for (auto &iso : isotopologues_)
         iso->update();
 }
 
 // Update and return natural isotopologue
-const Isotopologue *Species::naturalIsotopologue() const { return &naturalIsotopologue_; }
+const Isotopologue *SpeciesBaseNode::naturalIsotopologue() const { return &naturalIsotopologue_; }
 
 // Add a new Isotopologue to this species
-Isotopologue *Species::addIsotopologue(std::string_view baseName)
+Isotopologue *SpeciesBaseNode::addIsotopologue(std::string_view baseName)
 {
     auto &iso = isotopologues_.emplace_back(std::make_unique<Isotopologue>(this));
     iso->setName(DissolveSys::uniqueName(baseName, isotopologues_, [&](const auto &i) { return iso == i ? "" : i->name(); }));
@@ -25,10 +25,10 @@ Isotopologue *Species::addIsotopologue(std::string_view baseName)
 }
 
 // Remove specified Isotopologue from this Species
-void Species::removeIsotopologue(Isotopologue *iso)
+void SpeciesBaseNode::removeIsotopologue(Isotopologue *iso)
 {
     if (iso == nullptr)
-        Messenger::error("NULL_POINTER - NULL Isotopologue passed to Species::removeIsotopologue().\n");
+        Messenger::error("NULL_POINTER - NULL Isotopologue passed to SpeciesBaseNode::removeIsotopologue().\n");
     else if (std::any_of(isotopologues_.begin(), isotopologues_.end(), [iso](auto &i) { return i.get() == iso; }))
     {
         Messenger::print("Removing Isotopologue '{}' from Species '{}'.\n", iso->name(), name_);
@@ -39,22 +39,22 @@ void Species::removeIsotopologue(Isotopologue *iso)
 }
 
 // Return number of defined Isotopologues
-int Species::nIsotopologues() const { return isotopologues_.size(); }
+int SpeciesBaseNode::nIsotopologues() const { return isotopologues_.size(); }
 
 // Return nth Isotopologue in the list
-Isotopologue *Species::isotopologue(int n) { return isotopologues_[n].get(); }
+Isotopologue *SpeciesBaseNode::isotopologue(int n) { return isotopologues_[n].get(); }
 
 // Return Isotopologue List
-const std::vector<std::unique_ptr<Isotopologue>> &Species::isotopologues() const { return isotopologues_; }
+const std::vector<std::unique_ptr<Isotopologue>> &SpeciesBaseNode::isotopologues() const { return isotopologues_; }
 
 // Return whether the specified Isotopologue exists
-bool Species::hasIsotopologue(const Isotopologue *iso) const
+bool SpeciesBaseNode::hasIsotopologue(const Isotopologue *iso) const
 {
     return std::any_of(isotopologues_.begin(), isotopologues_.end(), [iso](auto &i) { return i.get() == iso; });
 }
 
 // Search for Isotopologue by name
-const Isotopologue *Species::findIsotopologue(std::string_view name) const
+const Isotopologue *SpeciesBaseNode::findIsotopologue(std::string_view name) const
 {
     // Check for the natural Isotopologue
     if (DissolveSys::sameString("Natural", name))

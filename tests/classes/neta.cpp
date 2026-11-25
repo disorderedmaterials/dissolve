@@ -4,7 +4,7 @@
 #include "neta/neta.h"
 #include "data/elements.h"
 #include "data/ff/ff.h"
-#include "nodes/structure/speciesBase.h"
+#include "nodes/structure/species.h"
 #include "templates/algorithms.h"
 #include <format>
 #include <gtest/gtest.h>
@@ -15,6 +15,8 @@ class NETATest : public ::testing::Test
 {
     public:
     NETATest()
+        : methane_(nullptr), ethane_(nullptr), rings_(nullptr), difluorobenzene_(nullptr), geometric_(nullptr),
+          methanol_(nullptr)
     {
         methane_.load("species/methane.toml");
         ethane_.load("species/ethane.toml");
@@ -25,11 +27,11 @@ class NETATest : public ::testing::Test
     }
 
     protected:
-    Species methane_, ethane_, rings_, difluorobenzene_, geometric_, methanol_;
+    SpeciesNode methane_, ethane_, rings_, difluorobenzene_, geometric_, methanol_;
 
     protected:
     // Test NETA description on all atom in molecule, expecting success for supplied atom indices
-    void testNETA(std::string_view title, const Species &sp, const NETADefinition &neta,
+    void testNETA(std::string_view title, const SpeciesNode &sp, const NETADefinition &neta,
                   const std::vector<int> &matchingIndices)
     {
         std::cout << std::format("Testing: {}...", title) << std::endl;
@@ -48,7 +50,7 @@ class NETATest : public ::testing::Test
         }
     }
     // Test NETA description on specific atom in molecule, expecting the match path to contain the supplied atom indices
-    NETAMatchedGroup testNETAMatchPath(std::string_view title, const Species &sp, const NETADefinition &neta,
+    NETAMatchedGroup testNETAMatchPath(std::string_view title, const SpeciesNode &sp, const NETADefinition &neta,
                                        int targetAtomIndex, const std::vector<int> &matchingIndices)
     {
         std::cout << std::format("Path Test: {}, atom {}...", title, targetAtomIndex) << std::endl;

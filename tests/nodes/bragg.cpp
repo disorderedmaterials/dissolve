@@ -11,7 +11,7 @@
 #include "nodes/structure/clearBonding.h"
 #include "nodes/structure/detectMolecules.h"
 #include "nodes/structure/replicatedConfiguration.h"
-#include "nodes/structure/speciesBase.h"
+#include "nodes/structure/species.h"
 #include "tests/testGraph.h"
 #include <memory>
 
@@ -34,7 +34,7 @@ class BraggNodeTest : public ::testing::Test
     ClearBondingNode *clearBondingNode_{nullptr};
     DetectMoleculesNode *detectMoleculesNode_{nullptr};
     ReplicatedConfigurationNode *replicatedConfigurationNode_{nullptr};
-    std::vector<Species *> species_;
+    std::vector<SpeciesNode *> species_;
 
     protected:
     // Create graph
@@ -67,7 +67,7 @@ class BraggNodeTest : public ::testing::Test
         for (const auto &[name, structure] : detectMoleculesNode_->detectedStructures())
         {
             // Take the output from detectedMoleculesNode and create a Species from it
-            auto *speciesNode = static_cast<SpeciesBaseNode *>(testGraph_.appendNode("Species", name));
+            auto *speciesNode = static_cast<SpeciesNode *>(testGraph_.appendNode("Species", name));
             ASSERT_TRUE(speciesNode);
 
             testGraph_.addEdge({std::string(detectMoleculesNode_->name()), name, name, "Structure"});
@@ -80,7 +80,7 @@ class BraggNodeTest : public ::testing::Test
                 {std::string(lastNode->name()), "Configuration", std::string(instantiateNode->name()), "Configuration"});
             lastNode = instantiateNode;
 
-            species_.push_back(&speciesNode->species());
+            species_.push_back(speciesNode);
         }
 
         replicatedConfigurationNode_ =

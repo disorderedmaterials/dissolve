@@ -2,7 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/empiricalFormula.h"
-#include "nodes/structure/speciesBase.h"
+#include "nodes/structure/species.h"
 #include <gtest/gtest.h>
 
 TEST(EmpiricalFormulaTest, Order)
@@ -25,15 +25,15 @@ TEST(EmpiricalFormulaTest, Zeroes)
 
 TEST(EmpiricalFormulaTest, Examples)
 {
-    Species benzene;
+    SpeciesNode benzene(nullptr);
     benzene.load("species/benzene.toml");
     EXPECT_EQ(EmpiricalFormula::formula(benzene.atoms(), [](const auto &i) { return i.Z(); }), "C6H6");
 
-    Species methane;
+    SpeciesNode methane(nullptr);
     methane.load("species/methane.toml");
     EXPECT_EQ(EmpiricalFormula::formula(methane.atoms(), [](const auto &i) { return i.Z(); }), "CH4");
 
-    Species methanol;
+    SpeciesNode methanol(nullptr);
     methanol.load("species/methanol.toml");
     EXPECT_EQ(EmpiricalFormula::formula(methanol.atoms(), [](const auto &i) { return i.Z(); }), "OCH4");
 }
