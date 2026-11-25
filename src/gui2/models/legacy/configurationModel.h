@@ -61,6 +61,7 @@ class ConfigurationMoleculesModel : public QAbstractListModel
     Q_OBJECT
 
     Q_PROPERTY(const Configuration *configuration READ configuration NOTIFY newConfig);
+    Q_PROPERTY(const QVector3D centre READ centre NOTIFY newConfig);
 
     enum ConfigurationMoleculesModelRoles
     {
@@ -77,6 +78,7 @@ class ConfigurationMoleculesModel : public QAbstractListModel
     void reset();
 
     Configuration *configuration() const;
+    QVector3D centre() const;
 
     Q_SIGNALS:
     void newConfig();

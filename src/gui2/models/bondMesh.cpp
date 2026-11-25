@@ -28,9 +28,12 @@ void BondMesh::updateMesh()
     indexes_.clear();
     colours_.clear();
 
+    auto center = config_->box().axisLengths();
+
     for (auto &atom : config_->atoms())
     {
-        positions_.append(QVector3D(atom.r().x, atom.r().y, atom.r().z) * scale_);
+        auto trans = atom.r() - center / 2;
+        positions_.append(QVector3D(trans.x, trans.y, trans.z) * scale_);
         if (atom.Z() == Elements::C)
             colours_.append(QVector4D(0.0, 1.0, 0.0, 1.0));
         else

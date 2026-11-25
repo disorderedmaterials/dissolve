@@ -66,7 +66,7 @@ Rectangle {
                     required property vector3d r
 
                     eulerRotation.y: 90
-                    position: r.times(configurationView.scale)
+                    position: (r.minus(molecules.centre)).times(configurationView.scale)
                     scale: Qt.vector3d(5e-3, 5e-3, 5e-3).times(configurationView.scale)
                     source: "#Sphere"
 

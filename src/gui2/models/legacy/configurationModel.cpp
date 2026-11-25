@@ -99,6 +99,12 @@ void ConfigurationMoleculesModel::reset()
 
 Configuration *ConfigurationMoleculesModel::configuration() const { return config; }
 
+QVector3D ConfigurationMoleculesModel::centre() const
+{
+    auto c = config->box().axisLengths() / 2;
+    return QVector3D(c.x, c.y, c.z);
+}
+
 MoleculeAtomsModel::MoleculeAtomsModel(Molecule *mol) : mol_(mol) {}
 
 int MoleculeAtomsModel::rowCount(const QModelIndex &parent) const
