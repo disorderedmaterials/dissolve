@@ -21,7 +21,7 @@ void BondMesh::setConfiguration(const Configuration *config)
         if (atom.Z() == Elements::C)
             colours_.append(QVector4D(0.0, 1.0, 0.0, 1.0));
         else
-            colours_.append(QVector4D(1.0, 0.0, 1.0, 1.0));
+            colours_.append(QVector4D(1.0, 1.0, 1.0, 1.0));
     }
 
     for (auto &mol : config->molecules())

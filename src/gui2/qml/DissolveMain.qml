@@ -462,11 +462,12 @@ ApplicationWindow {
                     textRole: "display"
                 }
             }
+
             DissolveConfigurationViewer {
+                anchors.top: configToolBar.bottom
                 anchors.bottom: parent.bottom
                 anchors.left: parent.left
                 anchors.right: parent.right
-                anchors.top: configToolBar.bottom
                 molecules: configModel.molecules
                 scale: 100.0
             }
