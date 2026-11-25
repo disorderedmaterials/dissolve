@@ -60,11 +60,12 @@ class ConfigurationMoleculesModel : public QAbstractListModel
 {
     Q_OBJECT
 
+    Q_PROPERTY(const Configuration *configuration READ configuration);
+
     enum ConfigurationMoleculesModelRoles
     {
         Atoms = Qt::UserRole + 0,
         Bonds = Qt::UserRole + 1,
-        Config = Qt::UserRole + 2,
     };
 
     public:
@@ -76,6 +77,8 @@ class ConfigurationMoleculesModel : public QAbstractListModel
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
     QHash<int, QByteArray> roleNames() const override;
     void reset();
+
+    Configuration *configuration() const;
 };
 
 // List the Configuration nodes in a graph, providing access to the
