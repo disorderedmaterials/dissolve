@@ -41,7 +41,7 @@ void OutputsNode::setUpdateRequired()
  * Serialisation
  */
 
-// Is it appropriate to bother serialising this node?
+// Is it appropriate to serialise this node?
 bool OutputsNode::shouldSerialise() const { return false; }
 
 // Express as a serialisable value

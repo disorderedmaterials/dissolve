@@ -383,7 +383,7 @@ class Node
     int podHistoryLength_{1000};
 
     public:
-    // Is it appropriate to bother serialising this node?
+    // Is it appropriate to serialise this node?
     virtual bool shouldSerialise() const { return true; }
     // Express as a serialisable value
     virtual void serialise(std::string tag, SerialisedValue &target) const;

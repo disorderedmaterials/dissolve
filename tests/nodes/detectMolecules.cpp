@@ -65,6 +65,7 @@ TEST(DetectMoleculesNodeTest, Water33Unordered)
     // Create a species from the detected structure
     auto speciesNode = testGraph.appendNode("Species", "Water");
     ASSERT_TRUE(speciesNode);
+    std::cout << std::format("NAME = {}\n", speciesNode->name());
     ASSERT_TRUE(testGraph.addEdge({"DetectMolecules", "OH2", "Water", "Structure"}));
 
     // Create a configuration

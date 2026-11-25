@@ -67,7 +67,7 @@ void LoopBacksNode::setUpdateRequired()
  * Serialisation
  */
 
-// Is it appropriate to bother serialising this node?
+// Is it appropriate to serialise this node?
 bool LoopBacksNode::shouldSerialise() const { return false; }
 
 // Express as a serialisable value
