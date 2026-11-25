@@ -15,8 +15,6 @@
 #include "tests/testGraph.h"
 #include <memory>
 
-#include "nodes/export/data.h"
-
 namespace UnitTest
 {
 class BraggNodeTest : public ::testing::Test
@@ -43,10 +41,6 @@ class BraggNodeTest : public ::testing::Test
     void createGraph()
     {
         // Create species and configuration from MgO cif file
-        auto root = testGraph_.dissolveGraph();
-
-        // ASSERT_TRUE(testGraph_.appendNode("ImportCIFStructure"));
-        // ASSERT_TRUE(testGraph_.fetchHead()->setOption("FilePath", std::filesystem::path("")));
         importCIFStructureNode_ = static_cast<ImportCIFStructureNode *>(testGraph_.appendNode("ImportCIFStructure"));
         ASSERT_TRUE(importCIFStructureNode_);
         importCIFStructureNode_->setOption("FilePath", std::filesystem::path("cif/1000053.cif"));
@@ -94,6 +88,7 @@ class BraggNodeTest : public ::testing::Test
         ASSERT_TRUE(replicatedConfigurationNode_);
 
         replicatedConfigurationNode_->setOption("Repeat", repeat);
+        replicatedConfigurationNode_->setOption("Grouping", true);
         testGraph_.addEdge({std::string(lastNode->name()), "Configuration", std::string(replicatedConfigurationNode_->name()),
                             "Configuration"});
 
@@ -113,8 +108,6 @@ class BraggNodeTest : public ::testing::Test
         ASSERT_TRUE(sqNode->setOption<Number>("QDelta", 0.05));
         ASSERT_TRUE(sqNode->setOption("WindowFunction", WindowFunction::Form::Lorch0));
         ASSERT_TRUE(sqNode->setOption<Function1DWrapper>("QBroadening", {Functions1D::Form::OmegaDependentGaussian, {0.02}}));
-        neutronSQNode_ = testGraph_.appendNeutronSQ(sqNode, "NeutronSQ", {}, {"epsr25/mgo500-555/mgo.EPSR.u01"});
-        ASSERT_TRUE(neutronSQNode_);
 
         // Bragg node
         braggNode_ = static_cast<BraggNode *>(testGraph_.appendNode("Bragg"));
@@ -124,9 +117,13 @@ class BraggNodeTest : public ::testing::Test
         ASSERT_TRUE(braggNode_->setOption<Number>("QMax", 20.0));
         ASSERT_TRUE(braggNode_->setOption<Function1DWrapper>("BraggQBroadening",
                                                              {Functions1D::Form::GaussianC2, {0.0235482, 0.0470964}}));
-
-        // Set Bragg multiplicities
         ASSERT_TRUE(braggNode_->setOption<Vector3i>("Multiplicity", braggMultiplicities));
+
+        // NeutronSQ
+        neutronSQNode_ = static_cast<NeutronSQNode *>(testGraph_.appendNode("NeutronSQ"));
+        ASSERT_TRUE(neutronSQNode_);
+        EXPECT_TRUE(testGraph_.addEdge({std::string(sqNode->name()), "UnweightedGR", "NeutronSQ", "UnweightedGR"}));
+        EXPECT_TRUE(testGraph_.addEdge({std::string(braggNode_->name()), "UnweightedSQ", "NeutronSQ", "UnweightedSQ"}));
     }
 
     static bool testReflections(const std::vector<BraggReflection> &braggReflections,
@@ -198,14 +195,13 @@ TEST_F(BraggNodeTest, MgO_Full)
 
     // Add correlation nodes and test
     addCorrelationNodes({5, 5, 5});
-    ASSERT_EQ(braggNode_->run(), NodeConstants::ProcessResult::Success);
+    ASSERT_EQ(neutronSQNode_->run(), NodeConstants::ProcessResult::Success);
 
     // Check Partial S(Q) data
     // Order of data in EPSR partial files is:  Mg-Mg    Mg-OX    OX-OX
     //                                 Column:    2        4        6
     auto unweightedSQ = braggNode_->getOutputValue<PartialSet *>("UnweightedSQ");
     auto unboundPartials = unweightedSQ->unboundPartials();
-    ExportDataNode::write(unboundPartials.get("Mg//Mg"), "mg-mg.txt");
 
     EXPECT_TRUE(testData1D(unboundPartials.get("Mg//Mg"), "SQs_UnweightedSQ_Mg-Mg_Unbound", "epsr25/mgo500-555/mgo.EPSR.f01", 1,
                            2, 1.5e-2));
