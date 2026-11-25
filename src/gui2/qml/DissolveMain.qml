@@ -5,13 +5,9 @@ import QtQuick3D
 import QtQuick3D.Helpers
 import QtQuick.Dialogs
 import QtQuick.Window
-import DissolveNodeGraphModule
-import DissolveControlsModule
-import DissolveDialogsModule
-import Dissolve
-import ProjectDissolve
 import "../../DissolveNodeGraphModule"
 import "../../DissolveControlsModule"
+import "../../DissolveConfigurationViewer"
 import "../../DissolveDialogsModule"
 import "../../ProjectDissolve"
 import "../../Dissolve"
@@ -20,7 +16,6 @@ ApplicationWindow {
     id: dissolveWindow
 
     property Dialog quickRunDialog: null
-    property vector3d scale: Qt.vector3d(Math.min(graphView.width / 2.5, graphView.height / 2.5), Math.min(graphView.width / 2.5, graphView.height / 2.5), 200)
     property ToolBar toolBar: null
 
     height: Screen.height
@@ -124,6 +119,10 @@ ApplicationWindow {
             }
             TabButton {
                 text: "Graph"
+                width: implicitWidth
+            }
+            TabButton {
+                text: "Configuration Viewer"
                 width: implicitWidth
             }
         }
@@ -418,6 +417,58 @@ ApplicationWindow {
                         }
                     }
                 }
+            }
+        }
+        Item {
+            id: configurationTab
+
+            ConfigurationModel {
+                id: configModel
+
+                graph: dissolve.graph
+                name: configurationPicker.currentText
+            }
+            // Reset the Configuration Model when the user switches
+            // tabs to ensure that we have the latest graph setup.
+            Connections {
+                function onCurrentIndexChanged() {
+                    configModel.reset();
+                }
+
+                target: applicationTabStack
+            }
+
+            // Tool Bar
+            ToolBar {
+                id: configToolBar
+
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.top: parent.top
+                height: configurationPicker.height + 5
+
+                Text {
+                    id: configName
+
+                    text: "Configuration"
+                }
+                ComboBox {
+                    id: configurationPicker
+
+                    anchors.left: configName.right
+                    anchors.top: parent.top
+                    editable: true
+                    model: configModel
+                    textRole: "display"
+                }
+            }
+            DissolveConfigurationViewer {
+                anchors.bottom: parent.bottom
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.top: configToolBar.bottom
+                molecules: configModel.molecules
+                scale: 100.0
             }
         }
     }

@@ -4,47 +4,109 @@
 #pragma once
 
 #include "classes/configuration.h"
-#include "templates/optionalRef.h"
+#include "nodes/graph.h"
+#include "nodes/structure/configuration.h"
 #include <QAbstractTableModel>
 #include <QModelIndex>
-#include <vector>
 
-class ConfigurationModel : public QAbstractListModel
+// List the atoms in a molecule
+class MoleculeAtomsModel : public QAbstractListModel
+{
+
+    enum ConfigurationAtomsModelRoles
+    {
+        R = Qt::UserRole + 0,
+        Element = Qt::UserRole + 1,
+    };
+
+    private:
+    Molecule *mol_ = nullptr;
+
+    public:
+    MoleculeAtomsModel(Molecule *mol);
+    int rowCount(const QModelIndex &parent = QModelIndex()) const override;
+    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
+    QHash<int, QByteArray> roleNames() const override;
+    void reset();
+};
+
+Q_DECLARE_METATYPE(MoleculeAtomsModel);
+
+// List the bonds in a molecule
+class MoleculeBondsModel : public QAbstractListModel
+{
+
+    enum ConfigurationBondsModelRoles
+    {
+        RI = Qt::UserRole + 0,
+        RJ = Qt::UserRole + 1,
+    };
+
+    private:
+    Molecule *mol_ = nullptr;
+
+    public:
+    MoleculeBondsModel(Molecule *mol);
+    int rowCount(const QModelIndex &parent = QModelIndex()) const override;
+    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
+    QHash<int, QByteArray> roleNames() const override;
+    void reset();
+};
+
+Q_DECLARE_METATYPE(MoleculeBondsModel);
+
+// List the molecules in a configurations, providing models for the atoms and bonds
+class ConfigurationMoleculesModel : public QAbstractListModel
 {
     Q_OBJECT
 
-    private:
-    // Source Configuration data
-    OptionalReferenceWrapper<const std::vector<std::unique_ptr<Configuration>>> configuration_;
-    // Vector containing checked items (if relevant)
-    OptionalReferenceWrapper<std::vector<Configuration *>> checkedItems_;
-    // Return object represented by specified model index
-    Configuration *rawData(const QModelIndex &index) const;
-
-    public:
-    enum class ConfigurationUserRole
+    enum ConfigurationMoleculesModelRoles
     {
-        RawData = Qt::UserRole,
-        MoleculesCount,
-        AtomsCount
+        Atoms = Qt::UserRole + 0,
+        Bonds = Qt::UserRole + 1,
     };
-    Q_ENUM(ConfigurationUserRole);
 
     public:
-    // Set source Configuration data
-    void setData(const std::vector<std::unique_ptr<Configuration>> &configuration);
-    // Set vector containing checked items
-    void setCheckStateData(std::vector<Configuration *> &checkedItemsVector);
-    // Refresh model data
-    void reset();
+    Configuration *config = nullptr;
+    std::vector<std::shared_ptr<MoleculeAtomsModel>> atoms_;
+    std::vector<std::shared_ptr<MoleculeBondsModel>> bonds_;
 
-    /*
-     * QAbstractItemModel overrides
-     */
+    int rowCount(const QModelIndex &parent = QModelIndex()) const override;
+    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
+    QHash<int, QByteArray> roleNames() const override;
+    void reset();
+};
+
+// List the Configuration nodes in a graph, providing access to the
+// molecule models for each configuration
+class ConfigurationModel : public QAbstractListModel
+{
+    Q_OBJECT
+    // The main graph
+    Q_PROPERTY(Graph *graph READ graph WRITE setGraph);
+    Q_PROPERTY(QString name READ name WRITE setName);
+    Q_PROPERTY(const ConfigurationMoleculesModel *molecules READ molecules);
+
+    private:
+    // Root graph that we pull nodes from
+    Graph *root_ = nullptr;
+    // Name of configuration we are viewing
+    //
+    // We use a string instead of an int because the user might add
+    // new configuration and change the order
+    std::string name_;
+    ConfigurationMoleculesModel molecules_;
+
     public:
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
-    bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole) override;
-    Qt::ItemFlags flags(const QModelIndex &index) const override;
-    QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
+
+    Graph *graph() const;
+    void setGraph(Graph *node);
+
+    QString name() const;
+    void setName(QString name);
+
+    Q_INVOKABLE void reset();
+    const ConfigurationMoleculesModel *molecules() const;
 };
