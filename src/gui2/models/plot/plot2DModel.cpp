@@ -6,10 +6,10 @@
 #include <algorithm>
 #include <cmath>
 
-Plot2DModel::Plot2DModel(const std::string &name, const std::function<const Data2D *()> &sourceDataGetter)
-    : PlotModelBase(2), name_(name), sourceDataGetter_(sourceDataGetter)
+Plot2DModel::Plot2DModel(const std::string &name, const Data2D *sourceData)
+    : PlotModelBase(2), name_(name), sourceData_(sourceData)
 {
-    regenerateIndices(sourceDataGetter_()->xAxis().size(), sourceDataGetter_()->yAxis().size());
+    regenerateIndices(sourceData_->xAxis().size(), sourceData_->yAxis().size());
 }
 
 //
@@ -18,7 +18,7 @@ QString Plot2DModel::name() { return QString::fromStdString(name_); }
 //
 double Plot2DModel::minX()
 {
-    const auto &x = sourceDataGetter_()->xAxis();
+    const auto &x = sourceData_->xAxis();
     if (x.empty())
         return 0;
     return *std::min_element(x.begin(), x.end());
@@ -27,19 +27,19 @@ double Plot2DModel::minX()
 //
 double Plot2DModel::minY()
 {
-    const auto &y = sourceDataGetter_()->yAxis();
+    const auto &y = sourceData_->yAxis();
     if (y.empty())
         return 0;
     return *std::min_element(y.begin(), y.end());
 }
 
 //
-double Plot2DModel::minZ() { return sourceDataGetter_()->minValue(); }
+double Plot2DModel::minZ() { return sourceData_->minValue(); }
 
 //
 double Plot2DModel::maxX()
 {
-    const auto &x = sourceDataGetter_()->xAxis();
+    const auto &x = sourceData_->xAxis();
     if (x.empty())
         return 0;
     auto max = *std::max_element(x.cbegin(), x.cend());
@@ -49,7 +49,7 @@ double Plot2DModel::maxX()
 //
 double Plot2DModel::maxY()
 {
-    const auto &y = sourceDataGetter_()->yAxis();
+    const auto &y = sourceData_->yAxis();
     if (y.empty())
         return 0;
     auto max = *std::max_element(y.cbegin(), y.cend());
@@ -57,7 +57,7 @@ double Plot2DModel::maxY()
 }
 
 //
-double Plot2DModel::maxZ() { return sourceDataGetter_()->maxValue(); }
+double Plot2DModel::maxZ() { return sourceData_->maxValue(); }
 
 //
 QString Plot2DModel::xName() { return QString::fromStdString(xName_); }
@@ -77,7 +77,7 @@ int Plot2DModel::currentNYValues() { return currentNYValues_; }
 //
 void Plot2DModel::handleDataChanged()
 {
-    const auto &source = sourceDataGetter_();
+    const auto &source = sourceData_;
     const auto nX = source->xAxis().size();
     const auto nY = source->yAxis().size();
     if (nX != currentNXValues_ || nY != currentNYValues_)
@@ -104,14 +104,14 @@ void Plot2DModel::regenerateIndices(int nX, int nY)
 }
 
 //
-double Plot2DModel::z(int x, int y) { return sourceDataGetter_()->value(x, y); }
+double Plot2DModel::z(int x, int y) { return sourceData_->value(x, y); }
 
 /*
  * QAbstractTableModel overrides
  */
 
 // Number of rows
-int Plot2DModel::rowCount(const QModelIndex &parent) const { return sourceDataGetter_()->nValues(); }
+int Plot2DModel::rowCount(const QModelIndex &parent) const { return sourceData_->nValues(); }
 
 // Access edge by QModelIndex.  The correct role can be found in the roleNames function.
 QVariant Plot2DModel::data(const QModelIndex &index, int role) const

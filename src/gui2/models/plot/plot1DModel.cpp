@@ -5,8 +5,8 @@
 #include <algorithm>
 #include <cmath>
 
-Plot1DModel::Plot1DModel(const std::string &name, const std::function<const Data1D *()> &sourceDataGetter)
-    : PlotModelBase(1), name_(name), sourceDataGetter_(sourceDataGetter)
+Plot1DModel::Plot1DModel(const std::string &name, const Data1D *sourceData)
+    : PlotModelBase(1), name_(name), sourceData_(sourceData)
 {
 }
 
@@ -16,19 +16,19 @@ QString Plot1DModel::name() { return QString::fromStdString(name_); }
 //
 double Plot1DModel::minX()
 {
-    const auto &x = sourceDataGetter_()->xAxis();
+    const auto &x = sourceData_->xAxis();
     if (x.empty())
         return 0;
     return *std::min_element(x.begin(), x.end());
 }
 
 //
-double Plot1DModel::minY() { return sourceDataGetter_()->minValue(); }
+double Plot1DModel::minY() { return sourceData_->minValue(); }
 
 //
 double Plot1DModel::maxX()
 {
-    const auto &x = sourceDataGetter_()->xAxis();
+    const auto &x = sourceData_->xAxis();
     if (x.empty())
         return 0;
     auto max = *std::max_element(x.cbegin(), x.cend());
@@ -36,7 +36,7 @@ double Plot1DModel::maxX()
 }
 
 //
-double Plot1DModel::maxY() { return sourceDataGetter_()->maxValue(); }
+double Plot1DModel::maxY() { return sourceData_->maxValue(); }
 
 //
 QString Plot1DModel::xName() { return QString::fromStdString(xName_); }
@@ -47,7 +47,7 @@ QString Plot1DModel::yName() { return QString::fromStdString(yName_); }
 //
 void Plot1DModel::handleDataChanged()
 {
-    const auto &source = sourceDataGetter_();
+    const auto &source = sourceData_;
     const auto n = source->nValues();
     for (int i = 0; i < n; i++)
     {
@@ -63,7 +63,7 @@ void Plot1DModel::handleDataChanged()
  */
 
 // Number of rows
-int Plot1DModel::rowCount(const QModelIndex &parent) const { return sourceDataGetter_()->nValues(); }
+int Plot1DModel::rowCount(const QModelIndex &parent) const { return sourceData_->nValues(); }
 
 // Access edge by QModelIndex.  The correct role can be found in the roleNames function.
 QVariant Plot1DModel::data(const QModelIndex &index, int role) const
@@ -75,9 +75,9 @@ QVariant Plot1DModel::data(const QModelIndex &index, int role) const
     switch (role - Qt::UserRole)
     {
         case X:
-            return sourceDataGetter_()->xAxis()[row];
+            return sourceData_->xAxis()[row];
         case Y:
-            return sourceDataGetter_()->values()[row];
+            return sourceData_->values()[row];
     }
     return {};
 }

@@ -20,7 +20,7 @@ class RenderableModel : public QAbstractListModel
     struct RenderableData
     {
         std::string name;
-        std::variant<std::function<const Data1D *()>, std::function<const Data2D *()>> lambda;
+        std::variant<const Data1D *, const Data2D *> data;
     };
 
     enum Roles

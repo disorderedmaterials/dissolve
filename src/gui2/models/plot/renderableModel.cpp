@@ -13,26 +13,24 @@ RenderableModel::RenderableModel(const Node::NodeParameterMap &outputs)
     {
         // Handle Data1D source
         if (parameter->storedDataType() == typeid(Data1D))
-            setData(index(rowCount(), 0), QVariant::fromValue<RenderableModel::RenderableData>(
-                                              {name, [parameter]() -> const Data1D * { return parameter->getPtr<Data1D>(); }}));
+            setData(index(rowCount(), 0),
+                    QVariant::fromValue<RenderableModel::RenderableData>({name, parameter->getPtr<Data1D>()}));
 
         // Handle Data2D source
         if (parameter->storedDataType() == typeid(Data2D))
-            setData(index(rowCount(), 0), QVariant::fromValue<RenderableModel::RenderableData>(
-                                              {name, [parameter]() -> const Data2D * { return parameter->getPtr<Data2D>(); }}));
+            setData(index(rowCount(), 0),
+                    QVariant::fromValue<RenderableModel::RenderableData>({name, parameter->getPtr<Data2D>()}));
 
         // Handle Histogram1D source
         if (parameter->storedDataType() == typeid(Histogram1D))
             setData(index(rowCount(), 0), QVariant::fromValue<RenderableModel::RenderableData>(
-                                              {name, [parameter]() -> const Data1D *
-                                               { return &parameter->getPtr<Histogram1D>()->accumulatedData(); }}));
+                                              {name, &parameter->getPtr<Histogram1D>()->accumulatedData()}));
 
         // Handle PartialSet source
         if (parameter->storedDataType() == typeid(PartialSet *))
         {
             setData(index(rowCount(), 0), QVariant::fromValue<RenderableModel::RenderableData>(
-                                              {name + "/" + "Total", [parameter]() -> const Data1D *
-                                               { return &parameter->get<PartialSet *>()->total(); }}));
+                                              {name + "/" + "Total", &parameter->get<PartialSet *>()->total()}));
 
             // Do the same for bound and unbound totals and partials...
         }
@@ -62,10 +60,10 @@ bool RenderableModel::setData(const QModelIndex &index, const QVariant &value, i
     const auto renderable = qvariant_cast<RenderableData>(value);
     std::unique_ptr<PlotModelBase> model = nullptr;
 
-    if (std::holds_alternative<std::function<const Data1D *()>>(renderable.lambda))
-        model = std::make_unique<Plot1DModel>(renderable.name, std::get<std::function<const Data1D *()>>(renderable.lambda));
-    else if (std::holds_alternative<std::function<const Data2D *()>>(renderable.lambda))
-        model = std::make_unique<Plot2DModel>(renderable.name, std::get<std::function<const Data2D *()>>(renderable.lambda));
+    if (std::holds_alternative<const Data1D *>(renderable.data))
+        model = std::make_unique<Plot1DModel>(renderable.name, std::get<const Data1D *>(renderable.data));
+    else if (std::holds_alternative<const Data2D *>(renderable.data))
+        model = std::make_unique<Plot2DModel>(renderable.name, std::get<const Data2D *>(renderable.data));
     else
         return false;
 

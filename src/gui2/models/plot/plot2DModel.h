@@ -28,7 +28,7 @@ class Plot2DModel : public PlotModelBase
     Q_PROPERTY(QString zName READ zName NOTIFY contentChanged)
 
     public:
-    Plot2DModel(const std::string &name, const std::function<const Data2D *()> &sourceDataGetter);
+    Plot2DModel(const std::string &name, const Data2D *sourceData);
     ~Plot2DModel() = default;
 
     enum Roles
@@ -42,7 +42,7 @@ class Plot2DModel : public PlotModelBase
     // Dataset name
     const std::string &name_;
     //
-    const std::function<const Data2D *()> sourceDataGetter_;
+    const Data2D *sourceData_;
     //
     std::string xName_{"x-axis"};
     //

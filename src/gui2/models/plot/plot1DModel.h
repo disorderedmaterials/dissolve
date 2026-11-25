@@ -23,7 +23,7 @@ class Plot1DModel : public PlotModelBase
     Q_PROPERTY(QString yName READ yName NOTIFY contentChanged)
 
     public:
-    Plot1DModel(const std::string &name, const std::function<const Data1D *()> &sourceDataGetter);
+    Plot1DModel(const std::string &name, const Data1D *sourceData);
     ~Plot1DModel() = default;
 
     enum Roles
@@ -36,7 +36,7 @@ class Plot1DModel : public PlotModelBase
     // Dataset name
     const std::string &name_;
     //
-    const std::function<const Data1D *()> sourceDataGetter_;
+    const Data1D *sourceData_;
     //
     std::string xName_{"x-axis"};
     //
