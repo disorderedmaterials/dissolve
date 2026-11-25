@@ -3,6 +3,7 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import QtQuick3D
 import QtQuick3D.Helpers
+import "../Dissolve"
 
 View3D {
     id: configurationView
@@ -75,30 +76,49 @@ View3D {
             }
         }
     }
-    Repeater3D {
-        model: configurationView.molecules
+    Model {
+        id: bondAggregate
 
-        delegate: Repeater3D {
-            id: bondRepeater
-
-            required property var bonds
-
-            model: bondRepeater.bonds
-
-            delegate: Model {
-                required property vector3d ri
-                required property vector3d rj
-
-                //! [3dcube]
-                geometry: ProceduralMesh {
-                    indexes: [0, 1]
-                    positions: [ri.times(configurationView.scale), rj.times(configurationView.scale)]
-                    primitiveMode: ProceduralMesh.Lines
-                }
-                materials: PrincipledMaterial {
-                    baseColor: "black"
-                }
-            }
+        BondMesh {
+            id: bondMesh
+            configuration: molecules.configuration
         }
+
+        geometry: ProceduralMesh {
+            indexes: bondMesh.indexes
+            positions: bondMesh.positions
+            primitiveMode: ProceduralMesh.Lines
+        }
+        materials: PrincipledMaterial {
+            baseColor: "black"
+        }
+
     }
+
+    // Repeater3D {
+    //     model: configurationView.molecules
+
+    //     delegate: Repeater3D {
+    //         id: bondRepeater
+
+    //         required property var bonds
+
+    //         model: bondRepeater.bonds
+
+    //         delegate: Model {
+    //             required property vector3d ri
+    //             required property vector3d rj
+
+    //             //! [3dcube]
+    //             geometry: ProceduralMesh {
+    //                 indexes: [0, 1]
+    //                 positions: [ri.times(configurationView.scale), rj.times(configurationView.scale)]
+    //                 primitiveMode: ProceduralMesh.Lines
+    //             }
+    //             materials: PrincipledMaterial {
+    //                 baseColor: "black"
+    //             }
+    //         }
+    //     }
+    // }
 }

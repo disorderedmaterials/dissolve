@@ -74,6 +74,7 @@ QHash<int, QByteArray> ConfigurationMoleculesModel::roleNames() const
     QHash<int, QByteArray> roles;
     roles[ConfigurationMoleculesModelRoles::Atoms] = "atoms";
     roles[ConfigurationMoleculesModelRoles::Bonds] = "bonds";
+    roles[ConfigurationMoleculesModelRoles::Config] = "configuration";
     return roles;
 }
 
@@ -85,6 +86,8 @@ QVariant ConfigurationMoleculesModel::data(const QModelIndex &index, int role) c
             return QVariant::fromValue(atoms_[index.row()].get());
         case ConfigurationMoleculesModel::ConfigurationMoleculesModelRoles::Bonds:
             return QVariant::fromValue(bonds_[index.row()].get());
+        case ConfigurationMoleculesModel::ConfigurationMoleculesModelRoles::Config:
+            return QVariant::fromValue(config);
     }
     return {};
 }

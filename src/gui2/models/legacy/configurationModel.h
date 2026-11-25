@@ -64,6 +64,7 @@ class ConfigurationMoleculesModel : public QAbstractListModel
     {
         Atoms = Qt::UserRole + 0,
         Bonds = Qt::UserRole + 1,
+        Config = Qt::UserRole + 2,
     };
 
     public:

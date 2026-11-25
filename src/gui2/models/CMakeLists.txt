@@ -12,6 +12,7 @@ set(nodeGraphModels_MOC_HDRS
     nodeRegistrySortFilterModel.h
     nodeMessages.h
     parameterEndPointsModel.h
+    bondMesh.h
 )
 
 set(nodeGraphModel_SRCS
@@ -25,6 +26,7 @@ set(nodeGraphModel_SRCS
     nodeRegistrySortFilterModel.cpp
     nodeMessages.cpp
     parameterEndPointsModel.cpp
+    bondMesh.cpp
 )
 
 # QML Types ###
@@ -80,8 +82,14 @@ find_package(Qt6 REQUIRED COMPONENTS Core Qml)
 add_library(models2 ${nodeGraphModel_SRCS} ${nodeGraphModel_MOC_SRCS} ${types_SRCS} ${legacyModels_SRCS} ${legacyModels_MOC_SRCS})
 
 target_include_directories(
-  models2 PRIVATE ${PROJECT_SOURCE_DIR}/src ${PROJECT_BINARY_DIR}/src ${CONAN_INCLUDE_DIRS_PUGIXML} ${Qt6Widgets_INCLUDE_DIRS}
-                  ${FREETYPE_INCLUDE_DIRS} ${Qt6Quick_INCLUDE_DIRS}
+  models2
+  PRIVATE ${PROJECT_SOURCE_DIR}/src
+          ${PROJECT_BINARY_DIR}/src
+          ${CONAN_INCLUDE_DIRS_PUGIXML}
+          ${Qt6Widgets_INCLUDE_DIRS}
+          ${FREETYPE_INCLUDE_DIRS}
+          ${Qt6Quick_INCLUDE_DIRS}
+          ${Qt6Quick3D_INCLUDE_DIRS}
 )
 
 target_link_libraries(models2 PRIVATE Qt6::Core Qt6::Qml)
