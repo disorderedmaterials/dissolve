@@ -5,9 +5,9 @@
 
 #include "base/enumOptions.h"
 #include "classes/configuration.h"
-#include "nodes/structure/speciesBase.h"
 #include "nodes/node.h"
 #include "nodes/number.h"
+#include "nodes/structure/speciesBase.h"
 
 class MDNode : public Node
 {

@@ -4,9 +4,9 @@
 #include "classes/molecule.h"
 #include "classes/box.h"
 #include "classes/configurationAtom.h"
-#include "nodes/structure/speciesBase.h"
 #include "classes/speciesBond.h"
 #include "data/atomicMasses.h"
+#include "nodes/structure/speciesBase.h"
 #include "templates/algorithms.h"
 #include <stdexcept>
 

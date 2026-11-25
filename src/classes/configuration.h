@@ -101,7 +101,8 @@ class Configuration
     void notifyAtomicPositionsChanged();
     // Add Molecule to Configuration based on the supplied Species
     std::shared_ptr<Molecule>
-    addMolecule(const SpeciesBaseNode *sp, OptionalReferenceWrapper<const std::vector<Vector3>> sourceCoordinates = std::nullopt);
+    addMolecule(const SpeciesBaseNode *sp,
+                OptionalReferenceWrapper<const std::vector<Vector3>> sourceCoordinates = std::nullopt);
     // Copy molecule
     std::shared_ptr<Molecule> copyMolecule(const Molecule &sourceMolecule);
     // Remove all Molecules of the target Species from the Configuration

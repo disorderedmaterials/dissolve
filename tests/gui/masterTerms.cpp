@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "nodes/structure/speciesBase.h"
 #include "gui2/models/legacy/commonAngleModel.h"
 #include "gui2/models/legacy/commonBondModel.h"
 #include "gui2/models/legacy/commonTorsionModel.h"
+#include "nodes/structure/speciesBase.h"
 #include <QTableView>
 #include <gmock/gmock.h>
 

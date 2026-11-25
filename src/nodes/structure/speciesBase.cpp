@@ -3,13 +3,15 @@
 
 #include "nodes/structure/speciesBase.h"
 
-SpeciesBaseNode::SpeciesBaseNode(Graph *parentGraph) : Node(parentGraph), naturalIsotopologue_(this, "Natural"), attachedAtomListsGenerated_(false)
+SpeciesBaseNode::SpeciesBaseNode(Graph *parentGraph)
+    : Node(parentGraph), naturalIsotopologue_(this, "Natural"), attachedAtomListsGenerated_(false)
 {
     // Outputs
     addPointerOutput<const SpeciesBaseNode>("Species", "The species object", *this);
 
     // State data
-    addStateData("Species", species_);
+    // TODO DISSOLVE2
+    // addStateData("Species", species_);
 }
 
 /*

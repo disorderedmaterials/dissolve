@@ -2,10 +2,10 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "tests/testing.h"
-#include "nodes/structure/speciesBase.h"
 #include "kernels/energy.h"
 #include "kernels/force.h"
 #include "nodes/import/xyData.h"
+#include "nodes/structure/speciesBase.h"
 #include <gtest/gtest.h>
 
 namespace UnitTest

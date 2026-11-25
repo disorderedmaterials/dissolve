@@ -172,7 +172,7 @@ class ParameterBase
     // Create a parameter link (input - data proxy - output) for the derived class type
     virtual ParameterLink createParameterLink(std::string_view newName, std::string_view newDescription = "") const = 0;
     // Resolve named data
-    void resolve(const std::map<std::string, const SpeciesBaseNode *> &speciesInScope) { dataResolver_(speciesInScope); }
+    void resolve(const std::map<std::string, const SpeciesBaseNode *> &reachableSpecies) { dataResolver_(reachableSpecies); }
 
     /*
      * Serialisation

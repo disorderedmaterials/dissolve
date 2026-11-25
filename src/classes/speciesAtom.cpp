@@ -5,8 +5,8 @@
 #include "base/serialiserLibrary.h"
 #include "classes/atomType.h"
 #include "classes/box.h"
-#include "nodes/structure/speciesBase.h"
 #include "classes/speciesBond.h"
+#include "nodes/structure/speciesBase.h"
 #include <algorithm>
 
 SpeciesAtom::SpeciesAtom(SpeciesBaseNode *parent) : parent_(parent) {}
@@ -16,7 +16,7 @@ SpeciesAtom::SpeciesAtom(SpeciesBaseNode *parent) : parent_(parent) {}
  */
 
 // Return parent Species
-Species *SpeciesAtom::parent() const { return parent_; }
+SpeciesBaseNode *SpeciesAtom::parent() const { return parent_; }
 
 // Set AtomType of SpeciesAtom
 void SpeciesAtom::setAtomType(const AtomType *at)

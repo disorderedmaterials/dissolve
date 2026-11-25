@@ -27,5 +27,5 @@ struct ForcefieldRecipe
 
     public:
     // Apply to species
-    bool apply(Species &species) const;
+    bool apply(SpeciesBaseNode &species) const;
 };

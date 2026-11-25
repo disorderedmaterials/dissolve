@@ -46,5 +46,5 @@ class ResolvableContext
 
     public:
     // Resolve internal resolvable name references with supplied data
-    virtual void resolve(const std::map<std::string, const SpeciesBaseNode *> &speciesInScope) = 0;
+    virtual void resolve(const std::map<std::string, const SpeciesBaseNode *> &reachableSpecies) = 0;
 };

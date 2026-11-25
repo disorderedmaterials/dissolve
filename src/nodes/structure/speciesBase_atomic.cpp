@@ -2,8 +2,8 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/atomType.h"
-#include "nodes/structure/speciesBase.h"
 #include "data/atomicMasses.h"
+#include "nodes/structure/speciesBase.h"
 #include <numeric>
 
 // Return the number of atoms in the species (or only those with the specified presence)

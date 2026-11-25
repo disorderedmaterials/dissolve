@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "nodes/structure/speciesBase.h"
 #include "classes/speciesAngle.h"
 #include "classes/speciesBond.h"
 #include "classes/speciesTorsion.h"
+#include "nodes/structure/speciesBase.h"
 
 // Add new common bond parameters
 CommonBond &Species::addCommonBond(std::string_view name, std::optional<int> insertAtIndex)

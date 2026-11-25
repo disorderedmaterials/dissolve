@@ -2,9 +2,9 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "neta/neta.h"
-#include "nodes/structure/speciesBase.h"
 #include "data/elements.h"
 #include "data/ff/ff.h"
+#include "nodes/structure/speciesBase.h"
 #include "templates/algorithms.h"
 #include <format>
 #include <gtest/gtest.h>

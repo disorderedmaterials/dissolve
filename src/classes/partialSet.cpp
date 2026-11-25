@@ -4,9 +4,9 @@
 #include "classes/partialSet.h"
 #include "classes/atomType.h"
 #include "classes/configuration.h"
-#include "nodes/structure/speciesBase.h"
 #include "math/interpolator.h"
 #include "nodes/export/data.h"
+#include "nodes/structure/speciesBase.h"
 #include "templates/algorithms.h"
 #include <filesystem>
 
@@ -486,12 +486,12 @@ void PartialSet::deserialise(SerialisedValue node)
 }
 
 // Resolve internal resolvable name references with supplied data
-void PartialSet::resolve(const std::map<std::string, const SpeciesBaseNode *> &speciesInScope)
+void PartialSet::resolve(const std::map<std::string, const SpeciesBaseNode *> &reachableSpecies)
 {
     for (auto &resolvableSpecies : std::views::keys(realSpeciesPopulations_))
     {
-        if (speciesInScope.contains(std::string(resolvableSpecies.name())))
-            resolvableSpecies.resolve(speciesInScope.at(std::string(resolvableSpecies.name())));
+        if (reachableSpecies.contains(std::string(resolvableSpecies.name())))
+            resolvableSpecies.resolve(reachableSpecies.at(std::string(resolvableSpecies.name())));
         else
             throw(std::runtime_error(std::format("Species '{}' is used in PartialSet, but no such species is in scope.\n",
                                                  resolvableSpecies.name())));

@@ -13,14 +13,14 @@ QString SpeciesModel::name()
 {
     if (node_ == nullptr)
         return "";
-    return QString::fromStdString(std::string(node_->species().name()));
+    return QString::fromStdString(std::string(node_->name()));
 }
 
 void SpeciesModel::setName(QString name)
 {
     if (node_ == nullptr)
         return;
-    node_->species().setName(name.toStdString());
+    node_->setName(name.toStdString());
     Q_EMIT(nameChanged());
 }
 
@@ -44,24 +44,12 @@ GraphModel *SpeciesModel::graphModel() { return graphModel_; }
 // Produce this species node on the given graph
 void SpeciesModel::assignModel(GraphModel *graphModel)
 {
-    graphModel_ = graphModel;
-    node_ = std::make_unique<SpeciesNode>(graphModel_->graph());
-    auto &species = node_->species();
-    atoms_.setSpecies(&species);
-    bonds_.setBonds(species.bonds());
-    angles_.setAngles(species.angles());
-    torsions_.setTorsions(species.torsions());
-    impropers_.setImpropers(species.impropers());
-}
-
-// Finalise the node
-void SpeciesModel::create()
-{
-    // Need copy because we're going to move the unique_ptr
-    auto name = node_->species().name();
-    // node_->setName(name);
-    graphModel_->addNode(std::unique_ptr<Node>(std::move(node_)), name);
-
-    // Create a new node for next call
-    node_ = std::make_unique<SpeciesNode>(graphModel_->graph());
+    // TODO We can't / don't need to create SpeciesNodes like this any more
+    // graphModel_ = graphModel;
+    // node_ = std::make_unique<SpeciesNode>(graphModel_->graph());
+    // atoms_.setSpecies(&species);
+    // bonds_.setBonds(species.bonds());
+    // angles_.setAngles(species.angles());
+    // torsions_.setTorsions(species.torsions());
+    // impropers_.setImpropers(species.impropers());
 }

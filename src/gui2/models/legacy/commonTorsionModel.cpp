@@ -4,7 +4,8 @@
 #include "gui2/models/legacy/commonTorsionModel.h"
 #include "nodes/structure/speciesBase.h"
 
-CommonTorsionModel::CommonTorsionModel(SpeciesBaseNode *species) : CommonTermModel(species), sourceData_(species->commonTorsions())
+CommonTorsionModel::CommonTorsionModel(SpeciesBaseNode *species)
+    : CommonTermModel(species), sourceData_(species->commonTorsions())
 {
     // Set connections
     modelUpdater.setModel(this);

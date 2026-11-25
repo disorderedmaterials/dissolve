@@ -3,8 +3,8 @@
 
 #pragma once
 
-#include "nodes/structure/speciesBase.h"
 #include "gui2/models/legacy/modelUpdater.h"
+#include "nodes/structure/speciesBase.h"
 #include "templates/optionalRef.h"
 #include <QAbstractTableModel>
 #include <QIcon>

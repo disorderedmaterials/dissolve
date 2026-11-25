@@ -5,7 +5,7 @@
 #include "classes/atomType.h"
 #include "gui/delegates/isotopeCombo.h"
 
-SpeciesIsoModel::SpeciesIsoModel(Species &species) : species_(species) {}
+SpeciesIsoModel::SpeciesIsoModel(SpeciesBaseNode &species) : species_(species) {}
 
 int SpeciesIsoModel::rowCount(const QModelIndex &parent) const
 {

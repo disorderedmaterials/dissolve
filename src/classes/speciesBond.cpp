@@ -2,9 +2,9 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/speciesBond.h"
-#include "nodes/structure/speciesBase.h"
 #include "classes/speciesAtom.h"
 #include "data/atomicMasses.h"
+#include "nodes/structure/speciesBase.h"
 
 SpeciesBond::SpeciesBond() : SpeciesIntra(nullptr, BondFunctions::Form::None) {}
 

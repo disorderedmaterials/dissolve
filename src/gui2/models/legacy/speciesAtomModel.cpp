@@ -1,6 +1,6 @@
 #include "gui2/models/legacy/speciesAtomModel.h"
-#include "nodes/structure/speciesBase.h"
 #include "data/elements.h"
+#include "nodes/structure/speciesBase.h"
 #include <memory>
 
 SpeciesAtomModel::SpeciesAtomModel() {}

@@ -84,9 +84,10 @@ class TestGraph : public DissolveGraph
     // Append GR and SQ nodes
     std::pair<GRNode *, SQNode *> appendGRSQ(bool noAveraging = false, bool noIntraBroadening = false);
     // Create a NeutronSQ node with optional reference data
-    NeutronSQNode *appendNeutronSQ(SQNode *sqNode, std::string name,
-                                   const std::vector<std::tuple<const SpeciesBaseNode *, std::string, double>> isotopologues = {},
-                                   std::string referenceData = {}, bool isHistogram = true);
+    NeutronSQNode *
+    appendNeutronSQ(SQNode *sqNode, std::string name,
+                    const std::vector<std::tuple<const SpeciesBaseNode *, std::string, double>> isotopologues = {},
+                    std::string referenceData = {}, bool isHistogram = true);
     // Create an XRaySQ node with optional reference data
     XRaySQNode *appendXRaySQ(SQNode *sqNode, std::string name, std::string referenceData = {}, bool isHistogram = true);
 };

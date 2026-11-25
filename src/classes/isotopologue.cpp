@@ -3,8 +3,8 @@
 
 #include "classes/isotopologue.h"
 #include "classes/atomType.h"
-#include "nodes/structure/speciesBase.h"
 #include "data/isotopes.h"
+#include "nodes/structure/speciesBase.h"
 
 Isotopologue::Isotopologue(const SpeciesBaseNode *parent, std::string name) : parent_(parent), name_(name) {}
 

@@ -2,9 +2,9 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/speciesImproper.h"
-#include "nodes/structure/speciesBase.h"
 #include "classes/speciesAtom.h"
 #include "classes/speciesTorsion.h"
+#include "nodes/structure/speciesBase.h"
 
 SpeciesImproper::SpeciesImproper() : SpeciesIntra(nullptr, TorsionFunctions::Form::None) {}
 

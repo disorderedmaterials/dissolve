@@ -121,10 +121,9 @@ SpeciesNode *TestGraph::createSpeciesFromStructureAndForcefield(std::string name
     // Add species node
     auto speciesNodeUniquePtr = std::make_unique<SpeciesNode>(nullptr);
     EXPECT_TRUE(speciesNodeUniquePtr);
-    auto speciesNodePtr = speciesNodeUniquePtr.get();
-    EXPECT_TRUE(speciesNodePtr);
-    auto &species = speciesNodePtr->species();
-    species.setName(name);
+    auto species = speciesNodeUniquePtr.get();
+    EXPECT_TRUE(species);
+    species->setName(name);
     currentGraph_->addNode(std::move(speciesNodeUniquePtr), name);
 
     // Create structure import node
@@ -149,11 +148,11 @@ SpeciesNode *TestGraph::createSpeciesFromStructureAndForcefield(std::string name
     EXPECT_TRUE(forcefieldNode->setOption<Forcefield *>("Forcefield", ff.get()));
     EXPECT_TRUE(currentGraph_->addEdge({"Forcefield", "Recipe", name, "Recipe"}));
 
-    return speciesNodePtr;
+    return species;
 }
 // Create basic configuration graph, returning the last node
-Node *TestGraph::createConfiguration(std::string name, const std::vector<std::pair<const SpeciesBaseNode *, int>> &species, double rho,
-                                     Units::DensityUnits rhoUnits)
+Node *TestGraph::createConfiguration(std::string name, const std::vector<std::pair<const SpeciesBaseNode *, int>> &species,
+                                     double rho, Units::DensityUnits rhoUnits)
 {
     // Create configuration
     EXPECT_TRUE(appendNode("Configuration", name));
@@ -244,9 +243,10 @@ std::pair<GRNode *, SQNode *> TestGraph::appendGRSQ(bool noAveraging, bool noInt
     return {grNode, sqNode};
 }
 // Create a NeutronSQ node with optional reference data
-NeutronSQNode *TestGraph::appendNeutronSQ(SQNode *sqNode, std::string name,
-                                          const std::vector<std::tuple<const SpeciesBaseNode *, std::string, double>> isotopologues,
-                                          std::string referenceData, bool isHistogram)
+NeutronSQNode *
+TestGraph::appendNeutronSQ(SQNode *sqNode, std::string name,
+                           const std::vector<std::tuple<const SpeciesBaseNode *, std::string, double>> isotopologues,
+                           std::string referenceData, bool isHistogram)
 {
     // Construct the isotopologue set
     IsotopologueSet isotopologueSet;

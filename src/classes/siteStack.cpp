@@ -4,8 +4,8 @@
 #include "classes/siteStack.h"
 #include "classes/box.h"
 #include "classes/configuration.h"
-#include "nodes/structure/speciesBase.h"
 #include "classes/speciesSite.h"
+#include "nodes/structure/speciesBase.h"
 #include <algorithm>
 #include <numeric>
 

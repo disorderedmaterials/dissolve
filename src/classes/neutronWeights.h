@@ -14,7 +14,8 @@ class NeutronWeights
 {
     public:
     NeutronWeights() = default;
-    NeutronWeights(const std::map<const SpeciesBaseNode *, double> &speciesPopulations, const IsotopologueSet &speciesIsotopologues);
+    NeutronWeights(const std::map<const SpeciesBaseNode *, double> &speciesPopulations,
+                   const IsotopologueSet &speciesIsotopologues);
     NeutronWeights(const NeutronWeights &source);
     void operator=(const NeutronWeights &source);
 

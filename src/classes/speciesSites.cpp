@@ -46,7 +46,8 @@ ResolvableKeyedVector<const SpeciesBaseNode *, ResolvableKeyedVector<const Speci
     return sites_;
 }
 
-const ResolvableKeyedVector<const SpeciesBaseNode *, ResolvableKeyedVector<const SpeciesSite *, double>> &SpeciesSites::sites() const
+const ResolvableKeyedVector<const SpeciesBaseNode *, ResolvableKeyedVector<const SpeciesSite *, double>> &
+SpeciesSites::sites() const
 {
     return sites_;
 }
@@ -92,13 +93,13 @@ void SpeciesSites::deserialise(const SerialisedValue &node)
 }
 
 // Resolve internal resolvable name references with supplied data
-void SpeciesSites::resolve(const std::map<std::string, const SpeciesBaseNode *> &speciesInScope)
+void SpeciesSites::resolve(const std::map<std::string, const SpeciesBaseNode *> &reachableSpecies)
 {
     for (auto &[resolvableSpecies, siteWeight] : sites_)
     {
         // Find the named species
-        if (speciesInScope.contains(std::string(resolvableSpecies.name())))
-            resolvableSpecies.resolve(speciesInScope.at(std::string(resolvableSpecies.name())));
+        if (reachableSpecies.contains(std::string(resolvableSpecies.name())))
+            resolvableSpecies.resolve(reachableSpecies.at(std::string(resolvableSpecies.name())));
         else
             throw(std::runtime_error(std::format("A site is referenced in species '{}' but no such species is in scope.\n",
                                                  resolvableSpecies.name())));

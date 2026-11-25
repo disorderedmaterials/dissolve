@@ -30,9 +30,9 @@ class SerialisableData
     // Express as a serialised value
     virtual SerialisedValue serialise() const { return {}; }
     // Read from a serialised value
-    virtual void deserialise(const SerialisedValue &node) {};
+    virtual void deserialise(const SerialisedValue &node) {}
     // Resolve named data
-    virtual void resolve(const std::map<std::string, const SpeciesBaseNode *> &speciesInScope) {};
+    virtual void resolve(const std::map<std::string, const SpeciesBaseNode *> &reachableSpecies) {}
 };
 
 // Primary type for a SerialisableClass to a specific DataClass
@@ -162,5 +162,8 @@ template <typename DataClass> class SerialisableClass : public SerialisableData
     // Read from a serialised value
     void deserialise(const SerialisedValue &node) { dataDeserialiser_(node); }
     // Resolve named data
-    void resolve(const std::map<std::string, const SpeciesBaseNode *> &speciesInScope) override { dataResolver_(speciesInScope); }
+    void resolve(const std::map<std::string, const SpeciesBaseNode *> &reachableSpecies) override
+    {
+        dataResolver_(reachableSpecies);
+    }
 };

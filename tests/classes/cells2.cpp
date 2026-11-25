@@ -4,8 +4,8 @@
 #include "classes/atomType.h"
 #include "classes/configuration.h"
 #include "classes/pairPotential.h"
-#include "nodes/structure/speciesBase.h"
 #include "math/mathFunc.h"
+#include "nodes/structure/speciesBase.h"
 #include <gtest/gtest.h>
 
 namespace UnitTest

@@ -3,8 +3,8 @@
 
 #include "data/ff/uff/uff4MOF.h"
 #include "classes/atomType.h"
-#include "nodes/structure/speciesBase.h"
 #include "data/elements.h"
+#include "nodes/structure/speciesBase.h"
 
 /*
  * Implements "Extension of the Universal Force Field to Metal-Organic Frameworks"

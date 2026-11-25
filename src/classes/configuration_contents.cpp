@@ -5,8 +5,8 @@
 #include "classes/box.h"
 #include "classes/cell.h"
 #include "classes/configuration.h"
-#include "nodes/structure/speciesBase.h"
 #include "math/mathFunc.h"
+#include "nodes/structure/speciesBase.h"
 #include <memory>
 #include <numeric>
 

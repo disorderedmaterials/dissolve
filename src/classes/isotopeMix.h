@@ -3,8 +3,8 @@
 
 #pragma once
 
-#include "nodes/structure/speciesBase.h"
 #include "data/isotopes.h"
+#include "nodes/structure/speciesBase.h"
 #include "templates/keyedVector.h"
 
 // Forward Declarations

@@ -17,7 +17,8 @@ class SpeciesBaseNode;
 template <class Intra, class Functions> class SpeciesIntra
 {
     public:
-    explicit SpeciesIntra(SpeciesBaseNode *parent, typename Functions::Form form) : parent_(parent), interactionPotential_(form) {};
+    explicit SpeciesIntra(SpeciesBaseNode *parent, typename Functions::Form form)
+        : parent_(parent), interactionPotential_(form) {};
     virtual ~SpeciesIntra() = default;
     SpeciesIntra(const SpeciesIntra &source) : interactionPotential_(source.interactionPotential_.form()) { (*this) = source; }
     SpeciesIntra(SpeciesIntra &&source) = delete;

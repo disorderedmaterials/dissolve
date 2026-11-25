@@ -13,10 +13,10 @@
 #include "classes/speciesSite.h"
 #include "classes/speciesTorsion.h"
 #include "classes/structure.h"
+#include "nodes/node.h"
 #include "templates/keyedVector.h"
 #include <memory>
 #include <vector>
-#include "nodes/node.h"
 
 // Forward Declarations
 class CommonBond;
@@ -36,7 +36,6 @@ class SpeciesBaseNode : public Node
     protected:
     // Clear Data
     void clear();
-
 
     /*
      * Basic Information

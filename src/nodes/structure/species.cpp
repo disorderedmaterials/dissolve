@@ -9,9 +9,6 @@ SpeciesNode::SpeciesNode(Graph *parentGraph) : SpeciesBaseNode(parentGraph)
     // Inputs
     addInput("Structure", "Structure of the species", structure_)->setFlags(ParameterBase::ParameterFlags::Required);
     addInput("Recipe", "Forcefield recipe to apply to the species", recipe_);
-
-    // State data
-    addStateData("Species", species_);
 }
 
 /*
@@ -32,10 +29,10 @@ std::string_view SpeciesNode::summary() const { return "Produce a species"; }
 NodeConstants::ProcessResult SpeciesNode::process()
 {
     if (structure_)
-        species_.create(*structure_);
+        create(*structure_);
 
     if (recipe_)
-        return recipe_->apply(species_) ? NodeConstants::ProcessResult::Success : NodeConstants::ProcessResult::Failed;
+        return recipe_->apply(*this) ? NodeConstants::ProcessResult::Success : NodeConstants::ProcessResult::Failed;
 
     return NodeConstants::ProcessResult::Success;
 }

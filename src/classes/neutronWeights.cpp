@@ -4,8 +4,8 @@
 #include "classes/neutronWeights.h"
 #include "classes/atomType.h"
 #include "classes/isotopologueSet.h"
-#include "nodes/structure/speciesBase.h"
 #include "data/isotopes.h"
+#include "nodes/structure/speciesBase.h"
 #include "templates/algorithms.h"
 
 NeutronWeights::NeutronWeights(const std::map<const SpeciesBaseNode *, double> &speciesPopulations,

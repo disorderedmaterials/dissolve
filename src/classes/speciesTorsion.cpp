@@ -3,9 +3,9 @@
 
 #include "classes/speciesTorsion.h"
 #include "base/serialiserLibrary.h"
-#include "nodes/structure/speciesBase.h"
 #include "classes/speciesAtom.h"
 #include "math/mathFunc.h"
+#include "nodes/structure/speciesBase.h"
 
 SpeciesTorsion::SpeciesTorsion() : SpeciesIntra(nullptr, TorsionFunctions::Form::None) {}
 

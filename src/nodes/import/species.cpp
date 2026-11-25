@@ -31,7 +31,7 @@ NodeConstants::ProcessResult ImportSpeciesNode::process()
     message("Reading species data from '{}'...\n", filePath);
 
     // Parse the file
-    species_.load(filePath);
+    load(filePath);
 
     return NodeConstants::ProcessResult::Success;
 }

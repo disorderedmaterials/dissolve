@@ -4,11 +4,11 @@
 #include "nodes/evolution/intraMC.h"
 #include "base/timer.h"
 #include "classes/configuration.h"
-#include "nodes/structure/speciesBase.h"
 #include "kernels/energy.h"
 #include "math/mathFunc.h"
 #include "math/mc.h"
 #include "nodes/dissolve.h"
+#include "nodes/structure/speciesBase.h"
 
 IntraMCNode::IntraMCNode(Graph *parentGraph) : Node(parentGraph)
 {

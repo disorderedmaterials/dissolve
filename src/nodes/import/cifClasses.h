@@ -4,9 +4,9 @@
 #pragma once
 
 #include "classes/localMolecule.h"
-#include "nodes/structure/speciesBase.h"
 #include "data/elements.h"
 #include "math/vector3.h"
+#include "nodes/structure/speciesBase.h"
 #include <algorithm>
 #include <vector>
 

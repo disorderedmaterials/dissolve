@@ -4,8 +4,8 @@
 #include "kernels/species.h"
 #include "classes/box.h"
 #include "classes/potentialMap.h"
-#include "nodes/structure/speciesBase.h"
 #include "math/combinations.h"
+#include "nodes/structure/speciesBase.h"
 #include "templates/algorithms.h"
 #include <numeric>
 

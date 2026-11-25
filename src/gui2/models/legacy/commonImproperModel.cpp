@@ -4,7 +4,8 @@
 #include "gui2/models/legacy/commonImproperModel.h"
 #include "nodes/structure/speciesBase.h"
 
-CommonImproperModel::CommonImproperModel(SpeciesBaseNode *species) : CommonTermModel(species), sourceData_(species->commonImpropers())
+CommonImproperModel::CommonImproperModel(SpeciesBaseNode *species)
+    : CommonTermModel(species), sourceData_(species->commonImpropers())
 {
     // Set connections
     modelUpdater.setModel(this);

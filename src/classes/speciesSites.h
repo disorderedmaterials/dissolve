@@ -48,5 +48,5 @@ class SpeciesSites : ResolvableContext
     // Read values from a serialisable value
     void deserialise(const SerialisedValue &node);
     // Resolve internal resolvable name references with supplied data
-    void resolve(const std::map<std::string, const SpeciesBaseNode *> &speciesInScope) override;
+    void resolve(const std::map<std::string, const SpeciesBaseNode *> &reachableSpecies) override;
 };

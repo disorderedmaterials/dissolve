@@ -72,7 +72,8 @@ std::map<const Isotopologue *, double> IsotopologueSet::normalisedIsotopologues(
 int IsotopologueSet::nSpecies() const { return isotopologues_.size(); }
 
 // Return vector of all Isotopologues
-ResolvableKeyedVector<const SpeciesBaseNode *, ResolvableKeyedVector<const Isotopologue *, double>> &IsotopologueSet::isotopologues()
+ResolvableKeyedVector<const SpeciesBaseNode *, ResolvableKeyedVector<const Isotopologue *, double>> &
+IsotopologueSet::isotopologues()
 {
     return isotopologues_;
 }
@@ -115,13 +116,13 @@ void IsotopologueSet::deserialise(const SerialisedValue &node)
 }
 
 // Resolve internal resolvable name references with supplied data
-void IsotopologueSet::resolve(const std::map<std::string, const SpeciesBaseNode *> &speciesInScope)
+void IsotopologueSet::resolve(const std::map<std::string, const SpeciesBaseNode *> &reachableSpecies)
 {
     for (auto &[resolvableSpecies, topes] : isotopologues_)
     {
         // Find the named species
-        if (speciesInScope.contains(std::string(resolvableSpecies.name())))
-            resolvableSpecies.resolve(speciesInScope.at(std::string(resolvableSpecies.name())));
+        if (reachableSpecies.contains(std::string(resolvableSpecies.name())))
+            resolvableSpecies.resolve(reachableSpecies.at(std::string(resolvableSpecies.name())));
         else
             throw(std::runtime_error(std::format("Species '{}' is used in IsotopologueSet, but no such species is in scope.\n",
                                                  resolvableSpecies.name())));

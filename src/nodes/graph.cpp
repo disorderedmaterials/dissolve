@@ -338,9 +338,10 @@ void Graph::deserialise(const SerialisedValue &node)
 // Resolve internal resolvable name references with supplied data
 void Graph::resolve()
 {
+    // Obtain resolvable data
     std::map<std::string, const SpeciesBaseNode *> reachableSpecies;
-    for (auto &node : ancestors<SpeciesNode>())
-        reachableSpecies[std::string(node->name())] = &node->species();
+    for (auto &speciesBase : ancestors<SpeciesBaseNode>())
+        reachableSpecies[std::string(speciesBase->name())] = speciesBase;
 
     for (auto &option : std::views::values(options_))
         option->resolve(reachableSpecies);

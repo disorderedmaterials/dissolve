@@ -3,8 +3,8 @@
 
 #include "classes/box.h"
 #include "classes/fragment.h"
-#include "nodes/structure/speciesBase.h"
 #include "classes/structure.h"
+#include "nodes/structure/speciesBase.h"
 
 // Finalise all relationships between intramolecular data
 void Species::finaliseIntramolecularData(bool recalculateAnglesAndTorsions)

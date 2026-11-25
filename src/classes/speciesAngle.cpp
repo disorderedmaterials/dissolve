@@ -2,9 +2,9 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/speciesAngle.h"
-#include "nodes/structure/speciesBase.h"
 #include "classes/speciesAtom.h"
 #include "math/mathFunc.h"
+#include "nodes/structure/speciesBase.h"
 
 SpeciesAngle::SpeciesAngle() : SpeciesIntra(nullptr, AngleFunctions::Form::None) {}
 
