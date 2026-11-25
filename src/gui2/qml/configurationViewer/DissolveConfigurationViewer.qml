@@ -94,31 +94,4 @@ View3D {
         }
 
     }
-
-    // Repeater3D {
-    //     model: configurationView.molecules
-
-    //     delegate: Repeater3D {
-    //         id: bondRepeater
-
-    //         required property var bonds
-
-    //         model: bondRepeater.bonds
-
-    //         delegate: Model {
-    //             required property vector3d ri
-    //             required property vector3d rj
-
-    //             //! [3dcube]
-    //             geometry: ProceduralMesh {
-    //                 indexes: [0, 1]
-    //                 positions: [ri.times(configurationView.scale), rj.times(configurationView.scale)]
-    //                 primitiveMode: ProceduralMesh.Lines
-    //             }
-    //             materials: PrincipledMaterial {
-    //                 baseColor: "black"
-    //             }
-    //         }
-    //     }
-    // }
 }
