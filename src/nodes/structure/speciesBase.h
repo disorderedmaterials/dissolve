@@ -40,15 +40,7 @@ class SpeciesBaseNode : public Node
     /*
      * Basic Information
      */
-    private:
-    // Name of the Species
-    std::string name_;
-
     public:
-    // Set name of the Species
-    void setName(std::string_view name);
-    // Return the name of the Species
-    std::string_view name() const;
     // Check set-up of Species
     bool checkSetUp() const;
     // Print Species information

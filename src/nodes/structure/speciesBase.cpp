@@ -42,12 +42,6 @@ void SpeciesBaseNode::clear()
  * Basic Information
  */
 
-// Set name of the Species
-void SpeciesBaseNode::setName(std::string_view name) { name_ = DissolveSys::niceName(name); }
-
-// Return the name of the Species
-std::string_view SpeciesBaseNode::name() const { return name_; }
-
 // Check set-up of Species
 bool SpeciesBaseNode::checkSetUp() const
 {
