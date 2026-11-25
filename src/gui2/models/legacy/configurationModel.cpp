@@ -159,9 +159,9 @@ QVariant MoleculeBondsModel::data(const QModelIndex &index, int role) const
 
     switch (role)
     {
-        case MoleculeBondsModel::ConfigurationBondsModelRoles::R:
+        case MoleculeBondsModel::ConfigurationBondsModelRoles::RI:
             return QVector3D(ii.x, ii.y, ii.z);
-        case MoleculeBondsModel::ConfigurationBondsModelRoles::R2:
+        case MoleculeBondsModel::ConfigurationBondsModelRoles::RJ:
             return QVector3D(jj.x, jj.y, jj.z);
     }
     return {};
@@ -176,7 +176,7 @@ void MoleculeBondsModel::reset()
 QHash<int, QByteArray> MoleculeBondsModel::roleNames() const
 {
     QHash<int, QByteArray> roles;
-    roles[ConfigurationBondsModelRoles::R] = "r";
-    roles[ConfigurationBondsModelRoles::R2] = "r2";
+    roles[ConfigurationBondsModelRoles::RI] = "ri";
+    roles[ConfigurationBondsModelRoles::RJ] = "rj";
     return roles;
 }

@@ -38,8 +38,8 @@ class MoleculeBondsModel : public QAbstractListModel
 
     enum ConfigurationBondsModelRoles
     {
-        R = Qt::UserRole + 0,
-        R2 = Qt::UserRole + 1,
+        RI = Qt::UserRole + 0,
+        RJ = Qt::UserRole + 1,
     };
 
     private:

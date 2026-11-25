@@ -86,13 +86,13 @@ View3D {
             model: bondRepeater.bonds
 
             delegate: Model {
-                required property vector3d r
-                required property vector3d r2
+                required property vector3d ri
+                required property vector3d rj
 
                 //! [3dcube]
                 geometry: ProceduralMesh {
                     indexes: [0, 1]
-                    positions: [r.times(configurationView.scale), r2.times(configurationView.scale)]
+                    positions: [ri.times(configurationView.scale), rj.times(configurationView.scale)]
                     primitiveMode: ProceduralMesh.Lines
                 }
                 materials: PrincipledMaterial {
