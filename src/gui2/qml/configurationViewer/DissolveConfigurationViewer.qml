@@ -87,10 +87,11 @@ View3D {
         geometry: ProceduralMesh {
             indexes: bondMesh.indexes
             positions: bondMesh.positions
+            colors: bondMesh.colours
             primitiveMode: ProceduralMesh.Lines
         }
         materials: PrincipledMaterial {
-            baseColor: "black"
+            baseColor: "white"
         }
 
     }
