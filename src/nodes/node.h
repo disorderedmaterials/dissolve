@@ -354,11 +354,11 @@ class Node
     // Persistent state serialisables
     std::map<std::string, std::shared_ptr<SerialisableData>> state_;
 
-    private:
-    // Save node in restart file
-    virtual std::optional<SerialisedValue> innerSaveRestart() const { return {}; }
-    // Load node from restart file
-    virtual bool innerLoadRestart(SerialisedValue &data) { return false; }
+    protected:
+    // Express state as a serialisable value
+    virtual void serialiseStateData(SerialisedValue &state) const;
+    // Read state data from a serialisable value
+    virtual bool deserialiseStateData(const SerialisedValue &state);
 
     public:
     // Clear any local data
@@ -368,10 +368,6 @@ class Node
     {
         state_[std::string(key)] = std::make_shared<SerialisableClass<DataClass>>(key, data);
     }
-    // Express state as a serialisable value
-    SerialisedValue serialiseState() const;
-    // Read persistent data from a serialisable value
-    void deserialiseState(const SerialisedValue &node);
     // Return timing information (in seconds)
     SampledDouble timing() const;
 
@@ -391,8 +387,8 @@ class Node
     virtual void deserialise(const SerialisedValue &node);
     // Resolve internal resolvable name references with supplied data
     virtual void resolve();
-    // Save node in restart file
-    virtual void saveRestart(std::filesystem::path directory) const;
-    // Load node from restart file
-    virtual bool loadRestart(std::filesystem::path directory);
+    // Serialise state to specified directory
+    virtual void serialiseState(std::filesystem::path directory) const;
+    // Read state from specified directory
+    virtual bool deserialiseState(std::filesystem::path directory);
 };

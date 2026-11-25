@@ -147,8 +147,8 @@ class Graph : public Node
     void deserialise(const SerialisedValue &node) override;
     // Resolve internal resolvable name references with supplied data
     void resolve() override;
-    // Save node in restart file
-    void saveRestart(std::filesystem::path directory) const override;
-    // Load node from restart file
-    bool loadRestart(std::filesystem::path directory) override;
+    // Serialise state to specified directory
+    void serialiseState(std::filesystem::path directory) const override;
+    // Read state from specified directory
+    bool deserialiseState(std::filesystem::path directory) override;
 };

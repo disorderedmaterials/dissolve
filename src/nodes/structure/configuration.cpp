@@ -29,39 +29,29 @@ std::string_view ConfigurationNode::summary() const { return "A Configuration.";
 // Return configuration object
 Configuration &ConfigurationNode::configuration() { return configuration_; }
 
-/*
- * Processing
- */
-
-// Perform processing
-NodeConstants::ProcessResult ConfigurationNode::process() { return NodeConstants::ProcessResult::Unchanged; }
-
-// Save node in restart file
-std::optional<SerialisedValue> ConfigurationNode::innerSaveRestart() const
+// Express state as a serialisable value
+void ConfigurationNode::serialiseStateData(SerialisedValue &state) const
 {
-    SerialisedValue result;
-    result["temperature"] = configuration_.temperature();
-    Serialisable::vector(configuration_.atoms(), "atoms", result,
+    state["temperature"] = configuration_.temperature();
+    Serialisable::vector(configuration_.atoms(), "atoms", state,
                          [](const ConfigurationAtom &atom)
                          {
                              SerialisedValue result;
                              atom.r().serialise("r", result);
                              return result["r"];
                          });
-
-    return {result};
 }
 
-// Load node from restart file
-bool ConfigurationNode::innerLoadRestart(SerialisedValue &data)
+// Read state data from a serialisable value
+bool ConfigurationNode::deserialiseStateData(const SerialisedValue &state)
 {
-    if (data.contains("temperature"))
-        configuration_.setTemperature(data["temperature"].as_floating());
+    if (state.contains("temperature"))
+        configuration_.setTemperature(state.at("temperature").as_floating());
     else
         return false;
-    if (data.contains("atoms"))
+    if (state.contains("atoms"))
     {
-        auto pos = Deserialisable::vector<Vector3>(data["atoms"]);
+        auto pos = Deserialisable::vector<Vector3>(state.at("atoms"));
         auto &atoms = configuration_.atoms();
         for (auto i = 0; i < atoms.size(); ++i)
             atoms[i].setR(pos[i]);
@@ -70,3 +60,10 @@ bool ConfigurationNode::innerLoadRestart(SerialisedValue &data)
         return false;
     return true;
 }
+
+/*
+ * Processing
+ */
+
+// Perform processing
+NodeConstants::ProcessResult ConfigurationNode::process() { return NodeConstants::ProcessResult::Unchanged; }

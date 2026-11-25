@@ -348,38 +348,17 @@ DissolveGraph *Node::dissolveGraph() { return parentGraph_->dissolveGraph(); }
 void Node::clearData() {}
 
 // Express state data as a serialisable value
-SerialisedValue Node::serialiseState() const
-{
-    SerialisedValue result;
-    timing_.serialise("timing", result);
-
-    for (auto &[key, serialisable] : state_)
-        if (serialisable->canSerialise())
-            result[key] = serialisable->serialise();
-
-    return result;
-}
+void Node::serialiseStateData(SerialisedValue &state) const {}
 
 // Read state data from a serialisable value
-void Node::deserialiseState(const SerialisedValue &node)
+bool Node::deserialiseStateData(const SerialisedValue &node)
 {
     // Obtain resolvable data
     std::map<std::string, const SpeciesBaseNode *> reachableSpecies;
     for (auto &speciesBase : ancestors<SpeciesBaseNode>())
         reachableSpecies[std::string(speciesBase->name())] = speciesBase;
 
-    timing_.deserialise(node.at("timing"));
-
-    // Read in defined serialisables if they exist
-    for (auto &[key, serialisable] : state_)
-        if (node.contains(key))
-        {
-            // Deserialise the data
-            serialisable->deserialise(node.at(key));
-
-            // Resolve any named data
-            serialisable->resolve(reachableSpecies);
-        }
+    return true;
 }
 
 // Return timing information (in seconds) for this Module
@@ -481,27 +460,37 @@ bool Node::hasAncestor(const Node *node) const { return allAncestors().contains(
 // Check if this node is an ancestor to a given node
 bool Node::isAncestor(const Node *node) const { return node->allAncestors().contains(this); }
 
-void Node::saveRestart(std::filesystem::path directory) const
+// Serialise state to specified directory
+void Node::serialiseState(std::filesystem::path directory) const
 {
-    auto node = innerSaveRestart();
-    if (!node)
-        return;
+    // All nodes have timing data
+    SerialisedValue state;
+    timing_.serialise("timing", state);
+
+    // Get any specific state data
+    serialiseStateData(state);
+
     auto filePath = directory / name();
     filePath += ".cbor";
     std::ofstream outfile(filePath, std::ios::binary | std::ios::out);
-    auto data = CBOR::to(*node);
+    auto data = CBOR::to(state);
     outfile.write(reinterpret_cast<const char *>(data.data()), data.size());
     outfile.close();
 }
 
-bool Node::loadRestart(std::filesystem::path directory)
+// Read state from specified directory
+bool Node::deserialiseState(std::filesystem::path directory)
 {
     auto filePath = directory / name();
     filePath += ".cbor";
     if (!std::filesystem::exists(filePath))
         return false;
     std::ifstream infile(filePath, std::ios::binary | std::ios::in);
-    auto data = CBOR::from(std::move(infile));
+    auto state = CBOR::from(std::move(infile));
     infile.close();
-    return innerLoadRestart(data);
+
+    // Get timing data
+    timing_.deserialise(state.at("timing"));
+
+    return deserialiseStateData(state);
 }

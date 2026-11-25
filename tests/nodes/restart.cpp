@@ -25,13 +25,13 @@ TEST(RestartTest, Configuration)
 
     auto path = std::filesystem::temp_directory_path() / "dissolve" / "RestartTest";
     std::filesystem::create_directories(path);
-    testGraph.saveRestart(path);
+    testGraph.serialiseState(path);
 
     auto configNode = dynamic_cast<ConfigurationNode *>(testGraph.findNode("Box"));
     ASSERT_TRUE(configNode);
     std::vector<ConfigurationAtom> before = configNode->configuration().atoms();
 
-    testGraph.loadRestart(path);
+    ASSERT_TRUE(testGraph.deserialiseState(path));
     std::vector<ConfigurationAtom> after = configNode->configuration().atoms();
 
     auto getR = [](const auto x) { return x.r(); };
