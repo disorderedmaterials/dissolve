@@ -14,22 +14,22 @@ GraphEdges::GraphEdges(GraphModel *parent, Graph *&graph)
 
 GraphEdges::GraphEdges(const GraphEdges &other) : graph_(other.graph_) {}
 
-//
+// Return the graph
 Graph *&GraphEdges::graph() { return graph_; }
 
-//
+// Return loop edges belonging to the graph
 const Graph::Edges *GraphEdges::loop() const { return loop_; }
 
-//
+// Return standard edges belonging to the graph
 const Graph::Edges *GraphEdges::standard() const { return standard_; }
 
-//
+// Set the loop edges belonging to the graph
 void GraphEdges::setLoopEdges(Graph::Edges *edges) { loop_ = edges; }
 
-//
+// Set the standard edges belonging to the graph
 void GraphEdges::setEdges(Graph::Edges *edges) { standard_ = edges; }
 
-//
+// Return the total edge count (combined number of standard and loop edges)
 int GraphEdges::count() { return (standard_ ? standard_->size() : 0) + (loop_ ? loop_->size() : 0); }
 
 // Remove an edge. Returns false if the edge does not exist

@@ -9,13 +9,13 @@
 Plot2DModel::Plot2DModel(const std::string &name, const Data2D *sourceData)
     : PlotModelBase(2), name_(name), sourceData_(sourceData)
 {
-    regenerateIndices(sourceData_->xAxis().size(), sourceData_->yAxis().size());
+    generateIndices(sourceData_->xAxis().size(), sourceData_->yAxis().size());
 }
 
-//
+// Return the name of the dataset being plotted
 QString Plot2DModel::name() { return QString::fromStdString(name_); }
 
-//
+// Return the minimum x-value in the dataset
 double Plot2DModel::minX()
 {
     const auto &x = sourceData_->xAxis();
@@ -24,7 +24,7 @@ double Plot2DModel::minX()
     return *std::min_element(x.begin(), x.end());
 }
 
-//
+// Return the minimum y-value in the dataset
 double Plot2DModel::minY()
 {
     const auto &y = sourceData_->yAxis();
@@ -33,10 +33,10 @@ double Plot2DModel::minY()
     return *std::min_element(y.begin(), y.end());
 }
 
-//
+// Return the minimum z-value in the dataset
 double Plot2DModel::minZ() { return sourceData_->minValue(); }
 
-//
+// Return the maximum x-value in the dataset
 double Plot2DModel::maxX()
 {
     const auto &x = sourceData_->xAxis();
@@ -46,7 +46,7 @@ double Plot2DModel::maxX()
     return max;
 }
 
-//
+// Return the maximum y-value in the dataset
 double Plot2DModel::maxY()
 {
     const auto &y = sourceData_->yAxis();
@@ -56,32 +56,32 @@ double Plot2DModel::maxY()
     return max;
 }
 
-//
+// Return the maximum z-value in the dataset
 double Plot2DModel::maxZ() { return sourceData_->maxValue(); }
 
-//
+// Return the name of the x-axis
 QString Plot2DModel::xName() { return QString::fromStdString(xName_); }
 
-//
+// Return the name of the y-axis
 QString Plot2DModel::yName() { return QString::fromStdString(yName_); }
 
-//
+// Return the name of the z-axis
 QString Plot2DModel::zName() { return QString::fromStdString(zName_); }
 
-//
+// Return the current number of x-axis values
 int Plot2DModel::currentNXValues() { return currentNXValues_; }
 
-//
+// Return the current number of y-axis values
 int Plot2DModel::currentNYValues() { return currentNYValues_; }
 
-//
+// Perform any required updates to the model when the data is changed
 void Plot2DModel::handleDataChanged()
 {
     const auto &source = sourceData_;
     const auto nX = source->xAxis().size();
     const auto nY = source->yAxis().size();
     if (nX != currentNXValues_ || nY != currentNYValues_)
-        regenerateIndices(nX, nY);
+        generateIndices(nX, nY);
     for (int i = 0; i < indices_.size(); i++)
     {
         auto index = this->index(i, 0);
@@ -90,8 +90,8 @@ void Plot2DModel::handleDataChanged()
     Q_EMIT contentChanged();
 }
 
-//
-void Plot2DModel::regenerateIndices(int nX, int nY)
+// Generate the indices for the x-y plane, given the numbe rof x- and y-axis values
+void Plot2DModel::generateIndices(int nX, int nY)
 {
     const int nIndices = nX * nY;
     indices_.clear();
@@ -103,7 +103,7 @@ void Plot2DModel::regenerateIndices(int nX, int nY)
     currentNYValues_ = nY;
 }
 
-//
+// Returns the z value at a given x-y point
 double Plot2DModel::z(int x, int y) { return sourceData_->value(x, y); }
 
 /*

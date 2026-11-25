@@ -37,57 +37,57 @@ class Plot2DModel : public PlotModelBase
     };
 
     private:
-    //
+    // Indexes of the x-y plane
     std::vector<std::pair<int, int>> indices_;
     // Dataset name
     const std::string &name_;
-    //
+    // Source data
     const Data2D *sourceData_;
-    //
+    // X-axis name
     std::string xName_{"x-axis"};
-    //
+    // Y-axis name
     std::string yName_{"y-axis"};
-    //
+    // Z-axis name
     std::string zName_{"z-axis"};
-    //
+    // Current number of x-axis values
     int currentNXValues_;
-    //
+    // Current number of y-axis values
     int currentNYValues_;
 
     private:
-    //
+    // Return the name of the dataset being plotted
     QString name();
-    //
+    // Return the minimum x-value in the dataset
     double minX();
-    //
+    // Return the minimum y-value in the dataset
     double minY();
-    //
+    // Return the minimum z-value in the dataset
     double minZ();
-    //
+    // Return the maximum x-value in the dataset
     double maxX();
-    //
+    // Return the maximum y-value in the dataset
     double maxY();
-    //
+    // Return the maximum z-value in the dataset
     double maxZ();
-    //
+    // Return the name of the x-axis
     QString xName();
-    //
+    // Return the name of the y-axis
     QString yName();
-    //
+    // Return the name of the z-axis
     QString zName();
-    //
+    // Return the current number of x-axis values
     int currentNXValues();
-    //
+    // Return the current number of y-axis values
     int currentNYValues();
 
     private:
-    //
+    // Perform any required updates to the model when the data is changed
     void handleDataChanged() override;
-    //
-    void regenerateIndices(int nX, int nY);
+    // Generate the indices for the x-y plane, given the numbe rof x- and y-axis values
+    void generateIndices(int nX, int nY);
 
     public Q_SLOTS:
-    //
+    // Returns the z value at a given x-y point
     double z(int x, int y);
 
     /*

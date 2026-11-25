@@ -51,7 +51,6 @@ bool RenderableModel::empty() { return dataSets_.empty(); }
  * QAbstractListModel overrides
  */
 
-//
 int RenderableModel::rowCount(const QModelIndex &parent) const { return dataSets_.size(); }
 
 // Set source 1D data

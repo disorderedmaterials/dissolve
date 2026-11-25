@@ -16,14 +16,12 @@ class DelayNode : public Node
      * Definition
      */
     private:
-    //
+    // Delay value in milliseconds
     Number delay_{2000};
-    //
+    // Input number
     Number input_{0.0};
-    //
+    // Output number
     Number output_{0.0};
-    //
-    bool print_{true};
 
     public:
     // Return type of the node

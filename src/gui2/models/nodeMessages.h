@@ -34,7 +34,7 @@ class NodeMessageModel : public QAbstractListModel
     protected:
     // Return the message list
     Node::MessageStore &messageList();
-    //
+    // Append a new message to the model
     const StatusMessagePair *append(const StatusMessagePair *element);
 
     /*
@@ -88,7 +88,7 @@ class NodeMessages : public QObject
     private:
     // Reset flags
     void resetFlags();
-    //
+    // Initialise the node messages object
     void initialise();
 
     private:

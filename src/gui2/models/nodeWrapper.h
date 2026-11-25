@@ -37,7 +37,7 @@ class NodeWrapper
     const Node *node() const { return node_; }
     // Does this node contain other nodes?
     bool hasInner() { return dynamic_cast<Graph *>(node_) != nullptr; }
-    //
+    // Return the renderable model pointer
     const RenderableModel *renderableModel() const { return renderables.get(); }
     RenderableModel *renderableModel() { return renderables.get(); }
 

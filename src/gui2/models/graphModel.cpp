@@ -76,7 +76,7 @@ ParameterEndPointsModel *GraphModel::parameterEndPoints() { return &parameterEnd
 // Access the GraphNodeModel
 GraphNodeModel *GraphModel::nodes() { return &nodes_; }
 
-//
+// Return a reference to the node wrapper whose wrapped node has a given name
 NodeWrapper &GraphModel::wrappedNode(std::string_view nodeName)
 {
     auto it = std::find_if(wrapped_.begin(), wrapped_.end(),
@@ -84,7 +84,7 @@ NodeWrapper &GraphModel::wrappedNode(std::string_view nodeName)
     return wrapped_[std::distance(wrapped_.begin(), it)];
 }
 
-//
+// Return an iterable graph pointer from this graph
 IterableGraph *GraphModel::iterable() { return iterable_; }
 
 // Returns the graph status icon

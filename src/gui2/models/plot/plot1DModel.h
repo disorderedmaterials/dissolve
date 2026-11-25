@@ -35,31 +35,31 @@ class Plot1DModel : public PlotModelBase
     private:
     // Dataset name
     const std::string &name_;
-    //
+    // Source data
     const Data1D *sourceData_;
-    //
+    // X-axis name
     std::string xName_{"x-axis"};
-    //
+    // Y-axis name
     std::string yName_{"y-axis"};
 
     private:
-    //
+    // Return the name of the dataset being plotted
     QString name();
-    //
+    // Return the minimum x-value in the dataset
     double minX();
-    //
+    // Return the minimum y-value in the dataset
     double minY();
-    //
+    // Return the maximum x-value in the dataset
     double maxX();
-    //
+    // Return the maximum y-value in the dataset
     double maxY();
-    //
+    // Return the name of the x-axis
     QString xName();
-    //
+    // Return the name of the y-axis
     QString yName();
 
     private:
-    //
+    // Perform any required updates to the model when the data is changed
     void handleDataChanged() override;
 
     /*
@@ -69,8 +69,6 @@ class Plot1DModel : public PlotModelBase
     public:
     // Number of rows
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
-    // Number of columns
-    // int columnCount(const QModelIndex &parent = QModelIndex()) const override;
     // Access edge by QModelIndex.  The correct role can be found in the roleNames function.
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
     // Return the mapping between role index and QML value name.  This is required by QAbstractListModel

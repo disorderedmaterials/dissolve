@@ -119,90 +119,92 @@ void NodeMessages::setGraphModel(GraphModel *graphModel)
         },
         Qt::ConnectionType::DirectConnection);
     // QObject::connect(graphModel_, &GraphModel::graphReconstructionComplete, this, &NodeMessages::peekNode);
-    QObject::connect(graphModel_, &GraphModel::graphReconstructionComplete, this,
-                     [this]()
-                     {
-                         const auto graphStatus = graphModel_->graphStatus();
-                         if (std::holds_alternative<GraphModel::GraphGlobalStates>(graphStatus) &&
-                             std::get<GraphModel::GraphGlobalStates>(graphStatus) == GraphModel::GraphGlobalStates::InProgress)
-                             initialise();
-                         peekNode();
+    QObject::connect(
+        graphModel_, &GraphModel::graphReconstructionComplete, this,
+        [this]()
+        {
+            const auto graphStatus = graphModel_->graphStatus();
+            if (std::holds_alternative<GraphModel::GraphGlobalStates>(graphStatus) &&
+                std::get<GraphModel::GraphGlobalStates>(graphStatus) == GraphModel::GraphGlobalStates::InProgress)
+                initialise();
+            peekNode();
         },
         Qt::ConnectionType::DirectConnection);
-    QObject::connect(graphModel_, &GraphModel::graphRunStarted, this,
-                     [this](const auto &runnerNode)
-                     {
-                         // Check that source node is not null (else, return early)
-                         if (!sourceNode())
-                             return;
+    QObject::connect(
+        graphModel_, &GraphModel::graphRunStarted, this,
+        [this](const auto &runnerNode)
+        {
+            // Check that source node is not null (else, return early)
+            if (!sourceNode())
+                return;
 
-                         // If source node is already up to date, no updates to messages as the node will not run
-                         if (sourceNode()->isUpToDate())
-                             return;
+            // If source node is already up to date, no updates to messages as the node will not run
+            if (sourceNode()->isUpToDate())
+                return;
 
-                         // If the node is unconnected, no updates to messages as the node will not run
-                         if (sourceNode()->inputEdges().empty() && sourceNode()->outputEdges().empty())
-                             return;
+            // If the node is unconnected, no updates to messages as the node will not run
+            if (sourceNode()->inputEdges().empty() && sourceNode()->outputEdges().empty())
+                return;
 
-                         // Check if the node is an ancestor to the runner node (if not - return since no updates expected)
-                         if (!sourceNode()->isAncestor(runnerNode))
-                             return;
+            // Check if the node is an ancestor to the runner node (if not - return since no updates expected)
+            if (!sourceNode()->isAncestor(runnerNode))
+                return;
 
-                         initialise();
+            initialise();
         },
         Qt::ConnectionType::DirectConnection);
-    QObject::connect(graphModel_, &GraphModel::graphRunComplete, this,
-                     [this]()
-                     {
-                         // Check that source node is not null (else, return early)
-                         if (!sourceNode())
-                             return;
+    QObject::connect(
+        graphModel_, &GraphModel::graphRunComplete, this,
+        [this]()
+        {
+            // Check that source node is not null (else, return early)
+            if (!sourceNode())
+                return;
 
-                         // Stop the timer and reset it
-                         if (peekTimer_)
-                         {
-                             peekTimer_->stop();
-                             peekTimer_ = nullptr;
-                         }
+            // Stop the timer and reset it
+            if (peekTimer_)
+            {
+                peekTimer_->stop();
+                peekTimer_ = nullptr;
+            }
 
-                         // If source node is not up to date, return
-                         if (!sourceNode()->isUpToDate())
-                             return;
+            // If source node is not up to date, return
+            if (!sourceNode()->isUpToDate())
+                return;
 
-                         // If no changes to node during graph run, return
-                         if (completionStatus_->has_value() &&
-                             completionStatus_->value() == NodeConstants::ProcessResult::Unchanged)
-                             return;
+            // If no changes to node during graph run, return
+            if (completionStatus_->has_value() && completionStatus_->value() == NodeConstants::ProcessResult::Unchanged)
+                return;
 
-                         peekNode();
+            peekNode();
         },
         Qt::ConnectionType::DirectConnection);
-    QObject::connect(graphModel_, &GraphModel::graphChanged, this,
-                     [this]()
-                     {
-                         // Check that source node is not null (else, return early)
-                         if (!sourceNode())
-                             return;
+    QObject::connect(
+        graphModel_, &GraphModel::graphChanged, this,
+        [this]()
+        {
+            // Check that source node is not null (else, return early)
+            if (!sourceNode())
+                return;
 
-                         // If node is up to date or has not been run yet, don't alter notification status
-                         if (sourceNode()->isUpToDate() ||
-                             (sourceNode()->versionIndex() < 0 && !completionStatus_->has_value()))
-                             return;
+            // If node is up to date or has not been run yet, don't alter notification status
+            if (sourceNode()->isUpToDate() || (sourceNode()->versionIndex() < 0 && !completionStatus_->has_value()))
+                return;
 
-                         // Do not invalidate nodes while graph is running
-                         // TODO: Try moving this check into the NodeMessages::setIndicatorProperties where we set the invalid
-                         // status, then use peekNode as normal here
-                         const auto graphStatus = graphModel_->graphStatus();
-                         if (std::holds_alternative<GraphModel::GraphGlobalStates>(graphStatus) &&
-                             std::get<GraphModel::GraphGlobalStates>(graphStatus) == GraphModel::InProgress)
-                             return;
+            // Do not invalidate nodes while graph is running
+            // TODO: Try moving this check into the NodeMessages::setIndicatorProperties where we set the invalid
+            // status, then use peekNode as normal here
+            const auto graphStatus = graphModel_->graphStatus();
+            if (std::holds_alternative<GraphModel::GraphGlobalStates>(graphStatus) &&
+                std::get<GraphModel::GraphGlobalStates>(graphStatus) == GraphModel::InProgress)
+                return;
 
-                         // Mark node as invalid since graph's connections have changed and it is no longer up to date
-                         resetFlags();
-                         flags_.setFlag(NodeMessages::Invalid);
+            // Mark node as invalid since graph's connections have changed and it is no longer up to date
+            resetFlags();
+            flags_.setFlag(NodeMessages::Invalid);
 
-                         setIndicatorProperties();
-                         Q_EMIT peeked();
+            setIndicatorProperties();
+            Q_EMIT peeked();
         },
         Qt::ConnectionType::DirectConnection);
 
@@ -245,7 +247,7 @@ void NodeMessages::peekNode()
     Q_EMIT peeked();
 }
 
-//
+// Initialise the node messages object
 void NodeMessages::initialise()
 {
     // Clear the outdated messages
@@ -360,7 +362,7 @@ void NodeMessages::updateMessages()
 // Return the message list
 Node::MessageStore &NodeMessageModel::messageList() { return messages_; }
 
-//
+// Append a new message to the model
 const NodeMessageModel::StatusMessagePair *NodeMessageModel::append(const NodeMessageModel::StatusMessagePair *element)
 {
     beginInsertRows(QModelIndex(), messages_.size(), messages_.size());

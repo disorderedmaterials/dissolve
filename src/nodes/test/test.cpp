@@ -327,7 +327,7 @@ const std::optional<Configuration> &TestNode::optionalConfiguration() const { re
 // Return the variant
 TestNode::TestVariant TestNode::variant() { return variant_; }
 
-//
+// Emplace an example sine dataset with a given phase angle (phi)
 void TestNode::emplaceSine(double phi)
 {
     // Append sine data
@@ -342,7 +342,7 @@ void TestNode::emplaceSine(double phi)
     }
 }
 
-//
+// Emplace an example cosine dataset with a given phase angle (phi)
 void TestNode::emplaceCosine(double phi)
 {
     // Append cosine data
@@ -357,7 +357,7 @@ void TestNode::emplaceCosine(double phi)
     }
 }
 
-//
+// Emplace an example 2D sinusoid dataset with a given phase angle (phi)
 void TestNode::shiftSinusoid2D(double phi)
 {
     auto dx = M_PI / 4;
@@ -394,8 +394,6 @@ NodeConstants::ProcessResult TestNode::process()
     emplaceSine(iteration_ * (M_PI / 4) * 0.2);
     emplaceCosine(iteration_ * (M_PI / 4) * 0.2);
     shiftSinusoid2D(iteration_ * (M_PI / 4) * 0.2);
-
-    message("Current iteration: {}", iteration_);
 
     number_ = number_ + 1;
 

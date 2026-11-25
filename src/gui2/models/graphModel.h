@@ -81,9 +81,9 @@ class GraphModel : public QObject
     GraphEdges *edges();
     // The model for the nodes in the graph
     GraphNodeModel *nodes();
-    //
+    // Return a reference to the node wrapper whose wrapped node has a given name
     NodeWrapper &wrappedNode(std::string_view nodeName);
-    //
+    // Return an iterable graph pointer from this graph
     IterableGraph *iterable();
     // Returns the graph status icon
     QUrl statusIcon();

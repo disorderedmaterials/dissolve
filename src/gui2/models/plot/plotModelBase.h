@@ -17,23 +17,23 @@ class PlotModelBase : public QAbstractListModel
     ~PlotModelBase() = default;
 
     private:
-    //
+    // Data version
     int version_{0};
 
     public:
-    //
+    // Number of dimensions (axes) used to plot the data
     const int N;
 
     public:
-    //
+    // Perform any required updates to the model when the data is changed
     virtual void handleDataChanged() = 0;
 
     Q_SIGNALS:
-    //
+    // Signal emitted when the plot content has changed
     void contentChanged();
 
     private:
-    //
+    // Returns the data version
     int version();
 
     /*

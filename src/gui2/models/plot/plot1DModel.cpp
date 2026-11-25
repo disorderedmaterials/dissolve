@@ -10,10 +10,10 @@ Plot1DModel::Plot1DModel(const std::string &name, const Data1D *sourceData)
 {
 }
 
-//
+// Return the name of the dataset being plotted
 QString Plot1DModel::name() { return QString::fromStdString(name_); }
 
-//
+// Return the minimum x-value in the dataset
 double Plot1DModel::minX()
 {
     const auto &x = sourceData_->xAxis();
@@ -22,10 +22,10 @@ double Plot1DModel::minX()
     return *std::min_element(x.begin(), x.end());
 }
 
-//
+// Return the minimum y-value in the dataset
 double Plot1DModel::minY() { return sourceData_->minValue(); }
 
-//
+// Return the maximum x-value in the dataset
 double Plot1DModel::maxX()
 {
     const auto &x = sourceData_->xAxis();
@@ -35,16 +35,16 @@ double Plot1DModel::maxX()
     return max;
 }
 
-//
+// Return the maximum y-value in the dataset
 double Plot1DModel::maxY() { return sourceData_->maxValue(); }
 
-//
+// Return the name of the x-axis
 QString Plot1DModel::xName() { return QString::fromStdString(xName_); }
 
-//
+// Return the name of the y-axis
 QString Plot1DModel::yName() { return QString::fromStdString(yName_); }
 
-//
+// Perform any required updates to the model when the data is changed
 void Plot1DModel::handleDataChanged()
 {
     const auto &source = sourceData_;

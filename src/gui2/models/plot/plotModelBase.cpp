@@ -8,5 +8,5 @@ PlotModelBase::PlotModelBase(int dimensions, QObject *parent) : QAbstractListMod
     QObject::connect(this, &PlotModelBase::contentChanged, this, [this]() { ++version_; });
 }
 
-//
+// Returns the data version
 int PlotModelBase::version() { return version_; }
