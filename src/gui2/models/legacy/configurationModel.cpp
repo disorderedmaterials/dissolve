@@ -5,9 +5,9 @@
 #include "classes/species.h"
 #include "data/elements.h"
 #include "nodes/structure/configuration.h"
-#include "qvectornd.h"
-#include <qstring.h>
-#include <qvariant.h>
+#include <QString>
+#include <QVariant>
+#include <QVector3D>
 
 /*
  * QAbstractItemModel overrides
