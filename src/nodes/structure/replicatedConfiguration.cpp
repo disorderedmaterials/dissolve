@@ -14,6 +14,7 @@ ReplicatedConfigurationNode::ReplicatedConfigurationNode(Graph *parentGraph) : N
 
     // Options
     addOption("Repeat", "Integer multiples to replicate the box contents along each axis", repeat_);
+    addOption("Grouping", "Group and replicate similar molecules together", grouping_);
 }
 
 /*
@@ -43,18 +44,48 @@ NodeConstants::ProcessResult ReplicatedConfigurationNode::process()
     newLengths.multiply(repeat_.x, repeat_.y, repeat_.z);
     replicated_.setBox(Box(newLengths, box.axisAngles()));
 
-    // Loop over cell images
-    for (auto ix = 0; ix < repeat_.x; ++ix)
-        for (auto iy = 0; iy < repeat_.y; ++iy)
-            for (auto iz = 0; iz < repeat_.z; ++iz)
-            {
-                // Determine translation vector
-                auto delta = box.axes() * Vector3(ix, iy, iz);
+    if (grouping_)
+    {
+        // Replicate runs of molecules of the same Species type in one go
+        auto startIndex = 0, endIndex = 0;
+        const auto &molecules = configuration_->molecules();
+        while (startIndex < configuration_->nMolecules())
+        {
+            // Determine the next end index
+            while (endIndex < molecules.size() && molecules[endIndex]->species() == molecules[startIndex]->species())
+                ++endIndex;
+            printf("SE = %d %d\n", startIndex, endIndex);
+            // Loop over cell images
+            for (auto ix = 0; ix < repeat_.x; ++ix)
+                for (auto iy = 0; iy < repeat_.y; ++iy)
+                    for (auto iz = 0; iz < repeat_.z; ++iz)
+                    {
+                        // Determine translation vector
+                        auto delta = box.axes() * Vector3(ix, iy, iz);
 
-                // Copy all molecules in the original configuration
-                for (auto &mol : configuration_->molecules())
-                    replicated_.copyMolecule(*mol)->translate(delta);
-            }
+                        for (auto i = startIndex; i < endIndex; ++i)
+                            replicated_.copyMolecule(*molecules[i])->translate(delta);
+                    }
+
+            // Set new indices
+            startIndex = endIndex;
+        }
+    }
+    else
+    {
+        // Loop over cell images
+        for (auto ix = 0; ix < repeat_.x; ++ix)
+            for (auto iy = 0; iy < repeat_.y; ++iy)
+                for (auto iz = 0; iz < repeat_.z; ++iz)
+                {
+                    // Determine translation vector
+                    auto delta = box.axes() * Vector3(ix, iy, iz);
+
+                    // Copy all molecules in the original configuration
+                    for (auto &mol : configuration_->molecules())
+                        replicated_.copyMolecule(*mol)->translate(delta);
+                }
+    }
 
     replicated_.updateObjectRelationships();
 
