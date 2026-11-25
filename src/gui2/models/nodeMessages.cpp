@@ -114,11 +114,13 @@ void NodeMessages::setGraphModel(GraphModel *graphModel)
             if (!parentGraph->findNode(thisName) || parentGraph->name() == thisName)
                 return;
 
+            // Update the renderables associated with the source node
             auto &wrappedNode = graphModel_->wrappedNode(sourceNode()->name());
+            if (!wrappedNode.renderableModel()->renderablesRealized())
+                wrappedNode.reconstructRenderables();
             wrappedNode.renderableModel()->update();
         },
         Qt::ConnectionType::DirectConnection);
-    // QObject::connect(graphModel_, &GraphModel::graphReconstructionComplete, this, &NodeMessages::peekNode);
     QObject::connect(
         graphModel_, &GraphModel::graphReconstructionComplete, this,
         [this]()

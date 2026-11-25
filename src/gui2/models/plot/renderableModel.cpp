@@ -13,24 +13,40 @@ RenderableModel::RenderableModel(const Node::NodeParameterMap &outputs)
     {
         // Handle Data1D source
         if (parameter->storedDataType() == typeid(Data1D))
+        {
+            ++nExpectedDatasets_;
             setData(index(rowCount(), 0),
                     QVariant::fromValue<RenderableModel::RenderableData>({name, parameter->getPtr<Data1D>()}));
+        }
 
         // Handle Data2D source
         if (parameter->storedDataType() == typeid(Data2D))
+        {
+            ++nExpectedDatasets_;
             setData(index(rowCount(), 0),
                     QVariant::fromValue<RenderableModel::RenderableData>({name, parameter->getPtr<Data2D>()}));
+        }
 
         // Handle Histogram1D source
         if (parameter->storedDataType() == typeid(Histogram1D))
+        {
+            ++nExpectedDatasets_;
             setData(index(rowCount(), 0), QVariant::fromValue<RenderableModel::RenderableData>(
                                               {name, &parameter->getPtr<Histogram1D>()->accumulatedData()}));
+        }
 
         // Handle PartialSet source
         if (parameter->storedDataType() == typeid(PartialSet *))
         {
-            setData(index(rowCount(), 0), QVariant::fromValue<RenderableModel::RenderableData>(
-                                              {name + "/" + "Total", &parameter->get<PartialSet *>()->total()}));
+            // TODO: increment for each of total and partials
+            ++nExpectedDatasets_;
+
+            const auto *partialSet = parameter->get<PartialSet *>();
+            if (!partialSet)
+                continue;
+
+            setData(index(rowCount(), 0),
+                    QVariant::fromValue<RenderableModel::RenderableData>({name + "/" + "Total", &partialSet->total()}));
 
             // Do the same for bound and unbound totals and partials...
         }
@@ -40,18 +56,21 @@ RenderableModel::RenderableModel(const Node::NodeParameterMap &outputs)
 // Update all datasets
 void RenderableModel::update()
 {
-    for (auto &[_, model] : dataSets_)
+    for (auto &[_, model] : datasets_)
         model->handleDataChanged();
 }
 
 // Returns bool - true if there are no renderables associated with this node
-bool RenderableModel::empty() { return dataSets_.empty(); }
+bool RenderableModel::empty() { return datasets_.empty(); }
+
+// Returns bool - true if the number of realized datasets matches the number of expected datasets
+bool RenderableModel::renderablesRealized() const { return nExpectedDatasets_ == datasets_.size(); }
 
 /*
  * QAbstractListModel overrides
  */
 
-int RenderableModel::rowCount(const QModelIndex &parent) const { return dataSets_.size(); }
+int RenderableModel::rowCount(const QModelIndex &parent) const { return datasets_.size(); }
 
 // Set source 1D data
 bool RenderableModel::setData(const QModelIndex &index, const QVariant &value, int role)
@@ -66,7 +85,7 @@ bool RenderableModel::setData(const QModelIndex &index, const QVariant &value, i
     else
         return false;
 
-    dataSets_.emplace_back(renderable.name, std::move(model));
+    datasets_.emplace_back(renderable.name, std::move(model));
     return true;
 }
 
@@ -79,22 +98,22 @@ QVariant RenderableModel::data(const QModelIndex &index, int role) const
     switch (role - Qt::UserRole)
     {
         case KEY:
-            return QString::fromStdString(dataSets_.at(row).first);
+            return QString::fromStdString(datasets_.at(row).first);
         case DATA:
         {
-            auto *dataSet = dataSets_.at(row).second.get();
-            switch (dataSet->N)
+            auto *dataset = datasets_.at(row).second.get();
+            switch (dataset->N)
             {
                 case 1:
-                    return QVariant::fromValue<Plot1DModel *>(static_cast<Plot1DModel *>(dataSet));
+                    return QVariant::fromValue<Plot1DModel *>(static_cast<Plot1DModel *>(dataset));
                 case 2:
-                    return QVariant::fromValue<Plot2DModel *>(static_cast<Plot2DModel *>(dataSet));
+                    return QVariant::fromValue<Plot2DModel *>(static_cast<Plot2DModel *>(dataset));
                 default:
                     throw std::runtime_error("Attempted to load renderable dataset with invalid dimensionalty.");
             }
         }
         case DIMENSIONS:
-            return dataSets_.at(row).second->N;
+            return datasets_.at(row).second->N;
     }
     return {};
 }

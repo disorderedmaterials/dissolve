@@ -80,6 +80,10 @@ class Plot2DModel : public PlotModelBase
     // Return the current number of y-axis values
     int currentNYValues();
 
+    public:
+    // Return the source data pointer
+    const Data2D *sourceData() const;
+
     private:
     // Perform any required updates to the model when the data is changed
     void handleDataChanged() override;

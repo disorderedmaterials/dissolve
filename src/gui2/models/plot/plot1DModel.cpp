@@ -44,6 +44,9 @@ QString Plot1DModel::xName() { return QString::fromStdString(xName_); }
 // Return the name of the y-axis
 QString Plot1DModel::yName() { return QString::fromStdString(yName_); }
 
+// Return the source data pointer
+const Data1D *Plot1DModel::sourceData() const { return sourceData_; }
+
 // Perform any required updates to the model when the data is changed
 void Plot1DModel::handleDataChanged()
 {

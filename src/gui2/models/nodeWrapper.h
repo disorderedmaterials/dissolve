@@ -40,6 +40,8 @@ class NodeWrapper
     // Return the renderable model pointer
     const RenderableModel *renderableModel() const { return renderables.get(); }
     RenderableModel *renderableModel() { return renderables.get(); }
+    // Reconstruct the renderables model for this node
+    void reconstructRenderables() { renderables = std::make_unique<RenderableModel>(node()->outputs()); }
 
     private:
     // Pointer to the node we're wrapping

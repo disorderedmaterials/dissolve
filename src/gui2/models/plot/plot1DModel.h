@@ -58,6 +58,10 @@ class Plot1DModel : public PlotModelBase
     // Return the name of the y-axis
     QString yName();
 
+    public:
+    // Return the source data pointer
+    const Data1D *sourceData() const;
+
     private:
     // Perform any required updates to the model when the data is changed
     void handleDataChanged() override;

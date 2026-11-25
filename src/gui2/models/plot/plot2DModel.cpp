@@ -74,6 +74,9 @@ int Plot2DModel::currentNXValues() { return currentNXValues_; }
 // Return the current number of y-axis values
 int Plot2DModel::currentNYValues() { return currentNYValues_; }
 
+// Return the source data pointer
+const Data2D *Plot2DModel::sourceData() const { return sourceData_; }
+
 // Perform any required updates to the model when the data is changed
 void Plot2DModel::handleDataChanged()
 {

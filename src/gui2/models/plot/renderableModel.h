@@ -36,13 +36,17 @@ class RenderableModel : public QAbstractListModel
 
     private:
     // Renderable data
-    std::vector<std::pair<std::string, std::unique_ptr<PlotModelBase>>> dataSets_;
+    std::vector<std::pair<std::string, std::unique_ptr<PlotModelBase>>> datasets_;
+    //
+    int nExpectedDatasets_{0};
 
     public Q_SLOTS:
     // Update all renderable data
     void update();
     // Returns bool - true if there are no renderables associated with this node
     bool empty();
+    // Returns bool - true if the number of realized datasets matches the number of expected datasets
+    bool renderablesRealized() const;
 
     /*
      * QAbstractListModel overrides
