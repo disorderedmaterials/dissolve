@@ -5,12 +5,6 @@ import QtQuick3D
 import QtQuick3D.Helpers
 import QtQuick.Dialogs
 import QtQuick.Window
-import DissolveNodeGraphModule
-import DissolveControlsModule
-import DissolveDialogsModule
-import DissolveConfigurationViewer
-import Dissolve
-import ProjectDissolve
 import "../../DissolveNodeGraphModule"
 import "../../DissolveControlsModule"
 import "../../DissolveConfigurationViewer"
