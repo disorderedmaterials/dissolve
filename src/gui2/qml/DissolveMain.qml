@@ -447,19 +447,34 @@ ApplicationWindow {
                 anchors.top: parent.top
                 height: configurationPicker.height + 5
 
-                Text {
-                    id: configName
+                RowLayout {
+                    anchors.fill: parent
+                    spacing: 6
+                    Label {
+                        Layout.alignment: Qt.AlignVCenter
+                        Layout.fillWidth: false
+                        text: "Configuration"
+                    }
+                    ComboBox {
+                        id: configurationPicker
+                        Layout.fillWidth: false
+                        editable: true
+                        model: configModel
+                        textRole: "display"
+                    }
+                    Label {
+                        Layout.alignment: Qt.AlignVCenter
+                        Layout.fillWidth: false
+                        text: "Scale"
+                    }
+                    Slider {
+                        id: configurationScale
+                        Layout.fillWidth: true
 
-                    text: "Configuration"
-                }
-                ComboBox {
-                    id: configurationPicker
-
-                    anchors.left: configName.right
-                    anchors.top: parent.top
-                    editable: true
-                    model: configModel
-                    textRole: "display"
+                        from: 1.0
+                        to: 200.0
+                        value: 100.0
+                    }
                 }
             }
 
@@ -469,7 +484,7 @@ ApplicationWindow {
                 anchors.left: parent.left
                 anchors.right: parent.right
                 molecules: configModel.molecules
-                scale: 100.0
+                scale: configurationScale.value
             }
         }
     }

@@ -67,7 +67,7 @@ Rectangle {
 
                     eulerRotation.y: 90
                     position: r.times(configurationView.scale)
-                    scale: Qt.vector3d(0.2, 0.2, 0.2)
+                    scale: Qt.vector3d(5e-3, 5e-3, 5e-3).times(configurationView.scale)
                     source: "#Sphere"
 
                     materials: PrincipledMaterial {
@@ -83,6 +83,7 @@ Rectangle {
             BondMesh {
                 id: bondMesh
                 configuration: molecules.configuration
+                scale: configurationView.scale
             }
 
             geometry: ProceduralMesh {
