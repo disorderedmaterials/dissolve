@@ -385,6 +385,10 @@ TEST_F(BraggNodeTest, MgO_Intensities111)
     createSupercell({5, 5, 5});
     ASSERT_EQ(replicatedConfigurationNode_->run(), NodeConstants::ProcessResult::Success);
 
+    // Assign atom types to the species TODO DISSOLVE2
+    for (auto *sp : species_)
+        sp->atom(0).setAtomType(sp->addAtomType(sp->atom(0).Z()));
+
     // Add correlation nodes and test
     addCorrelationNodes({1, 1, 1});
     ASSERT_EQ(braggNode_->run(), NodeConstants::ProcessResult::Success);
