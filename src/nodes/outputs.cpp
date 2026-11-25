@@ -43,9 +43,3 @@ void OutputsNode::setUpdateRequired()
 
 // Is it appropriate to serialise this node?
 bool OutputsNode::shouldSerialise() const { return false; }
-
-// Express as a serialisable value
-void OutputsNode::serialise(std::string tag, SerialisedValue &target) const {}
-
-// Read values from a serialisable value
-void OutputsNode::deserialise(const SerialisedValue &node) {};

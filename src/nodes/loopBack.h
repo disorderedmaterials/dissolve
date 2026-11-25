@@ -48,8 +48,4 @@ class LoopBacksNode : public Node
     public:
     // Is it appropriate to serialise this node?
     bool shouldSerialise() const;
-    // Express as a serialisable value
-    void serialise(std::string tag, SerialisedValue &target) const;
-    // Read values from a serialisable value
-    void deserialise(const SerialisedValue &node);
 };
