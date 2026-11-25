@@ -439,7 +439,7 @@ ApplicationWindow {
             }
 
             // Tool Bar
-            Rectangle {
+            ToolBar {
                 id: configToolBar
 
                 anchors.left: parent.left
