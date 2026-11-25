@@ -450,6 +450,7 @@ ApplicationWindow {
                 RowLayout {
                     anchors.fill: parent
                     spacing: 6
+
                     Label {
                         Layout.alignment: Qt.AlignVCenter
                         Layout.fillWidth: false
@@ -457,6 +458,7 @@ ApplicationWindow {
                     }
                     ComboBox {
                         id: configurationPicker
+
                         Layout.fillWidth: false
                         editable: true
                         model: configModel
@@ -469,20 +471,19 @@ ApplicationWindow {
                     }
                     Slider {
                         id: configurationScale
-                        Layout.fillWidth: true
 
+                        Layout.fillWidth: true
                         from: 1.0
                         to: 200.0
                         value: 100.0
                     }
                 }
             }
-
             DissolveConfigurationViewer {
-                anchors.top: configToolBar.bottom
                 anchors.bottom: parent.bottom
                 anchors.left: parent.left
                 anchors.right: parent.right
+                anchors.top: configToolBar.bottom
                 molecules: configModel.molecules
                 scale: configurationScale.value
             }

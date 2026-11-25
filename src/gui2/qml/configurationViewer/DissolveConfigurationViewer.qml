@@ -7,9 +7,12 @@ import "../Dissolve"
 
 Rectangle {
     id: configurationView
+
     required property variant molecules
     required property real scale
+
     color: "black"
+
     View3D {
         anchors.fill: parent
         camera: cameraOrthographicLeft
@@ -80,22 +83,22 @@ Rectangle {
         Model {
             id: bondAggregate
 
-            BondMesh {
-                id: bondMesh
-                configuration: molecules.configuration
-                scale: configurationView.scale
-            }
-
             geometry: ProceduralMesh {
+                colors: bondMesh.colours
                 indexes: bondMesh.indexes
                 positions: bondMesh.positions
-                colors: bondMesh.colours
                 primitiveMode: ProceduralMesh.Lines
             }
             materials: PrincipledMaterial {
                 baseColor: "white"
             }
 
+            BondMesh {
+                id: bondMesh
+
+                configuration: molecules.configuration
+                scale: configurationView.scale
+            }
         }
     }
 }
