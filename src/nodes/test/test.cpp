@@ -143,8 +143,6 @@ NodeConstants::ProcessResult TestNode::process()
     emplaceCosine(iteration_ * (M_PI / 4) * 0.2);
     shiftSinusoid2D(iteration_ * (M_PI / 4) * 0.2);
 
-    number_ = number_ + 1;
-
     /*
      * Dynamic outputs
      */
