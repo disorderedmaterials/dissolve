@@ -52,32 +52,24 @@ Rectangle {
         DirectionalLight {
             eulerRotation.y: 270
         }
-        Repeater3D {
-            model: configurationView.molecules
+        Model {
+            id: atomAggregate
 
-            delegate: Repeater3D {
-                id: atomRepeater
+            geometry: ProceduralMesh {
+                colors: atomMesh.colours
+                indexes: atomMesh.indexes
+                positions: atomMesh.positions
+                primitiveMode: ProceduralMesh.Triangles
+            }
+            materials: PrincipledMaterial {
+                baseColor: "white"
+            }
 
-                required property var atoms
+            AtomMesh {
+                id: atomMesh
 
-                model: atomRepeater.atoms
-
-                delegate: Model {
-                    id: sphere
-
-                    required property string element
-                    required property vector3d r
-
-                    eulerRotation.y: 90
-                    position: (r.minus(molecules.centre)).times(configurationView.scale)
-                    scale: Qt.vector3d(5e-3, 5e-3, 5e-3).times(configurationView.scale)
-                    source: "#Sphere"
-
-                    materials: PrincipledMaterial {
-                        // TODO: More advanced colour controls
-                        baseColor: element == "C" ? "green" : "gray"
-                    }
-                }
+                configuration: molecules.configuration
+                scale: configurationView.scale
             }
         }
         Model {
