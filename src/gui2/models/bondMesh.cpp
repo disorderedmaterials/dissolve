@@ -9,7 +9,8 @@ double BondMesh::scale() const { return scale_; }
 void BondMesh::setScale(const double scl)
 {
     scale_ = scl;
-    buildMesh();
+    if (!positions_.empty())
+        updatePositions();
 }
 
 const Configuration *BondMesh::configuration() const { return config_; }
