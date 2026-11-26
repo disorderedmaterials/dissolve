@@ -12,8 +12,8 @@ class BondMesh : public QQuick3DGeometry
     Q_OBJECT
     Q_PROPERTY(const Configuration *configuration READ configuration WRITE setConfiguration);
     Q_PROPERTY(QList<QVector3D> positions READ positions NOTIFY newGeometry)
-    Q_PROPERTY(QList<QVector4D> colours READ colours NOTIFY newGeometry)
-    Q_PROPERTY(QList<uint> indexes READ indexes NOTIFY newGeometry)
+    Q_PROPERTY(QList<QVector4D> colours READ colours NOTIFY newConfig)
+    Q_PROPERTY(QList<uint> indexes READ indexes NOTIFY newConfig)
     Q_PROPERTY(double scale READ scale WRITE setScale)
 
     private:
@@ -30,9 +30,10 @@ class BondMesh : public QQuick3DGeometry
     QList<uint> indexes_;
     // Scaling to magnify the mesh
     double scale_;
-    // Repopulate the arrays with the latest data from the
-    // configuration
-    void updateMesh();
+    // Create the mesh for a new configuration
+    void buildMesh();
+    // Update positions in the existing mesh
+    void updatePositions(bool emits = true);
 
     public:
     const Configuration *configuration() const;
@@ -46,4 +47,5 @@ class BondMesh : public QQuick3DGeometry
 
     Q_SIGNALS:
     void newGeometry();
+    void newConfig();
 };
