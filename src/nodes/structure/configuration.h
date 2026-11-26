@@ -28,12 +28,6 @@ class ConfigurationNode : public Node
     // Configuration object
     Configuration configuration_;
 
-    protected:
-    // Express state as a serialisable value
-    void serialiseStateData(SerialisedValue &state) const override;
-    // Read state data from a serialisable value
-    bool deserialiseStateData(const SerialisedValue &node) override;
-
     public:
     // Return configuration object
     Configuration &configuration();

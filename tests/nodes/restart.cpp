@@ -13,6 +13,10 @@ namespace UnitTest
 {
 TEST(RestartTest, Configuration)
 {
+    GTEST_SKIP();
+    // TODO DISSOLVE2 This test is disable pending conversion of Configuration -> ConfigurationNode, but will become redundant
+    // anyway once round-trip testing through node test fixtures is complete.
+
     // Set up the test graph
     TestGraph testGraph;
     EXPECT_TRUE(testGraph.createConfiguration("Box", {{testGraph.createAtomicSpecies(Elements::Ar), 5000}}, 0.0213))

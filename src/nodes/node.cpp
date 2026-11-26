@@ -347,20 +347,6 @@ DissolveGraph *Node::dissolveGraph() { return parentGraph_->dissolveGraph(); }
 // Clear any local data
 void Node::clearData() {}
 
-// Express state data as a serialisable value
-void Node::serialiseStateData(SerialisedValue &state) const {}
-
-// Read state data from a serialisable value
-bool Node::deserialiseStateData(const SerialisedValue &node)
-{
-    // Obtain resolvable data
-    std::map<std::string, const SpeciesBaseNode *> reachableSpecies;
-    for (auto &speciesBase : ancestors<SpeciesBaseNode>())
-        reachableSpecies[std::string(speciesBase->name())] = speciesBase;
-
-    return true;
-}
-
 // Return timing information (in seconds) for this Module
 SampledDouble Node::timing() const { return timing_; }
 
@@ -467,8 +453,10 @@ void Node::serialiseState(std::filesystem::path directory) const
     SerialisedValue state;
     timing_.serialise("timing", state);
 
-    // Get any specific state data
-    serialiseStateData(state);
+    // Serialise tagged state data
+    for (auto &[key, serialisable] : state_)
+        if (serialisable->canSerialise())
+            state[key] = serialisable->serialise();
 
     auto filePath = directory / name();
     filePath += ".cbor";
@@ -485,6 +473,7 @@ bool Node::deserialiseState(std::filesystem::path directory)
     filePath += ".cbor";
     if (!std::filesystem::exists(filePath))
         return false;
+
     std::ifstream infile(filePath, std::ios::binary | std::ios::in);
     auto state = CBOR::from(std::move(infile));
     infile.close();
@@ -492,5 +481,22 @@ bool Node::deserialiseState(std::filesystem::path directory)
     // Get timing data
     timing_.deserialise(state.at("timing"));
 
-    return deserialiseStateData(state);
+    // Obtain resolvable data
+    // TODO DISSOLVE2 - SHOULD WE MOVE THIS TO BE AT THE GRAPH LEVEL?
+    std::map<std::string, const SpeciesBaseNode *> reachableSpecies;
+    for (auto &speciesBase : ancestors<SpeciesBaseNode>())
+        reachableSpecies[std::string(speciesBase->name())] = speciesBase;
+
+    // Read in defined serialisables if they exist
+    for (auto &[key, serialisable] : state_)
+        if (state.contains(key))
+        {
+            // Deserialise the data
+            serialisable->deserialise(state.at(key));
+
+            // Resolve any named data
+            serialisable->resolve(reachableSpecies);
+        }
+
+    return true;
 }

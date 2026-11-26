@@ -354,12 +354,6 @@ class Node
     // Persistent state serialisables
     std::map<std::string, std::shared_ptr<SerialisableData>> state_;
 
-    protected:
-    // Express state as a serialisable value
-    virtual void serialiseStateData(SerialisedValue &state) const;
-    // Read state data from a serialisable value
-    virtual bool deserialiseStateData(const SerialisedValue &state);
-
     public:
     // Clear any local data
     virtual void clearData();
