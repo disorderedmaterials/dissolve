@@ -17,11 +17,21 @@ class BondMesh : public QQuick3DGeometry
     Q_PROPERTY(double scale READ scale WRITE setScale)
 
     private:
+    // The configuration which holds our bonds
     const Configuration *config_;
+    // Mesh vertices as list of x, y, z
     QList<QVector3D> positions_;
+    // Vertex colours as RGBA.  Color 0 is black and 1 is white.
+    // Alpha 0 is transparent and Alpha 1 is opaque
     QList<QVector4D> colours_;
+    // Connections between vertices.  Each non-overlapping pair of
+    // indices is a line between those two vertices from the
+    // positions_ array
     QList<uint> indexes_;
+    // Scaling to magnify the mesh
     double scale_;
+    // Repopulate the arrays with the latest data from the
+    // configuration
     void updateMesh();
 
     public:
