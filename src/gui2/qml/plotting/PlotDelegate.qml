@@ -13,6 +13,7 @@ DelegateChooser {
     id: root
 
     property bool enabled: true
+    required property string parentNodeName
 
     role: "dimensions"
 
@@ -69,7 +70,7 @@ DelegateChooser {
                         Layout.fillWidth: true
                         canvasDimensions: menuItem.canvasDimensions
                         plotModel: renderableData
-                        title: key
+                        title: root.parentNodeName + "/" + key
                     }
                 }
             }
@@ -128,7 +129,7 @@ DelegateChooser {
                         Layout.fillWidth: true
                         canvasDimensions: menuItem.canvasDimensions
                         plotModel: renderableData
-                        title: key
+                        title: root.parentNodeName + "/" + key
                     }
                 }
             }

@@ -23,7 +23,7 @@ double Plot1DModel::minX()
 }
 
 // Return the minimum y-value in the dataset
-double Plot1DModel::minY() { return sourceData_->minValue(); }
+double Plot1DModel::minValue() { return sourceData_->minValue(); }
 
 // Return the maximum x-value in the dataset
 double Plot1DModel::maxX()
@@ -36,13 +36,13 @@ double Plot1DModel::maxX()
 }
 
 // Return the maximum y-value in the dataset
-double Plot1DModel::maxY() { return sourceData_->maxValue(); }
+double Plot1DModel::maxValue() { return sourceData_->maxValue(); }
 
 // Return the name of the x-axis
 QString Plot1DModel::xName() { return QString::fromStdString(xName_); }
 
 // Return the name of the y-axis
-QString Plot1DModel::yName() { return QString::fromStdString(yName_); }
+QString Plot1DModel::valueName() { return QString::fromStdString(valueName_); }
 
 // Return the source data pointer
 const Data1D *Plot1DModel::sourceData() const { return sourceData_; }

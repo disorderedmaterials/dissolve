@@ -10,15 +10,15 @@ Item {
     required property var context
     readonly property double graphCornerHeight: context.canvasDimensions["dy"] / 8
     readonly property double graphCornerWidth: context.canvasDimensions["dx"] / 8
+    readonly property double maxValue: context.plotModel.maxValue
     readonly property double maxX: context.plotModel.maxX
     readonly property double maxY: context.plotModel.maxY
-    readonly property double maxZ: context.plotModel.maxZ
+    readonly property double minValue: context.plotModel.minValue
     readonly property double minX: context.plotModel.minX
     readonly property double minY: context.plotModel.minY
-    readonly property double minZ: context.plotModel.minZ
     readonly property double realXAxisLength: Math.abs(maxX - minX)
     readonly property double realYAxisLength: Math.abs(maxY - minY)
-    readonly property double realZAxisLength: Math.abs(maxZ - minZ)
+    readonly property double realZAxisLength: Math.abs(maxValue - minValue)
     readonly property double xAxisLength: context.canvasDimensions["dx"] - (2 * graphCornerWidth)
     readonly property double yAxisLength: context.canvasDimensions["dy"] - (2 * graphCornerHeight)
 
@@ -216,7 +216,7 @@ Item {
 
                             color: pZ < 0 ? "blue" : "red"
                             height: canvasRectangle.dY
-                            opacity: pZ == 0 ? 0 : (1 / root.maxZ) * Math.abs(pZ)
+                            opacity: root.maxValue == 0 ? 0 : (1 / root.maxValue) * Math.abs(pZ)
                             width: canvasRectangle.dX
                         }
                     }

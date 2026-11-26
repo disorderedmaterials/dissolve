@@ -12,10 +12,12 @@
 
 class GraphModel;
 
-/** An object to keep track of the edges between the nodes in the graph.
+/*
+ * An object to keep track of the edges between the nodes in the graph.
  * Note that the object only maintains a record of the *existing* edges
  * between nodes.  The GraphModel is the source of truth
- * and this class just caches all of the edges.**/
+ * and this class just caches all of the edges.
+ */
 class GraphEdges : public QObject
 {
     Q_OBJECT;
@@ -43,8 +45,6 @@ class GraphEdges : public QObject
     void setLoopEdges(Graph::Edges *edges);
     // Set the standard edges belonging to the graph
     void setEdges(Graph::Edges *edges);
-    //
-    // std::vector<const Edge *>::iterator find(const Edge *edge);
     // Remove an edge. Returns false if the edge does not exist
     bool remove(Edge *edge);
     // Remove any edges connected to a node with a given name

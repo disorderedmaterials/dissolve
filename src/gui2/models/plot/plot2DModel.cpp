@@ -34,7 +34,7 @@ double Plot2DModel::minY()
 }
 
 // Return the minimum z-value in the dataset
-double Plot2DModel::minZ() { return sourceData_->minValue(); }
+double Plot2DModel::minValue() { return sourceData_->minValue(); }
 
 // Return the maximum x-value in the dataset
 double Plot2DModel::maxX()
@@ -57,7 +57,7 @@ double Plot2DModel::maxY()
 }
 
 // Return the maximum z-value in the dataset
-double Plot2DModel::maxZ() { return sourceData_->maxValue(); }
+double Plot2DModel::maxValue() { return sourceData_->maxValue(); }
 
 // Return the name of the x-axis
 QString Plot2DModel::xName() { return QString::fromStdString(xName_); }
@@ -66,7 +66,7 @@ QString Plot2DModel::xName() { return QString::fromStdString(xName_); }
 QString Plot2DModel::yName() { return QString::fromStdString(yName_); }
 
 // Return the name of the z-axis
-QString Plot2DModel::zName() { return QString::fromStdString(zName_); }
+QString Plot2DModel::valueName() { return QString::fromStdString(valueName_); }
 
 // Return the current number of x-axis values
 int Plot2DModel::currentNXValues() { return currentNXValues_; }

@@ -113,7 +113,7 @@ class ParameterBase
 
     private:
     // Check the validity of the parameter data
-    template <typename DataClass> Parameter<DataClass> *checkData()
+    template <typename DataClass> Parameter<DataClass> *castData()
     {
         // Requested DataClass must always match the storedDataType_, regardless of the underlying parameter type.
         // Note: We check by name() here rather than comparing type_index objects since, on OSX, it is possible for the same
@@ -155,9 +155,9 @@ class ParameterBase
     // Set type's representation as a raw int (only valid for int and enum)
     virtual void setFromInt(int value) { return; }
     // Get the parameter's value
-    template <typename DataClass> DataClass get() { return checkData<DataClass>()->getData(); }
+    template <typename DataClass> DataClass get() { return castData<DataClass>()->getData(); }
     // Get a pointer to the parameter
-    template <typename DataClass> DataClass *getPtr() { return checkData<DataClass>()->getPtrData(); }
+    template <typename DataClass> DataClass *getPtr() { return castData<DataClass>()->getPtrData(); }
     // Set the parameter's value
     template <typename DataClass> void set(const DataClass &data)
     {

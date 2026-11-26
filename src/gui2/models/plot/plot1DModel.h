@@ -16,11 +16,11 @@ class Plot1DModel : public PlotModelBase
 
     Q_PROPERTY(QString name READ name NOTIFY contentChanged)
     Q_PROPERTY(double minX READ minX NOTIFY contentChanged)
-    Q_PROPERTY(double minY READ minY NOTIFY contentChanged)
+    Q_PROPERTY(double minValue READ minValue NOTIFY contentChanged)
     Q_PROPERTY(double maxX READ maxX NOTIFY contentChanged)
-    Q_PROPERTY(double maxY READ maxY NOTIFY contentChanged)
+    Q_PROPERTY(double maxValue READ maxValue NOTIFY contentChanged)
     Q_PROPERTY(QString xName READ xName NOTIFY contentChanged)
-    Q_PROPERTY(QString yName READ yName NOTIFY contentChanged)
+    Q_PROPERTY(QString valueName READ valueName NOTIFY contentChanged)
 
     public:
     Plot1DModel(const std::string &name, const Data1D *sourceData);
@@ -40,7 +40,7 @@ class Plot1DModel : public PlotModelBase
     // X-axis name
     std::string xName_{"x-axis"};
     // Y-axis name
-    std::string yName_{"y-axis"};
+    std::string valueName_{"y-axis"};
 
     private:
     // Return the name of the dataset being plotted
@@ -48,15 +48,15 @@ class Plot1DModel : public PlotModelBase
     // Return the minimum x-value in the dataset
     double minX();
     // Return the minimum y-value in the dataset
-    double minY();
+    double minValue();
     // Return the maximum x-value in the dataset
     double maxX();
     // Return the maximum y-value in the dataset
-    double maxY();
+    double maxValue();
     // Return the name of the x-axis
     QString xName();
     // Return the name of the y-axis
-    QString yName();
+    QString valueName();
 
     public:
     // Return the source data pointer

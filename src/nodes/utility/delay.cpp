@@ -2,9 +2,8 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "nodes/utility/delay.h"
-#include <cmath>
 #include <chrono>
-#include <iostream>
+#include <cmath>
 #include <thread>
 
 DelayNode::DelayNode(Graph *parentGraph) : Node(parentGraph)

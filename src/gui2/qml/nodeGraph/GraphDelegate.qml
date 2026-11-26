@@ -209,6 +209,7 @@ NodeBox {
                     model: renderables
 
                     delegate: PlotDelegate {
+                        parentNodeName: root.nodeName
                     }
                 }
             }

@@ -17,15 +17,15 @@ class Plot2DModel : public PlotModelBase
     Q_PROPERTY(QString name READ name NOTIFY contentChanged)
     Q_PROPERTY(double minX READ minX NOTIFY contentChanged)
     Q_PROPERTY(double minY READ minY NOTIFY contentChanged)
-    Q_PROPERTY(double minZ READ minZ NOTIFY contentChanged)
+    Q_PROPERTY(double minValue READ minValue NOTIFY contentChanged)
     Q_PROPERTY(double maxX READ maxX NOTIFY contentChanged)
     Q_PROPERTY(double maxY READ maxY NOTIFY contentChanged)
-    Q_PROPERTY(double maxZ READ maxZ NOTIFY contentChanged)
+    Q_PROPERTY(double maxValue READ maxValue NOTIFY contentChanged)
     Q_PROPERTY(int nX READ currentNXValues NOTIFY contentChanged)
     Q_PROPERTY(int nY READ currentNYValues NOTIFY contentChanged)
     Q_PROPERTY(QString xName READ xName NOTIFY contentChanged)
     Q_PROPERTY(QString yName READ yName NOTIFY contentChanged)
-    Q_PROPERTY(QString zName READ zName NOTIFY contentChanged)
+    Q_PROPERTY(QString valueName READ valueName NOTIFY contentChanged)
 
     public:
     Plot2DModel(const std::string &name, const Data2D *sourceData);
@@ -48,7 +48,7 @@ class Plot2DModel : public PlotModelBase
     // Y-axis name
     std::string yName_{"y-axis"};
     // Z-axis name
-    std::string zName_{"z-axis"};
+    std::string valueName_{"z-axis"};
     // Current number of x-axis values
     int currentNXValues_;
     // Current number of y-axis values
@@ -62,19 +62,19 @@ class Plot2DModel : public PlotModelBase
     // Return the minimum y-value in the dataset
     double minY();
     // Return the minimum z-value in the dataset
-    double minZ();
+    double minValue();
     // Return the maximum x-value in the dataset
     double maxX();
     // Return the maximum y-value in the dataset
     double maxY();
     // Return the maximum z-value in the dataset
-    double maxZ();
+    double maxValue();
     // Return the name of the x-axis
     QString xName();
     // Return the name of the y-axis
     QString yName();
     // Return the name of the z-axis
-    QString zName();
+    QString valueName();
     // Return the current number of x-axis values
     int currentNXValues();
     // Return the current number of y-axis values
@@ -87,7 +87,7 @@ class Plot2DModel : public PlotModelBase
     private:
     // Perform any required updates to the model when the data is changed
     void handleDataChanged() override;
-    // Generate the indices for the x-y plane, given the numbe rof x- and y-axis values
+    // Generate the indices for the x-y plane, given the number of x- and y-axis values
     void generateIndices(int nX, int nY);
 
     public Q_SLOTS:

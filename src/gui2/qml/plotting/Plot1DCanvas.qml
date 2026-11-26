@@ -10,12 +10,12 @@ Item {
     required property var context
     readonly property double graphCornerHeight: context.canvasDimensions["dy"] / 8
     readonly property double graphCornerWidth: context.canvasDimensions["dx"] / 8
+    readonly property double maxValue: context.plotModel.maxValue
     readonly property double maxX: context.plotModel.maxX
-    readonly property double maxY: context.plotModel.maxY
+    readonly property double minValue: context.plotModel.minValue
     readonly property double minX: context.plotModel.minX
-    readonly property double minY: context.plotModel.minY
     readonly property double realXAxisLength: Math.abs(maxX - minX)
-    readonly property double realYAxisLength: Math.abs(maxY - minY)
+    readonly property double realYAxisLength: Math.abs(maxValue - minValue)
     readonly property double xAxisLength: context.canvasDimensions["dx"] - graphCornerWidth
     readonly property double yAxisLength: context.canvasDimensions["dy"] - graphCornerHeight
 
@@ -54,7 +54,7 @@ Item {
                         delegate: Rectangle {
                             id: yTickRectangle
 
-                            readonly property double value: index > 0 ? yAxisTickRepeater.itemAt(index - 1).value - (root.realYAxisLength / context.nYAxisTicks) : root.maxY - root.realYAxisLength / (2 * context.nYAxisTicks)
+                            readonly property double value: index > 0 ? yAxisTickRepeater.itemAt(index - 1).value - (root.realYAxisLength / context.nYAxisTicks) : root.maxValue - root.realYAxisLength / (2 * context.nYAxisTicks)
 
                             Layout.fillHeight: true
                             Layout.preferredWidth: root.graphCornerWidth
@@ -171,7 +171,7 @@ Item {
                         radius: 50
                         width: 8
                         x: mappedXY.x - (width / 2)
-                        y: mappedXY.y - ((height / 2) - root.maxY * root.yAxisLength / root.realYAxisLength)
+                        y: mappedXY.y - ((height / 2) - root.maxValue * root.yAxisLength / root.realYAxisLength)
                     }
                 }
             }

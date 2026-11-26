@@ -38,8 +38,7 @@ class ParameterEndPointsModel : public QAbstractListModel
     void remove(const std::string &sourceNode, const std::string &sourceOutput, const std::string &targetNode,
                 const std::string &targetInput);
     // Add all parameter endpoint DropArea pairs from a graph's edges
-    void resetFromEdges(GraphEdges &edges,
-                        const std::map<const Node *, std::map<std::string, QQuickItem *>> &curveOutputsMap,
+    void resetFromEdges(GraphEdges &edges, const std::map<const Node *, std::map<std::string, QQuickItem *>> &curveOutputsMap,
                         const std::map<const Node *, std::map<std::string, QQuickItem *>> &curveInputsMap);
     // Clear all end points
     void clear();
