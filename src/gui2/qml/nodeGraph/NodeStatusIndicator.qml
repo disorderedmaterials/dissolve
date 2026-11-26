@@ -6,9 +6,9 @@ import "../Dissolve"
 Rectangle {
     id: root
 
+    required property bool bypass
     required property var imageSource
     required property string summary
-    required property bool bypass
 
     ToolTip.text: summary
     ToolTip.visible: errorIndicatorHover.hovered && (summary.length > 0)
@@ -19,8 +19,8 @@ Rectangle {
     border.width: 3
     height: width
     radius: width / 2
-    width: 25
     visible: !bypass
+    width: 25
 
     HoverHandler {
         id: errorIndicatorHover
