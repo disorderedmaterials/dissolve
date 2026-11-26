@@ -22,11 +22,12 @@ void BondMesh::setConfiguration(const Configuration *config)
 
 void BondMesh::updateMesh()
 {
-    if (config_ == nullptr)
-        return;
     positions_.clear();
     indexes_.clear();
     colours_.clear();
+
+    if (config_ == nullptr)
+        return;
 
     auto center = config_->box().axisLengths();
 
