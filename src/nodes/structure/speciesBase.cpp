@@ -11,7 +11,14 @@ SpeciesBaseNode::SpeciesBaseNode(Graph *parentGraph)
 
     // State data
     addStateData("atomTypes", atomTypes_);
-    // Serialisable::vector<>(atoms_, "atoms", result);
+
+    addStateData("commonBonds", commonBonds_);
+    addStateData("commonAngles", commonAngles_);
+    addStateData("commonTorsions", commonTorsions_);
+    addStateData("commonImpropers", commonImpropers_);
+
+    addStateData("atom", atoms_, this);
+    addStateData("bonds", bonds_, this);
     // Serialisable::fromVectorToTable<>(commonBonds_, "commonBonds", result);
     // Serialisable::vector<>(bonds_, "bonds", result);
     // Serialisable::fromVectorToTable<>(commonAngles_, "commonAngles", result);
