@@ -2,14 +2,15 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "gui2/models/bondMesh.h"
-#include "nodes/structure/speciesBase.h"
+#include "nodes/structure/species.h"
 
 double BondMesh::scale() const { return scale_; }
 
 void BondMesh::setScale(const double scl)
 {
     scale_ = scl;
-    buildMesh();
+    if (!positions_.empty())
+        updatePositions();
 }
 
 const Configuration *BondMesh::configuration() const { return config_; }

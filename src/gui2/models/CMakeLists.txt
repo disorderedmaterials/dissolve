@@ -12,6 +12,7 @@ set(nodeGraphModels_MOC_HDRS
     nodeRegistrySortFilterModel.h
     nodeMessages.h
     parameterEndPointsModel.h
+    atomMesh.h
     bondMesh.h
 )
 
@@ -26,6 +27,7 @@ set(nodeGraphModel_SRCS
     nodeRegistrySortFilterModel.cpp
     nodeMessages.cpp
     parameterEndPointsModel.cpp
+    atomMesh.cpp
     bondMesh.cpp
 )
 
