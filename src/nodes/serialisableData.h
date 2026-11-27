@@ -36,7 +36,7 @@ class SerialisableData
 };
 
 // Primary type for a SerialisableClass to a specific DataClass
-template <typename DataClass> class SerialisableClass : public SerialisableData
+template <typename DataClass, typename... ConstructorContext> class SerialisableClass : public SerialisableData
 {
     public:
     // Optional Vector of Serialisable
@@ -90,7 +90,7 @@ template <typename DataClass> class SerialisableClass : public SerialisableData
     {
     }
     // Vector of Serialisable
-    SerialisableClass(std::string_view key, DataClass &targetData)
+    SerialisableClass(std::string_view key, DataClass &targetData, ConstructorContext... args)
         requires(is_instance_of_v<DataClass, std::vector> && Serialisable::Serialisable<typename DataClass::value_type>)
         : SerialisableData(key), data_(targetData), dataSerialiser_(
                                                         [&]()
@@ -107,7 +107,8 @@ template <typename DataClass> class SerialisableClass : public SerialisableData
               [&](const SerialisedValue &value)
               {
                   data_.clear();
-                  Deserialisable::vector(value, [&](const auto &node) { data_.emplace_back().deserialise(node); });
+                  Deserialisable::vector(value, [&](const auto &node)
+                                         { data_.emplace_back(std::forward<ConstructorContext>(args)...).deserialise(node); });
               }),
           dataChecker_([&]() { return !targetData.empty(); }),
           dataResolver_(
