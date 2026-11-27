@@ -36,7 +36,7 @@ class SerialisableData
 };
 
 // Primary type for a SerialisableClass to a specific DataClass
-template <typename DataClass, typename... ConstructorContext> class SerialisableClass : public SerialisableData
+template <typename DataClass, class... ConstructorArgs> class SerialisableClass : public SerialisableData
 {
     public:
     // Optional Vector of Serialisable
@@ -90,7 +90,7 @@ template <typename DataClass, typename... ConstructorContext> class Serialisable
     {
     }
     // Vector of shared_ptr Serialisable
-    SerialisableClass(std::string_view key, DataClass &targetData, ConstructorContext... args)
+    SerialisableClass(std::string_view key, DataClass &targetData, ConstructorArgs... args)
         requires(is_instance_of_v<DataClass, std::vector> &&
                  is_instance_of_v<typename DataClass::value_type, std::shared_ptr> &&
                  Serialisable::Serialisable<typename DataClass::value_type>)
@@ -112,8 +112,8 @@ template <typename DataClass, typename... ConstructorContext> class Serialisable
                   Deserialisable::vector(value,
                                          [&](const auto &node)
                                          {
-                                             auto shared = std::make_shared<typename DataClass::value_type::element_type>(
-                                                 std::forward<ConstructorContext>(args)...);
+                                             auto shared =
+                                                 std::make_shared<typename DataClass::value_type::element_type>(args...);
                                              shared->deserialise(node);
                                              data_.push_back(shared);
                                          });
@@ -122,14 +122,14 @@ template <typename DataClass, typename... ConstructorContext> class Serialisable
           dataResolver_(
               [&](const std::map<std::string, const SpeciesBaseNode *> &reachableSpecies)
               {
-                  if constexpr (std::is_base_of_v<ResolvableContext, typename DataClass::value_type>)
+                  if constexpr (std::is_base_of_v<ResolvableContext, typename DataClass::value_type::element_type>)
                       for (auto &item : data_)
                           item->resolve(reachableSpecies);
               })
     {
     }
     // Vector of Serialisable
-    SerialisableClass(std::string_view key, DataClass &targetData, ConstructorContext... args)
+    SerialisableClass(std::string_view key, DataClass &targetData, ConstructorArgs... args)
         requires(is_instance_of_v<DataClass, std::vector> &&
                  !is_instance_of_v<typename DataClass::value_type, std::shared_ptr> &&
                  Serialisable::Serialisable<typename DataClass::value_type>)
@@ -148,8 +148,7 @@ template <typename DataClass, typename... ConstructorContext> class Serialisable
               [&](const SerialisedValue &value)
               {
                   data_.clear();
-                  Deserialisable::vector(value, [&](const auto &node)
-                                         { data_.emplace_back(std::forward<ConstructorContext>(args)...).deserialise(node); });
+                  Deserialisable::vector(value, [&](const auto &node) { data_.emplace_back(args...).deserialise(node); });
               }),
           dataChecker_([&]() { return !targetData.empty(); }),
           dataResolver_(

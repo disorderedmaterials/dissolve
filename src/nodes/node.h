@@ -358,9 +358,11 @@ class Node
     // Clear any local data
     virtual void clearData();
     // Flag an item of state data
-    template <typename DataClass> void addStateData(std::string_view key, DataClass &data)
+    template <typename DataClass, typename... ConstructorArgs>
+    void addStateData(std::string_view key, DataClass &data, ConstructorArgs... args)
     {
-        state_[std::string(key)] = std::make_shared<SerialisableClass<DataClass>>(key, data);
+        state_[std::string(key)] = std::make_shared<SerialisableClass<DataClass, ConstructorArgs...>>(
+            key, data, std::forward<ConstructorArgs>(args)...);
     }
     // Return timing information (in seconds)
     SampledDouble timing() const;
