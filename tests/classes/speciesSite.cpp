@@ -2,7 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/site.h"
-#include "classes/species.h"
+#include "nodes/structure/species.h"
 #include <gtest/gtest.h>
 
 namespace UnitTest
@@ -11,14 +11,14 @@ namespace UnitTest
 class SpeciesSiteTest : public ::testing::Test
 {
     public:
-    SpeciesSiteTest()
+    SpeciesSiteTest() : methane_{nullptr}, benzene_{nullptr}
     {
         methane_.load("species/methane.toml");
         benzene_.load("species/benzene.toml");
     };
 
     protected:
-    Species methane_, benzene_;
+    SpeciesNode methane_, benzene_;
 
     void testVector(const Vector3 &u, const Vector3 &v)
     {

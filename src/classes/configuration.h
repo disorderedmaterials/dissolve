@@ -21,7 +21,7 @@
 class EnergyKernel;
 class PotentialMap;
 class ProcessPool;
-class Species;
+class SpeciesBaseNode;
 
 // Configuration
 class Configuration
@@ -60,7 +60,7 @@ class Configuration
      */
     private:
     // Species populations present in the Configuration
-    KeyedVector<const Species *, int> speciesPopulations_;
+    KeyedVector<const SpeciesBaseNode *, int> speciesPopulations_;
     // Molecule vector
     std::vector<std::shared_ptr<Molecule>> molecules_;
     // Atom vector
@@ -78,7 +78,7 @@ class Configuration
     // Empty contents of Configuration
     void empty();
     // Return Species populations within the Configuration
-    const KeyedVector<const Species *, int> &speciesPopulations() const;
+    const KeyedVector<const SpeciesBaseNode *, int> &speciesPopulations() const;
     // Return atom type populations for this Configuration
     KeyedVector<const AtomType *, int> atomTypePopulations() const;
     // Return atom type index map
@@ -101,11 +101,12 @@ class Configuration
     void notifyAtomicPositionsChanged();
     // Add Molecule to Configuration based on the supplied Species
     std::shared_ptr<Molecule>
-    addMolecule(const Species *sp, OptionalReferenceWrapper<const std::vector<Vector3>> sourceCoordinates = std::nullopt);
+    addMolecule(const SpeciesBaseNode *sp,
+                OptionalReferenceWrapper<const std::vector<Vector3>> sourceCoordinates = std::nullopt);
     // Copy molecule
     std::shared_ptr<Molecule> copyMolecule(const Molecule &sourceMolecule);
     // Remove all Molecules of the target Species from the Configuration
-    void removeMolecules(const Species *sp);
+    void removeMolecules(const SpeciesBaseNode *sp);
     // Remove specified Molecules from the Configuration
     void removeMolecules(const std::vector<std::shared_ptr<Molecule>> &molecules);
     // Return number of Molecules in Configuration

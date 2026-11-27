@@ -22,7 +22,7 @@
 #include <vector>
 
 // Forward Declarations
-class Species;
+class SpeciesBaseNode;
 class SpeciesAtom;
 
 // Forcefield Base Class

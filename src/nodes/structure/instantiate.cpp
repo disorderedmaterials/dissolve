@@ -4,9 +4,9 @@
 #include "nodes/structure/instantiate.h"
 #include "classes/box.h"
 #include "classes/configuration.h"
-#include "classes/species.h"
 #include "math/mathFunc.h"
 #include "nodes/dissolve.h"
+#include "nodes/structure/speciesBase.h"
 #include <random>
 
 InstantiateNode::InstantiateNode(Graph *parentGraph) : Node(parentGraph)

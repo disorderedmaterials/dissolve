@@ -4,7 +4,6 @@
 #include "data/ff/ff.h"
 #include "classes/atomType.h"
 #include "classes/box.h"
-#include "classes/species.h"
 #include "classes/speciesAtom.h"
 #include "classes/speciesBond.h"
 #include "data/ff/angleTerm.h"
@@ -12,6 +11,7 @@
 #include "data/ff/bondTerm.h"
 #include "data/ff/improperTerm.h"
 #include "data/ff/torsionTerm.h"
+#include "nodes/structure/speciesBase.h"
 
 /*
  * Set Up

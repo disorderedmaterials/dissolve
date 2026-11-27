@@ -22,6 +22,8 @@ enum Roles
     MODEL,
 };
 
+Q_DECLARE_OPAQUE_POINTER(SpeciesBaseNode *);
+
 ParameterModel::ParameterModel(Node::NodeParameterMap &values) : values_(values) {}
 
 // Returns the reference to the parameters from the model
@@ -142,7 +144,7 @@ QVariant ParameterModel::data(const QModelIndex &index, int role) const
                 return "ranged vector3";
             if (EnumRegistry::hasEnumOption(it->second->storedDataType()))
                 return "enum";
-            if (it->second->storedDataType() == typeid(std::shared_ptr<Species>))
+            if (it->second->storedDataType() == typeid(SpeciesBaseNode *))
                 return "species";
 
             return "unknown";
@@ -230,8 +232,8 @@ bool ParameterModel::setData(const QModelIndex &index, const QVariant &value, in
     }
     if (EnumRegistry::hasEnumOption(it->storedDataType()))
         it->setFromInt(value.toInt());
-    if (it->storedDataType() == typeid(std::shared_ptr<Species>))
-        it->set<std::shared_ptr<Species>>(qvariant_cast<std::shared_ptr<Species>>(value));
+    if (it->storedDataType() == typeid(SpeciesBaseNode *))
+        it->set<SpeciesBaseNode *>(qvariant_cast<SpeciesBaseNode *>(value));
     return true;
 }
 

@@ -5,9 +5,9 @@
 
 #include "base/enumOptions.h"
 #include "classes/configuration.h"
-#include "classes/species.h"
 #include "nodes/node.h"
 #include "nodes/number.h"
+#include "nodes/structure/speciesBase.h"
 
 class MDNode : public Node
 {
@@ -82,7 +82,7 @@ class MDNode : public Node
 
     public:
     // Evolve Species coordinates, returning new coordinates
-    static std::vector<Vector3> evolve(const ProcessPool &procPool, const PotentialMap &potentialMap, const Species *sp,
+    static std::vector<Vector3> evolve(const ProcessPool &procPool, const PotentialMap &potentialMap, const SpeciesBaseNode *sp,
                                        double temperature, int nSteps, double maxDeltaT, const std::vector<Vector3> &rInit,
                                        std::vector<Vector3> &velocities);
 };

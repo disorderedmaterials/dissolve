@@ -6,7 +6,7 @@
 #include "classes/atomType.h"
 #include "classes/cell.h"
 #include "classes/potentialMap.h"
-#include "classes/species.h"
+#include "nodes/structure/speciesBase.h"
 
 Configuration::Configuration() : box_({1.0, 1.0, 1.0}) {}
 

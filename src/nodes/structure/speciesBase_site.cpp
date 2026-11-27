@@ -2,11 +2,11 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "base/sysFunc.h"
-#include "classes/species.h"
+#include "nodes/structure/speciesBase.h"
 #include <cstring>
 
 // Add a new SpeciesSite to this Species
-SpeciesSite *Species::addSite(std::string_view name)
+SpeciesSite *SpeciesBaseNode::addSite(std::string_view name)
 {
     auto &site = sites_.emplace_back(std::make_unique<SpeciesSite>(this));
     site->setName(uniqueSiteName(name));
@@ -15,7 +15,7 @@ SpeciesSite *Species::addSite(std::string_view name)
 }
 
 // Remove specified SpeciesSite
-void Species::removeSite(SpeciesSite *site)
+void SpeciesBaseNode::removeSite(SpeciesSite *site)
 {
     assert(site);
     auto it = std::find_if(sites_.begin(), sites_.end(), [&](const auto &p) { return p.get() == site; });
@@ -27,14 +27,14 @@ void Species::removeSite(SpeciesSite *site)
 }
 
 // Return number of defined SpeciesSites
-int Species::nSites() const { return sites_.size(); }
+int SpeciesBaseNode::nSites() const { return sites_.size(); }
 
 // Return SpeciesSite List
-const std::vector<std::unique_ptr<SpeciesSite>> &Species::sites() const { return sites_; }
-std::vector<std::unique_ptr<SpeciesSite>> &Species::sites() { return sites_; }
+const std::vector<std::unique_ptr<SpeciesSite>> &SpeciesBaseNode::sites() const { return sites_; }
+std::vector<std::unique_ptr<SpeciesSite>> &SpeciesBaseNode::sites() { return sites_; }
 
 // Generate unique site name with base name provided
-std::string Species::uniqueSiteName(std::string_view base, const SpeciesSite *exclude) const
+std::string SpeciesBaseNode::uniqueSiteName(std::string_view base, const SpeciesSite *exclude) const
 {
     auto baseName = DissolveSys::niceName(base.empty() ? "NewSite" : base);
     std::string uniqueName{baseName};
@@ -48,7 +48,7 @@ std::string Species::uniqueSiteName(std::string_view base, const SpeciesSite *ex
 }
 
 // Search for SpeciesSite by name
-const SpeciesSite *Species::findSite(std::string_view name, const SpeciesSite *exclude) const
+const SpeciesSite *SpeciesBaseNode::findSite(std::string_view name, const SpeciesSite *exclude) const
 {
     auto it = std::find_if(sites_.begin(), sites_.end(), [name, exclude](const auto &site)
                            { return ((site.get() != exclude) && (DissolveSys::sameString(name, site->name()))); });
@@ -57,7 +57,7 @@ const SpeciesSite *Species::findSite(std::string_view name, const SpeciesSite *e
 
     return nullptr;
 }
-SpeciesSite *Species::findSite(std::string_view name, const SpeciesSite *exclude)
+SpeciesSite *SpeciesBaseNode::findSite(std::string_view name, const SpeciesSite *exclude)
 {
     auto it = std::find_if(sites_.begin(), sites_.end(), [name, exclude](const auto &site)
                            { return ((site.get() != exclude) && (DissolveSys::sameString(name, site->name()))); });

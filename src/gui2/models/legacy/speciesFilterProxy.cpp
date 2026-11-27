@@ -2,7 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "gui2/models/legacy/speciesFilterProxy.h"
-#include "classes/species.h"
+#include "nodes/structure/speciesBase.h"
 
 SpeciesFilterProxy::SpeciesFilterProxy(const Flags<SpeciesFilterProxy::FilterFlags> &flags) : filterFlags_(flags) {}
 
@@ -22,7 +22,7 @@ bool SpeciesFilterProxy::filterAcceptsRow(int row, const QModelIndex &parent) co
     if (!filterFlags_.anySet())
         return true;
 
-    const auto *sp = sourceModel()->data(sourceModel()->index(row, 0, parent), Qt::UserRole).value<const Species *>();
+    const auto *sp = sourceModel()->data(sourceModel()->index(row, 0, parent), Qt::UserRole).value<const SpeciesBaseNode *>();
 
     if (filterFlags_.isSet(SpeciesFilterProxy::HasPeriodicBox) && sp->box().type() == Box::BoxType::None)
         return false;

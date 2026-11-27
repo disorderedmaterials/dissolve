@@ -33,7 +33,7 @@ NodeConstants::ProcessResult AtomicSpeciesNode::process()
     auto potential = parameters_.empty()
                          ? InteractionPotential<ShortRangeFunctions>{ShortRangeFunctions::Form::Undefined}
                          : InteractionPotential<ShortRangeFunctions>{ShortRangeFunctions::Form::LennardJones, parameters_};
-    species_.setName(Elements::symbol(element_));
-    species_.createAtomic(element_, potential);
+    setName(Elements::symbol(element_));
+    createAtomic(element_, potential);
     return NodeConstants::ProcessResult::Success;
 }

@@ -4,16 +4,19 @@
 #include "classes/speciesSite.h"
 #include "base/serialiserLibrary.h"
 #include "classes/site.h"
-#include "classes/species.h"
 #include "data/atomicMasses.h"
 #include "neta/matchedGroup.h"
 #include "neta/neta.h"
+#include "nodes/structure/speciesBase.h"
 #include "templates/algorithms.h"
 #include <numeric>
 #include <string_view>
 
-SpeciesSite::SpeciesSite(const Species *parent, SiteType type) : parent_(parent), type_(type), originMassWeighted_(false) {}
-SpeciesSite::SpeciesSite(const Species *parent, std::string name, SiteType type)
+SpeciesSite::SpeciesSite(const SpeciesBaseNode *parent, SiteType type)
+    : parent_(parent), type_(type), originMassWeighted_(false)
+{
+}
+SpeciesSite::SpeciesSite(const SpeciesBaseNode *parent, std::string name, SiteType type)
     : name_(name), parent_(parent), type_(type), originMassWeighted_(false)
 {
 }
@@ -36,7 +39,7 @@ void SpeciesSite::setName(std::string_view newName) { name_ = newName; }
 std::string_view SpeciesSite::name() const { return name_; }
 
 // Return species parent
-const Species *SpeciesSite::parent() const { return parent_; }
+const SpeciesBaseNode *SpeciesSite::parent() const { return parent_; }
 
 // Return version
 int SpeciesSite::version() const { return version_; }

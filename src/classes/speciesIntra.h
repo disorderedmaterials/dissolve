@@ -11,13 +11,14 @@
 #include <vector>
 
 // Forward Declarations
-class Species;
+class SpeciesBaseNode;
 
 // Base class for intramolecular interactions within Species
 template <class Intra, class Functions> class SpeciesIntra
 {
     public:
-    explicit SpeciesIntra(Species *parent, typename Functions::Form form) : parent_(parent), interactionPotential_(form) {};
+    explicit SpeciesIntra(SpeciesBaseNode *parent, typename Functions::Form form)
+        : parent_(parent), interactionPotential_(form) {};
     virtual ~SpeciesIntra() = default;
     SpeciesIntra(const SpeciesIntra &source) : interactionPotential_(source.interactionPotential_.form()) { (*this) = source; }
     SpeciesIntra(SpeciesIntra &&source) = delete;
@@ -39,11 +40,11 @@ template <class Intra, class Functions> class SpeciesIntra
      */
     protected:
     // Parent species
-    Species *parent_{nullptr};
+    SpeciesBaseNode *parent_{nullptr};
 
     public:
     // Return parent species
-    Species *parent() const { return parent_; }
+    SpeciesBaseNode *parent() const { return parent_; }
 
     /*
      * SpeciesAtom Information

@@ -2,9 +2,10 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "gui2/models/legacy/commonImproperModel.h"
-#include "classes/species.h"
+#include "nodes/structure/speciesBase.h"
 
-CommonImproperModel::CommonImproperModel(Species *species) : CommonTermModel(species), sourceData_(species->commonImpropers())
+CommonImproperModel::CommonImproperModel(SpeciesBaseNode *species)
+    : CommonTermModel(species), sourceData_(species->commonImpropers())
 {
     // Set connections
     modelUpdater.setModel(this);

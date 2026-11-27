@@ -3,19 +3,282 @@
 
 #include "nodes/structure/speciesBase.h"
 
-SpeciesBaseNode::SpeciesBaseNode(Graph *parentGraph) : Node(parentGraph)
+SpeciesBaseNode::SpeciesBaseNode(Graph *parentGraph)
+    : Node(parentGraph), naturalIsotopologue_(this, "Natural"), attachedAtomListsGenerated_(false)
 {
     // Outputs
-    addPointerOutput<const Species>("Species", "The species object", species_);
+    addPointerOutput<const SpeciesBaseNode>("Species", "The species object", *this);
 
     // State data
-    addStateData("Species", species_);
+    // TODO DISSOLVE2
+    // addStateData("Species", species_);
 }
 
 /*
  * Data
  */
 
-// Return the species object
-Species &SpeciesBaseNode::species() { return species_; }
-const Species &SpeciesBaseNode::species() const { return species_; }
+// Clear Data
+void SpeciesBaseNode::clear()
+{
+    isotopologues_.clear();
+
+    impropers_.clear();
+    torsions_.clear();
+    angles_.clear();
+    bonds_.clear();
+
+    atoms_.clear();
+    instances_.clear();
+
+    atomTypes_.clear();
+    commonBonds_.clear();
+    commonAngles_.clear();
+    commonTorsions_.clear();
+    commonImpropers_.clear();
+}
+
+/*
+ * Basic Information
+ */
+
+// Check set-up of Species
+bool SpeciesBaseNode::checkSetUp() const
+{
+    auto nErrors = 0;
+
+    // Must have at least one atom...
+    if (atoms_.size() == 0)
+    {
+        Messenger::error("Species contains no Atoms.\n");
+        return false;
+    }
+
+    /*
+     * AtomTypes
+     */
+    for (auto &i : atoms_)
+    {
+        if (i.atomType() == nullptr)
+        {
+            Messenger::error("Atom {} ({}) of species '{}' has no associated atom type.\n", i.index(), Elements::symbol(i.Z()),
+                             name_);
+            ++nErrors;
+        }
+    }
+    if (nErrors > 0)
+        return false;
+
+    /*
+     * IntraMolecular Data
+     */
+    for (auto &i : atoms_)
+    {
+        if ((i.bonds().size() == 0) && (atoms_.size() > 1))
+        {
+            Messenger::error("SpeciesAtom {} ({}) participates in no Bonds, but is part of a multi-atom Species.\n", i.index(),
+                             Elements::symbol(i.Z()));
+            ++nErrors;
+        }
+    }
+    if (nErrors > 0)
+        return false;
+
+    /*
+     * Check Isotopologues
+     */
+    for (auto &iso : isotopologues_)
+    {
+        for (auto [atomType, isotope] : iso->isotopes())
+        {
+            if (isotope == Sears91::Isotope::Unknown)
+            {
+                Messenger::error("Isotopologue '{}' does not refer to an elemental Isotope for AtomType '{}'.\n", iso->name(),
+                                 atomType->name());
+                ++nErrors;
+            }
+            else if (Sears91::Z(isotope) != atomType->Z())
+            {
+                Messenger::error("Isotopologue '{}' does not refer to a suitable Isotope for AtomType '{}'.\n", iso->name(),
+                                 atomType->name());
+                ++nErrors;
+            }
+        }
+    }
+
+    return (nErrors == 0);
+}
+
+// Print Species information
+void SpeciesBaseNode::print() const
+{
+    Messenger::print("  Atoms:\n");
+    Messenger::print("      ID   El  Type (ID)        X             Y             Z             Q\n");
+    Messenger::print("    ----------------------------------------------------------------------------\n");
+    for (auto n = 0; n < nAtoms(); ++n)
+    {
+        auto &i = atom(n);
+        Messenger::print("    {:4d}  {:3}  {:4} ({:2d})  {:12.4e}  {:12.4e}  {:12.4e}  {:12.4e}\n", n + 1,
+                         Elements::symbol(i.Z()), (i.atomType() ? i.atomType()->name() : "??"),
+                         (i.atomType() ? i.atomTypeIndex() : -1), i.r().x, i.r().y, i.r().z, i.q());
+    }
+
+    if (!bonds_.empty())
+    {
+        Messenger::print("\n  Bonds:\n");
+        Messenger::print("      I     J    Form             Parameters\n");
+        Messenger::print("    ---------------------------------------------------------------------------------\n");
+        for (const auto &bond : bonds_)
+            Messenger::print("   {:4d}  {:4d}    {}{:<12}  {}\n", bond.i()->index() + 1, bond.j()->index() + 1,
+                             bond.commonTerm() ? '@' : ' ', BondFunctions::forms().keyword(bond.interactionForm()),
+                             bond.interactionPotential().parametersAsString());
+    }
+
+    if (!angles_.empty())
+    {
+        Messenger::print("\n  Angles:\n");
+        Messenger::print("      I     J     K    Form             Parameters\n");
+        Messenger::print("    ---------------------------------------------------------------------------------------\n");
+        for (const auto &angle : angles_)
+            Messenger::print("   {:4d}  {:4d}  {:4d}    {}{:<12}  {}\n", angle.i()->index() + 1, angle.j()->index() + 1,
+                             angle.k()->index() + 1, angle.commonTerm() ? '@' : ' ',
+                             AngleFunctions::forms().keyword(angle.interactionForm()),
+                             angle.interactionPotential().parametersAsString());
+    }
+
+    if (!torsions_.empty())
+    {
+        Messenger::print("\n  Torsions:\n");
+        Messenger::print("      I     J     K     L    Form             Parameters\n");
+        Messenger::print("    ---------------------------------------------------------------------------------------------\n");
+        // Loop over Torsions
+        for (const auto &torsion : torsions())
+            Messenger::print("   {:4d}  {:4d}  {:4d}  {:4d}    {}{:<12}  {}\n", torsion.i()->index() + 1,
+                             torsion.j()->index() + 1, torsion.k()->index() + 1, torsion.l()->index() + 1,
+                             torsion.commonTerm() ? '@' : ' ', TorsionFunctions::forms().keyword(torsion.interactionForm()),
+                             torsion.interactionPotential().parametersAsString());
+    }
+
+    if (!impropers_.empty())
+    {
+        Messenger::print("\n  Impropers:\n");
+        Messenger::print("      I     J     K     L    Form             Parameters\n");
+        Messenger::print("    ---------------------------------------------------------------------------------------------\n");
+        // Loop over Impropers
+        for (auto &improper : impropers())
+            Messenger::print("   {:4d}  {:4d}  {:4d}  {:4d}    {}{:<12}  {}\n", improper.i()->index() + 1,
+                             improper.j()->index() + 1, improper.k()->index() + 1, improper.l()->index() + 1,
+                             improper.commonTerm() ? '@' : ' ', TorsionFunctions::forms().keyword(improper.interactionForm()),
+                             improper.interactionPotential().parametersAsString());
+    }
+}
+
+/*
+ * Serialisation
+ */
+
+// Express as a serialisable value
+void SpeciesBaseNode::serialise(std::string tag, SerialisedValue &target) const
+{
+    auto &result = target[tag];
+    result["name"] = name_;
+
+    Serialisable::fromVectorToTable(atomTypes_, "atomTypes", result);
+    Serialisable::vector<>(atoms_, "atoms", result);
+    Serialisable::fromVectorToTable<>(commonBonds_, "commonBonds", result);
+    Serialisable::vector<>(bonds_, "bonds", result);
+    Serialisable::fromVectorToTable<>(commonAngles_, "commonAngles", result);
+    Serialisable::vector<>(angles_, "angles", result);
+    Serialisable::fromVectorToTable<>(commonTorsions_, "commonTorsions", result);
+    Serialisable::vector<>(torsions_, "torsions", result);
+    Serialisable::fromVectorToTable<>(commonImpropers_, "commonImpropers", result);
+    Serialisable::vector<>(impropers_, "impropers", result);
+    Serialisable::fromVectorToTable<>(isotopologues_, "isotopologues", result);
+    Serialisable::fromVectorToTable<>(sites_, "sites", result);
+    if (box_.type() != Box::BoxType::None)
+        result["box"] = Serialisable::ser(box_);
+    Serialisable::vector<>(instances_, "instances", result, [](const auto &instance)
+                           { return Serialisable::vector(instance, [](const auto &v) { return Serialisable::ser(v); }); });
+}
+
+// Read values from a serialisable value
+void SpeciesBaseNode::deserialise(const SerialisedValue &node)
+{
+    setName(Deserialisable::deser<std::string>(node.at("name")));
+
+    Deserialisable::map(node, "atomTypes", [this](const std::string &name, const auto &data)
+                        { atomTypes_.emplace_back(std::make_shared<AtomType>(name))->deserialise(data); });
+
+    Deserialisable::vector(node, "atoms", [this](const SerialisedValue &atom) { atoms_.emplace_back(this).deserialise(atom); });
+
+    Deserialisable::map(node, "commonBonds", [this](const std::string &name, const SerialisedValue &bond)
+                        { commonBonds_.emplace_back(std::make_unique<CommonBond>(name))->deserialise(bond); });
+    Deserialisable::vector(node, "bonds",
+                           [this](const SerialisedValue &bond)
+                           {
+                               bonds_
+                                   .emplace_back(this, &atoms_.at(Deserialisable::deser<int>(bond.at("i"))),
+                                                 &atoms_.at(Deserialisable::deser<int>(bond.at("j"))))
+                                   .deserialise(bond);
+                           });
+
+    Deserialisable::map(node, "commonAngles", [this](const std::string &name, const SerialisedValue &bond)
+                        { commonAngles_.emplace_back(std::make_unique<CommonAngle>(name))->deserialise(bond); });
+    Deserialisable::vector(node, "angles",
+                           [this](const SerialisedValue &angle)
+                           {
+                               angles_
+                                   .emplace_back(this, &atoms_.at(Deserialisable::deser<int>(angle.at("i"))),
+                                                 &atoms_.at(Deserialisable::deser<int>(angle.at("j"))),
+                                                 &atoms_.at(Deserialisable::deser<int>(angle.at("k"))))
+                                   .deserialise(angle);
+                           });
+
+    Deserialisable::map(node, "commonImpropers", [this](const std::string &name, const SerialisedValue &bond)
+                        { commonImpropers_.emplace_back(std::make_unique<CommonImproper>(name))->deserialise(bond); });
+    Deserialisable::vector(node, "impropers",
+                           [this](const SerialisedValue &improper)
+                           {
+                               impropers_
+                                   .emplace_back(this, &atoms_.at(Deserialisable::deser<int>(improper.at("i"))),
+                                                 &atoms_.at(Deserialisable::deser<int>(improper.at("j"))),
+                                                 &atoms_.at(Deserialisable::deser<int>(improper.at("k"))),
+                                                 &atoms_.at(Deserialisable::deser<int>(improper.at("l"))))
+                                   .deserialise(improper);
+                           });
+
+    Deserialisable::map(node, "commonTorsions", [this](const std::string &name, const SerialisedValue &bond)
+                        { commonTorsions_.emplace_back(std::make_unique<CommonTorsion>(name))->deserialise(bond); });
+    Deserialisable::vector(node, "torsions",
+                           [this](const SerialisedValue &torsion)
+                           {
+                               torsions_
+                                   .emplace_back(this, &atoms_.at(Deserialisable::deser<int>(torsion.at("i"))),
+                                                 &atoms_.at(Deserialisable::deser<int>(torsion.at("j"))),
+                                                 &atoms_.at(Deserialisable::deser<int>(torsion.at("k"))),
+                                                 &atoms_.at(Deserialisable::deser<int>(torsion.at("l"))))
+                                   .deserialise(torsion);
+                           });
+
+    Deserialisable::map(node, "isotopologues", [this](const std::string &name, const SerialisedValue &iso)
+                        { isotopologues_.emplace_back(std::make_unique<Isotopologue>(this, name))->deserialise(iso); });
+
+    // We must finalise the intramolecular data before we attempt to add sites as Fragment sites need the bond connectivity
+    finaliseIntramolecularData(false);
+
+    Deserialisable::map(node, "sites", [this](const std::string &name, const SerialisedValue &site)
+                        { sites_.emplace_back(std::make_unique<SpeciesSite>(this, name))->deserialise(site); });
+
+    box_ = Deserialisable::deser_or(node, "box", Box());
+
+    Deserialisable::vector(node, "instances",
+                           [this](const SerialisedValue &instanceNode)
+                           {
+                               auto &instance = instances_.emplace_back();
+                               Deserialisable::vector(instanceNode, [instance](const auto &vector3Node)
+                                                      { return Deserialisable::deser<Vector3>(vector3Node); });
+                           });
+
+    // Always update type indexing after deserialisation
+    updateTypeIndexing();
+}

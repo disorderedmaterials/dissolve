@@ -2,13 +2,13 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/speciesImproper.h"
-#include "classes/species.h"
 #include "classes/speciesAtom.h"
 #include "classes/speciesTorsion.h"
+#include "nodes/structure/speciesBase.h"
 
 SpeciesImproper::SpeciesImproper() : SpeciesIntra(nullptr, TorsionFunctions::Form::None) {}
 
-SpeciesImproper::SpeciesImproper(Species *parent, SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l)
+SpeciesImproper::SpeciesImproper(SpeciesBaseNode *parent, SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l)
     : SpeciesIntra(parent, TorsionFunctions::Form::None), i_(i), j_(j), k_(k), l_(l)
 {
 }

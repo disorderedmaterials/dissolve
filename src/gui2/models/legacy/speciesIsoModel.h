@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "classes/species.h"
+#include "nodes/structure/speciesBase.h"
 #include <QAbstractItemModel>
 #include <QModelIndex>
 
@@ -11,14 +11,14 @@ class SpeciesIsoModel : public QAbstractItemModel
 {
     Q_OBJECT
     private:
-    Species &species_;
+    SpeciesBaseNode &species_;
 
     public Q_SLOTS:
     QModelIndex addIso();
     void removeIso(const QModelIndex &index);
 
     public:
-    SpeciesIsoModel(Species &species);
+    SpeciesIsoModel(SpeciesBaseNode &species);
     QModelIndex parent(const QModelIndex &index) const override;
     QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const override;
     bool hasChildren(const QModelIndex &parent) const override;

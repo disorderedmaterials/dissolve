@@ -31,7 +31,7 @@ class MoleculeTorsionNode : public Node
     // Target configuration
     Configuration *configuration_{nullptr};
     // Target Species
-    const Species *species_{nullptr};
+    const SpeciesBaseNode *species_{nullptr};
     // Target atom indices
     Number i_{0}, j_{1}, k_{2}, l_{3};
     // Torsion histogram

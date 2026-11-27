@@ -3,9 +3,9 @@
 
 #include "data/ff/uff/uff.h"
 #include "classes/atomType.h"
-#include "classes/species.h"
 #include "data/elements.h"
 #include "math/mathFunc.h"
+#include "nodes/structure/speciesBase.h"
 
 /*
  * Implements "UFF, a Full Periodic Table Force Field for Molecular Mechanics and Molecular Dynamics Simulations"

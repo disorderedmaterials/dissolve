@@ -2,12 +2,12 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/atomType.h"
-#include "classes/species.h"
 #include "data/atomicMasses.h"
+#include "nodes/structure/speciesBase.h"
 #include <numeric>
 
 // Return the number of atoms in the species (or only those with the specified presence)
-int Species::nAtoms(AtomConstants::Presence withPresence) const
+int SpeciesBaseNode::nAtoms(AtomConstants::Presence withPresence) const
 {
     return withPresence == AtomConstants::Presence::Any
                ? atoms_.size()
@@ -16,14 +16,14 @@ int Species::nAtoms(AtomConstants::Presence withPresence) const
 }
 
 // Return the nth Atom in the Species
-SpeciesAtom &Species::atom(int n)
+SpeciesAtom &SpeciesBaseNode::atom(int n)
 {
     assert(n >= 0 && n < atoms_.size());
     auto it = std::next(atoms_.begin(), n);
     return *it;
 }
 
-const SpeciesAtom &Species::atom(int n) const
+const SpeciesAtom &SpeciesBaseNode::atom(int n) const
 {
     assert(n >= 0 && n < atoms_.size());
     const auto it = std::next(atoms_.begin(), n);
@@ -31,18 +31,18 @@ const SpeciesAtom &Species::atom(int n) const
 }
 
 // Return a vector of SpeciesAtoms
-const std::vector<SpeciesAtom> &Species::atoms() const { return atoms_; }
-std::vector<SpeciesAtom> &Species::atoms() { return atoms_; }
+const std::vector<SpeciesAtom> &SpeciesBaseNode::atoms() const { return atoms_; }
+std::vector<SpeciesAtom> &SpeciesBaseNode::atoms() { return atoms_; }
 
 // Return total atomic mass of Species
-double Species::mass() const
+double SpeciesBaseNode::mass() const
 {
     return std::accumulate(atoms_.begin(), atoms_.end(), 0.0, [](const auto acc, const auto &i)
                            { return acc + (i.isPresence(AtomConstants::Presence::Physical) ? AtomicMass::mass(i.Z()) : 0.0); });
 }
 
 // Add new atom type to atom types
-AtomType *Species::addAtomType(Elements::Element Z, std::string_view name)
+AtomType *SpeciesBaseNode::addAtomType(Elements::Element Z, std::string_view name)
 {
     // Create a suitable unique name
     auto uniqueName = DissolveSys::uniqueName(name == "" ? Elements::symbol(Z) : name, atomTypes_,
@@ -56,7 +56,7 @@ AtomType *Species::addAtomType(Elements::Element Z, std::string_view name)
 }
 
 // Find and return the named atom type
-AtomType *Species::findAtomType(std::string_view name) const
+AtomType *SpeciesBaseNode::findAtomType(std::string_view name) const
 {
     auto it = std::find_if(atomTypes_.begin(), atomTypes_.end(), [name](const auto at) { return at->name() == name; });
     if (it != atomTypes_.end())
@@ -65,9 +65,9 @@ AtomType *Species::findAtomType(std::string_view name) const
 }
 
 // Return atom types in the species
-std::vector<std::shared_ptr<AtomType>> &Species::atomTypes() { return atomTypes_; };
-const std::vector<std::shared_ptr<AtomType>> &Species::atomTypes() const { return atomTypes_; }
-std::vector<const AtomType *> Species::atomTypesRaw() const
+std::vector<std::shared_ptr<AtomType>> &SpeciesBaseNode::atomTypes() { return atomTypes_; };
+const std::vector<std::shared_ptr<AtomType>> &SpeciesBaseNode::atomTypes() const { return atomTypes_; }
+std::vector<const AtomType *> SpeciesBaseNode::atomTypesRaw() const
 {
     std::vector<const AtomType *> result;
     std::transform(atomTypes_.begin(), atomTypes_.end(), std::back_inserter(result), [](const auto &at) { return at.get(); });
@@ -75,7 +75,7 @@ std::vector<const AtomType *> Species::atomTypesRaw() const
 }
 
 // Calculate and return atom type populations
-KeyedVector<const AtomType *, int> Species::atomTypePopulations() const
+KeyedVector<const AtomType *, int> SpeciesBaseNode::atomTypePopulations() const
 {
     KeyedVector<const AtomType *, int> result;
     for (const auto &i : atoms_)
@@ -86,7 +86,7 @@ KeyedVector<const AtomType *, int> Species::atomTypePopulations() const
 }
 
 // Return atom type index map
-std::map<const AtomType *, int> Species::atomTypeIndexMap() const
+std::map<const AtomType *, int> SpeciesBaseNode::atomTypeIndexMap() const
 {
     auto populations = atomTypePopulations();
 
@@ -98,7 +98,7 @@ std::map<const AtomType *, int> Species::atomTypeIndexMap() const
 }
 
 // Clear AtomType assignments for all atoms
-void Species::clearAtomTypes()
+void SpeciesBaseNode::clearAtomTypes()
 {
     for (auto &i : atoms_)
         i.setAtomType(nullptr);
@@ -107,7 +107,7 @@ void Species::clearAtomTypes()
 }
 
 // Simplify atom types, merging together those with identical parameters
-int Species::simplifyAtomTypes()
+int SpeciesBaseNode::simplifyAtomTypes()
 {
     // Iterate over all atoms bar the first
     auto nModified = 0;
@@ -129,7 +129,7 @@ int Species::simplifyAtomTypes()
 }
 
 // Return total charge of species from local/atomtype atomic charges
-double Species::totalCharge(bool useAtomTypes) const
+double SpeciesBaseNode::totalCharge(bool useAtomTypes) const
 {
     if (useAtomTypes)
         return std::accumulate(atoms_.begin(), atoms_.end(), 0.0, [](const auto acc, const auto &i)
@@ -139,7 +139,7 @@ double Species::totalCharge(bool useAtomTypes) const
 }
 
 // Update type indices per Atom
-void Species::updateTypeIndexing()
+void SpeciesBaseNode::updateTypeIndexing()
 {
     // Are we currently up-to-date
     if (typeIndicesValid_)
@@ -161,10 +161,10 @@ void Species::updateTypeIndexing()
 }
 
 // Return positional instances
-const std::vector<std::vector<Vector3>> &Species::instances() const { return instances_; }
+const std::vector<std::vector<Vector3>> &SpeciesBaseNode::instances() const { return instances_; }
 
 // Return as a Structure
-Structure Species::asStructure(bool includeInstances) const
+Structure SpeciesBaseNode::asStructure(bool includeInstances) const
 {
     Structure result;
 

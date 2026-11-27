@@ -3,7 +3,7 @@
 
 #include "gui2/models/legacy/commonTermTreeModel.h"
 
-MasterTermTreeModel::MasterTermTreeModel(Species *species)
+MasterTermTreeModel::MasterTermTreeModel(SpeciesBaseNode *species)
     : bondModel_(species), angleModel_(species), torsionModel_(species), improperModel_(species)
 {
 }
@@ -25,22 +25,22 @@ CommonTermModel &MasterTermTreeModel::modelForTopLevelRow(int row)
     }
 }
 
-void MasterTermTreeModel::setBondQueryFunction(std::function<bool(std::string_view termName, Species *sp)> func)
+void MasterTermTreeModel::setBondQueryFunction(std::function<bool(std::string_view termName, SpeciesBaseNode *sp)> func)
 {
     bondModel_.setQueryFunction(std::move(func));
 }
 
-void MasterTermTreeModel::setAngleQueryFunction(std::function<bool(std::string_view termName, Species *sp)> func)
+void MasterTermTreeModel::setAngleQueryFunction(std::function<bool(std::string_view termName, SpeciesBaseNode *sp)> func)
 {
     angleModel_.setQueryFunction(std::move(func));
 }
 
-void MasterTermTreeModel::setTorsionQueryFunction(std::function<bool(std::string_view termName, Species *sp)> func)
+void MasterTermTreeModel::setTorsionQueryFunction(std::function<bool(std::string_view termName, SpeciesBaseNode *sp)> func)
 {
     torsionModel_.setQueryFunction(std::move(func));
 }
 
-void MasterTermTreeModel::setImproperQueryFunction(std::function<bool(std::string_view termName, Species *sp)> func)
+void MasterTermTreeModel::setImproperQueryFunction(std::function<bool(std::string_view termName, SpeciesBaseNode *sp)> func)
 {
     improperModel_.setQueryFunction(std::move(func));
 }

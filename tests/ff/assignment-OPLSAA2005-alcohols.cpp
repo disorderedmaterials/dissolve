@@ -10,23 +10,22 @@ namespace UnitTest
 TEST(OPLSAA2005AlcoholsAssignmentTest, Methanol)
 {
     TestGraph testGraph;
-    auto *speciesNode = testGraph.createSpeciesFromStructureAndForcefield("Methanol", "ImportXYZStructure", "xyz/methanol.xyz",
-                                                                          ForcefieldLibrary::forcefield("OPLSAA2005/Alcohols"));
+    auto *species = testGraph.createSpeciesFromStructureAndForcefield("Methanol", "ImportXYZStructure", "xyz/methanol.xyz",
+                                                                      ForcefieldLibrary::forcefield("OPLSAA2005/Alcohols"));
 
-    ASSERT_TRUE(speciesNode);
-    auto &species = speciesNode->species();
-    ASSERT_EQ(speciesNode->run(), NodeConstants::ProcessResult::Success);
+    ASSERT_TRUE(species);
+    ASSERT_EQ(species->run(), NodeConstants::ProcessResult::Success);
 
-    ASSERT_EQ(species.bonds().size(), 5);
-    ASSERT_EQ(species.angles().size(), 7);
-    ASSERT_EQ(species.torsions().size(), 3);
-    ASSERT_EQ(species.impropers().size(), 0);
+    ASSERT_EQ(species->bonds().size(), 5);
+    ASSERT_EQ(species->angles().size(), 7);
+    ASSERT_EQ(species->torsions().size(), 3);
+    ASSERT_EQ(species->impropers().size(), 0);
 
-    EXPECT_TRUE(testSpeciesAtomType(&species, {{0, "CT"}, {1, "OH"}, {2, "HO"}, {3, "HC"}, {4, "HC"}, {5, "HC"}}));
-    EXPECT_TRUE(testSpeciesBond(species.getBond(0, 1), {BondFunctions::Form::Harmonic, "k=2677.76 eq=1.41"}));
-    EXPECT_TRUE(testSpeciesBond(species.getBond(0, 3), {BondFunctions::Form::Harmonic, "k=2845.12 eq=1.09"}));
-    EXPECT_TRUE(testSpeciesAngle(species.getAngle(0, 1, 2), {AngleFunctions::Form::Harmonic, "k=460.24 eq=108.5"}));
-    EXPECT_TRUE(testSpeciesAngle(species.getAngle(4, 0, 1), {AngleFunctions::Form::Harmonic, "k=292.88 eq=109.5"}));
-    EXPECT_TRUE(testSpeciesTorsion(species.getTorsion(3, 0, 1, 2), {TorsionFunctions::Form::Cos3, "0  0  1.47444"}));
+    EXPECT_TRUE(testSpeciesAtomType(species, {{0, "CT"}, {1, "OH"}, {2, "HO"}, {3, "HC"}, {4, "HC"}, {5, "HC"}}));
+    EXPECT_TRUE(testSpeciesBond(species->getBond(0, 1), {BondFunctions::Form::Harmonic, "k=2677.76 eq=1.41"}));
+    EXPECT_TRUE(testSpeciesBond(species->getBond(0, 3), {BondFunctions::Form::Harmonic, "k=2845.12 eq=1.09"}));
+    EXPECT_TRUE(testSpeciesAngle(species->getAngle(0, 1, 2), {AngleFunctions::Form::Harmonic, "k=460.24 eq=108.5"}));
+    EXPECT_TRUE(testSpeciesAngle(species->getAngle(4, 0, 1), {AngleFunctions::Form::Harmonic, "k=292.88 eq=109.5"}));
+    EXPECT_TRUE(testSpeciesTorsion(species->getTorsion(3, 0, 1, 2), {TorsionFunctions::Form::Cos3, "0  0  1.47444"}));
 }
 }; // namespace UnitTest

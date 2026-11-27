@@ -12,7 +12,7 @@
 
 // Forward Declarations
 class AtomType;
-class Species;
+class SpeciesBaseNode;
 
 // XRay Weights Container
 class XRayWeights
@@ -33,7 +33,8 @@ class XRayWeights
 
     public:
     // Set-up from supplied species populations and form factors
-    bool setUp(const std::map<const Species *, double> &speciesPopulations, XRayFormFactors::XRayFormFactorData formFactors);
+    bool setUp(const std::map<const SpeciesBaseNode *, double> &speciesPopulations,
+               XRayFormFactors::XRayFormFactorData formFactors);
     // Return atom type fractions
     const KeyedVector<const AtomType *, double> &typeFractions() const;
     // Return pre-factor for types i and j

@@ -6,8 +6,8 @@
 #include "classes/configuration.h"
 #include "classes/configurationAtom.h"
 #include "classes/molecule.h"
-#include "classes/species.h"
 #include "math/mathFunc.h"
+#include "nodes/structure/speciesBase.h"
 #include "templates/algorithms.h"
 
 GeometryKernel::GeometryKernel(const Box &box, const PotentialMap &potentialMap) : KernelBase(box, potentialMap) {}

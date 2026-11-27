@@ -43,10 +43,10 @@ struct ParameterLink
 class ParameterBase
 {
     public:
-    using DataResolver = std::function<void(const std::map<std::string, const Species *> &)>;
+    using DataResolver = std::function<void(const std::map<std::string, const SpeciesBaseNode *> &)>;
     ParameterBase(
         Node *parent, std::string_view name, std::string_view description, std::type_index storedDataType,
-        DataResolver resolver = [](const std::map<std::string, const Species *> &reachableSpecies) {});
+        DataResolver resolver = [](const std::map<std::string, const SpeciesBaseNode *> &reachableSpecies) {});
     virtual ~ParameterBase() = default;
 
     // Parameter Flags
@@ -109,7 +109,7 @@ class ParameterBase
      */
     private:
     // Resolver function for data
-    DataResolver dataResolver_{[&](const std::map<std::string, const Species *> &reachableSpecies) {}};
+    DataResolver dataResolver_{[&](const std::map<std::string, const SpeciesBaseNode *> &reachableSpecies) {}};
 
     public:
     // Return whether the contained data is an instance of std::vector
@@ -172,7 +172,7 @@ class ParameterBase
     // Create a parameter link (input - data proxy - output) for the derived class type
     virtual ParameterLink createParameterLink(std::string_view newName, std::string_view newDescription = "") const = 0;
     // Resolve named data
-    void resolve(const std::map<std::string, const Species *> &speciesInScope) { dataResolver_(speciesInScope); }
+    void resolve(const std::map<std::string, const SpeciesBaseNode *> &reachableSpecies) { dataResolver_(reachableSpecies); }
 
     /*
      * Serialisation
@@ -267,7 +267,7 @@ template <typename DataClass> class Parameter : public ParameterBase, public std
     Parameter(Node *parent, std::string_view name, std::string_view description, DataClass &value)
         requires(std::is_base_of_v<ResolvableContext, DataClass>)
         : ParameterBase(parent, name, description, std::type_index(typeid(DataClass)),
-                        [&](const std::map<std::string, const Species *> &reachableSpecies)
+                        [&](const std::map<std::string, const SpeciesBaseNode *> &reachableSpecies)
                         { value.resolve(reachableSpecies); }),
           data_(value), default_(value)
     {

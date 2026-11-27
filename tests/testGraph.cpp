@@ -60,7 +60,7 @@ Node *TestGraph::appendNode(const std::string &nodeType, const std::optional<std
 }
 // Create species insertion node chain
 Node *TestGraph::createAndInsertSpecies(Node *cfgSourceNode, std::string cfgSourceOutput,
-                                        const std::vector<std::pair<const Species *, int>> &species, double rho,
+                                        const std::vector<std::pair<const SpeciesBaseNode *, int>> &species, double rho,
                                         Units::DensityUnits rhoUnits, InsertRandomNode::BoxScalingType boxScalingType)
 {
     // Add Species and Insert nodes
@@ -86,30 +86,30 @@ Node *TestGraph::createAndInsertSpecies(Node *cfgSourceNode, std::string cfgSour
     return fetchHead();
 }
 // Find a species corresponding to a species node belonging to the graph of any type (Species/ImportSpecies/AtomicSpecies)Node
-const Species *TestGraph::findSpecies(std::string name)
+const SpeciesBaseNode *TestGraph::findSpecies(std::string name)
 {
     auto node = findNode(name);
     if (!node)
         return nullptr;
 
-    return node->findOutput("Species")->get<const Species *>();
+    return node->findOutput("Species")->get<const SpeciesBaseNode *>();
 }
 // Create atomic species
-const Species *TestGraph::createAtomicSpecies(Elements::Element element, std::string interactionPotential)
+const SpeciesBaseNode *TestGraph::createAtomicSpecies(Elements::Element element, std::string interactionPotential)
 {
     auto node = createNode("AtomicSpecies", Elements::symbol(element));
     node->setOption("Element", element);
     node->setOption("InteractionPotential", interactionPotential);
     node->run();
-    return node->findOutput("Species")->get<const Species *>();
+    return node->findOutput("Species")->get<const SpeciesBaseNode *>();
 }
 // Import species
-const Species *TestGraph::importSpecies(std::filesystem::path tomlPath)
+const SpeciesBaseNode *TestGraph::importSpecies(std::filesystem::path tomlPath)
 {
     auto node = std::make_unique<ImportSpeciesNode>(this);
     node->setOption("FilePath", tomlPath);
     node->run();
-    auto species = node->findOutput("Species")->get<const Species *>();
+    auto species = node->findOutput("Species")->get<const SpeciesBaseNode *>();
     addNode(std::move(node), species->name());
     return species;
 }
@@ -121,10 +121,9 @@ SpeciesNode *TestGraph::createSpeciesFromStructureAndForcefield(std::string name
     // Add species node
     auto speciesNodeUniquePtr = std::make_unique<SpeciesNode>(nullptr);
     EXPECT_TRUE(speciesNodeUniquePtr);
-    auto speciesNodePtr = speciesNodeUniquePtr.get();
-    EXPECT_TRUE(speciesNodePtr);
-    auto &species = speciesNodePtr->species();
-    species.setName(name);
+    auto species = speciesNodeUniquePtr.get();
+    EXPECT_TRUE(species);
+    species->setName(name);
     currentGraph_->addNode(std::move(speciesNodeUniquePtr), name);
 
     // Create structure import node
@@ -149,11 +148,11 @@ SpeciesNode *TestGraph::createSpeciesFromStructureAndForcefield(std::string name
     EXPECT_TRUE(forcefieldNode->setOption<Forcefield *>("Forcefield", ff.get()));
     EXPECT_TRUE(currentGraph_->addEdge({"Forcefield", "Recipe", name, "Recipe"}));
 
-    return speciesNodePtr;
+    return species;
 }
 // Create basic configuration graph, returning the last node
-Node *TestGraph::createConfiguration(std::string name, const std::vector<std::pair<const Species *, int>> &species, double rho,
-                                     Units::DensityUnits rhoUnits)
+Node *TestGraph::createConfiguration(std::string name, const std::vector<std::pair<const SpeciesBaseNode *, int>> &species,
+                                     double rho, Units::DensityUnits rhoUnits)
 {
     // Create configuration
     EXPECT_TRUE(appendNode("Configuration", name));
@@ -163,7 +162,7 @@ Node *TestGraph::createConfiguration(std::string name, const std::vector<std::pa
                                   InsertRandomNode::BoxScalingType::AddVolume);
 }
 // Create basic configuration graph, returning the last node
-Node *TestGraph::createConfiguration(std::string name, const std::vector<std::pair<const Species *, int>> &species,
+Node *TestGraph::createConfiguration(std::string name, const std::vector<std::pair<const SpeciesBaseNode *, int>> &species,
                                      const Vector3 &cellLengths, const Vector3 &cellAngles)
 {
     // Create configuration and SetBox nodes
@@ -244,9 +243,10 @@ std::pair<GRNode *, SQNode *> TestGraph::appendGRSQ(bool noAveraging, bool noInt
     return {grNode, sqNode};
 }
 // Create a NeutronSQ node with optional reference data
-NeutronSQNode *TestGraph::appendNeutronSQ(SQNode *sqNode, std::string name,
-                                          const std::vector<std::tuple<const Species *, std::string, double>> isotopologues,
-                                          std::string referenceData, bool isHistogram)
+NeutronSQNode *
+TestGraph::appendNeutronSQ(SQNode *sqNode, std::string name,
+                           const std::vector<std::tuple<const SpeciesBaseNode *, std::string, double>> isotopologues,
+                           std::string referenceData, bool isHistogram)
 {
     // Construct the isotopologue set
     IsotopologueSet isotopologueSet;

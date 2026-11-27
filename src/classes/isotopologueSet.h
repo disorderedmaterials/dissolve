@@ -7,7 +7,7 @@
 #include "templates/resolvableKeyedVector.h"
 
 // Forward Declarations
-class Species;
+class SpeciesBaseNode;
 class Isotopologue;
 
 // IsotopologueSet - Isotopologues for one or more Species
@@ -25,7 +25,7 @@ class IsotopologueSet : ResolvableContext
      */
     private:
     // Isotopologue mixtures for individual Species
-    ResolvableKeyedVector<const Species *, ResolvableKeyedVector<const Isotopologue *, double>> isotopologues_;
+    ResolvableKeyedVector<const SpeciesBaseNode *, ResolvableKeyedVector<const Isotopologue *, double>> isotopologues_;
 
     public:
     // Clear all existing data
@@ -33,18 +33,19 @@ class IsotopologueSet : ResolvableContext
     // Add Isotopologue with the specified relative weight
     void add(const Isotopologue *iso, double relativeWeight);
     // Remove specified Species from the list (if it exists)
-    void remove(const Species *sp);
+    void remove(const SpeciesBaseNode *sp);
     // Remove any occurrences of the specified Isotopologue
     void remove(const Isotopologue *iso);
     // Return whether Isotopologues for the specified Species exists
-    bool contains(const Species *sp) const;
+    bool contains(const SpeciesBaseNode *sp) const;
     // Return Isotopologues with normalised populations for the specified Species
-    std::map<const Isotopologue *, double> normalisedIsotopologues(const Species *sp) const;
+    std::map<const Isotopologue *, double> normalisedIsotopologues(const SpeciesBaseNode *sp) const;
     // Return number of species covered by set
     int nSpecies() const;
     // Return vector of all Isotopologues
-    ResolvableKeyedVector<const Species *, ResolvableKeyedVector<const Isotopologue *, double>> &isotopologues();
-    const ResolvableKeyedVector<const Species *, ResolvableKeyedVector<const Isotopologue *, double>> &isotopologues() const;
+    ResolvableKeyedVector<const SpeciesBaseNode *, ResolvableKeyedVector<const Isotopologue *, double>> &isotopologues();
+    const ResolvableKeyedVector<const SpeciesBaseNode *, ResolvableKeyedVector<const Isotopologue *, double>> &
+    isotopologues() const;
 
     /*
      * Serialisation
@@ -55,5 +56,5 @@ class IsotopologueSet : ResolvableContext
     // Read values from a serialisable value
     void deserialise(const SerialisedValue &node);
     // Resolve internal resolvable name references with supplied data
-    void resolve(const std::map<std::string, const Species *> &speciesInScope) override;
+    void resolve(const std::map<std::string, const SpeciesBaseNode *> &reachableSpecies) override;
 };

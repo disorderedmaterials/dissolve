@@ -2,9 +2,10 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "gui2/models/legacy/commonTorsionModel.h"
-#include "classes/species.h"
+#include "nodes/structure/speciesBase.h"
 
-CommonTorsionModel::CommonTorsionModel(Species *species) : CommonTermModel(species), sourceData_(species->commonTorsions())
+CommonTorsionModel::CommonTorsionModel(SpeciesBaseNode *species)
+    : CommonTermModel(species), sourceData_(species->commonTorsions())
 {
     // Set connections
     modelUpdater.setModel(this);

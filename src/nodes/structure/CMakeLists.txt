@@ -22,6 +22,12 @@ add_library(
   setCoordinates.h
   speciesBase.cpp
   speciesBase.h
+  speciesBase_atomic.cpp
+  speciesBase_common.cpp
+  speciesBase_intra.cpp
+  speciesBase_isotopologues.cpp
+  speciesBase_site.cpp
+  speciesBase_transform.cpp
   species.cpp
   species.h
 )

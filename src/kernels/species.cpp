@@ -4,12 +4,12 @@
 #include "kernels/species.h"
 #include "classes/box.h"
 #include "classes/potentialMap.h"
-#include "classes/species.h"
 #include "math/combinations.h"
+#include "nodes/structure/speciesBase.h"
 #include "templates/algorithms.h"
 #include <numeric>
 
-SpeciesKernel::SpeciesKernel(const Species *sp, const PotentialMap &potentialMap)
+SpeciesKernel::SpeciesKernel(const SpeciesBaseNode *sp, const PotentialMap &potentialMap)
     : GeometryKernel(species_->box(), potentialMap), species_(sp)
 {
 }

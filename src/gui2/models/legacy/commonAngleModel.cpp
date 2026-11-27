@@ -2,9 +2,9 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "gui2/models/legacy/commonAngleModel.h"
-#include "classes/species.h"
+#include "nodes/structure/speciesBase.h"
 
-CommonAngleModel::CommonAngleModel(Species *species) : CommonTermModel(species), sourceData_(species->commonAngles())
+CommonAngleModel::CommonAngleModel(SpeciesBaseNode *species) : CommonTermModel(species), sourceData_(species->commonAngles())
 {
     // Set connections
     modelUpdater.setModel(this);

@@ -9,7 +9,7 @@
 #include <map>
 #include <vector>
 
-class Species;
+class SpeciesBaseNode;
 
 // DetectMolecules Node
 class DetectMoleculesNode : public Node

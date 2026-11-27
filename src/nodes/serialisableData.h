@@ -30,9 +30,9 @@ class SerialisableData
     // Express as a serialised value
     virtual SerialisedValue serialise() const { return {}; }
     // Read from a serialised value
-    virtual void deserialise(const SerialisedValue &node) {};
+    virtual void deserialise(const SerialisedValue &node) {}
     // Resolve named data
-    virtual void resolve(const std::map<std::string, const Species *> &speciesInScope) {};
+    virtual void resolve(const std::map<std::string, const SpeciesBaseNode *> &reachableSpecies) {}
 };
 
 // Primary type for a SerialisableClass to a specific DataClass
@@ -62,7 +62,7 @@ template <typename DataClass> class SerialisableClass : public SerialisableData
               }),
           dataChecker_([&]() { return targetData.has_value() && !targetData.value().empty(); }),
           dataResolver_(
-              [&](const std::map<std::string, const Species *> &reachableSpecies)
+              [&](const std::map<std::string, const SpeciesBaseNode *> &reachableSpecies)
               {
                   if constexpr (std::is_base_of_v<ResolvableContext, typename DataClass::value_type::value_type>)
                       for (auto &item : data_.value())
@@ -82,7 +82,7 @@ template <typename DataClass> class SerialisableClass : public SerialisableData
               }),
           dataChecker_([&]() { return targetData.has_value(); }),
           dataResolver_(
-              [&](const std::map<std::string, const Species *> &reachableSpecies)
+              [&](const std::map<std::string, const SpeciesBaseNode *> &reachableSpecies)
               {
                   if constexpr (std::is_base_of_v<ResolvableContext, typename DataClass::value_type>)
                       data_.value().resolve(reachableSpecies);
@@ -111,7 +111,7 @@ template <typename DataClass> class SerialisableClass : public SerialisableData
               }),
           dataChecker_([&]() { return !targetData.empty(); }),
           dataResolver_(
-              [&](const std::map<std::string, const Species *> &reachableSpecies)
+              [&](const std::map<std::string, const SpeciesBaseNode *> &reachableSpecies)
               {
                   if constexpr (std::is_base_of_v<ResolvableContext, typename DataClass::value_type>)
                       for (auto &item : data_)
@@ -123,7 +123,7 @@ template <typename DataClass> class SerialisableClass : public SerialisableData
     SerialisableClass(std::string_view key, DataClass &value)
         requires(!is_optional<DataClass> && Serialisable::Serialisable<DataClass>)
         : SerialisableData(key), data_(value), dataResolver_(
-                                                   [&](const std::map<std::string, const Species *> &reachableSpecies)
+                                                   [&](const std::map<std::string, const SpeciesBaseNode *> &reachableSpecies)
                                                    {
                                                        if constexpr (std::is_base_of_v<ResolvableContext, DataClass>)
                                                            data_.resolve(reachableSpecies);
@@ -148,8 +148,8 @@ template <typename DataClass> class SerialisableClass : public SerialisableData
     using ValueChecker = std::function<bool()>;
     ValueChecker dataChecker_{[&]() { return true; }};
     // Resolver function for data
-    using DataResolver = std::function<void(const std::map<std::string, const Species *> &)>;
-    DataResolver dataResolver_{[&](const std::map<std::string, const Species *> &reachableSpecies) {}};
+    using DataResolver = std::function<void(const std::map<std::string, const SpeciesBaseNode *> &)>;
+    DataResolver dataResolver_{[&](const std::map<std::string, const SpeciesBaseNode *> &reachableSpecies) {}};
 
     /*
      * Serialisation
@@ -162,5 +162,8 @@ template <typename DataClass> class SerialisableClass : public SerialisableData
     // Read from a serialised value
     void deserialise(const SerialisedValue &node) { dataDeserialiser_(node); }
     // Resolve named data
-    void resolve(const std::map<std::string, const Species *> &speciesInScope) override { dataResolver_(speciesInScope); }
+    void resolve(const std::map<std::string, const SpeciesBaseNode *> &reachableSpecies) override
+    {
+        dataResolver_(reachableSpecies);
+    }
 };

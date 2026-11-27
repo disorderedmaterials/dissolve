@@ -3,7 +3,7 @@
 
 #include "classes/isotopologueSet.h"
 #include "base/serialiserLibrary.h"
-#include "classes/species.h"
+#include "nodes/structure/speciesBase.h"
 
 IsotopologueSet::IsotopologueSet(const std::vector<std::pair<const Isotopologue *, double>> &topes)
 {
@@ -28,7 +28,7 @@ void IsotopologueSet::add(const Isotopologue *iso, double relativeWeight)
 }
 
 // Remove specified Species from the list (if it exists)
-void IsotopologueSet::remove(const Species *sp)
+void IsotopologueSet::remove(const SpeciesBaseNode *sp)
 {
     if (!isotopologues_.contains(sp))
         isotopologues_.erase(sp);
@@ -48,10 +48,10 @@ void IsotopologueSet::remove(const Isotopologue *iso)
 }
 
 // Return whether Isotopologues for the specified Species exists
-bool IsotopologueSet::contains(const Species *sp) const { return isotopologues_.contains(sp); }
+bool IsotopologueSet::contains(const SpeciesBaseNode *sp) const { return isotopologues_.contains(sp); }
 
 // Return Isotopologues with normalised populations for the specified Species
-std::map<const Isotopologue *, double> IsotopologueSet::normalisedIsotopologues(const Species *sp) const
+std::map<const Isotopologue *, double> IsotopologueSet::normalisedIsotopologues(const SpeciesBaseNode *sp) const
 {
     if (isotopologues_.contains(sp))
     {
@@ -72,12 +72,13 @@ std::map<const Isotopologue *, double> IsotopologueSet::normalisedIsotopologues(
 int IsotopologueSet::nSpecies() const { return isotopologues_.size(); }
 
 // Return vector of all Isotopologues
-ResolvableKeyedVector<const Species *, ResolvableKeyedVector<const Isotopologue *, double>> &IsotopologueSet::isotopologues()
+ResolvableKeyedVector<const SpeciesBaseNode *, ResolvableKeyedVector<const Isotopologue *, double>> &
+IsotopologueSet::isotopologues()
 {
     return isotopologues_;
 }
 
-const ResolvableKeyedVector<const Species *, ResolvableKeyedVector<const Isotopologue *, double>> &
+const ResolvableKeyedVector<const SpeciesBaseNode *, ResolvableKeyedVector<const Isotopologue *, double>> &
 IsotopologueSet::isotopologues() const
 {
     return isotopologues_;
@@ -115,13 +116,13 @@ void IsotopologueSet::deserialise(const SerialisedValue &node)
 }
 
 // Resolve internal resolvable name references with supplied data
-void IsotopologueSet::resolve(const std::map<std::string, const Species *> &speciesInScope)
+void IsotopologueSet::resolve(const std::map<std::string, const SpeciesBaseNode *> &reachableSpecies)
 {
     for (auto &[resolvableSpecies, topes] : isotopologues_)
     {
         // Find the named species
-        if (speciesInScope.contains(std::string(resolvableSpecies.name())))
-            resolvableSpecies.resolve(speciesInScope.at(std::string(resolvableSpecies.name())));
+        if (reachableSpecies.contains(std::string(resolvableSpecies.name())))
+            resolvableSpecies.resolve(reachableSpecies.at(std::string(resolvableSpecies.name())));
         else
             throw(std::runtime_error(std::format("Species '{}' is used in IsotopologueSet, but no such species is in scope.\n",
                                                  resolvableSpecies.name())));

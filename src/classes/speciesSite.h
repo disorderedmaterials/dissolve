@@ -17,7 +17,7 @@
 // Forward Declarations
 class Configuration;
 class Site;
-class Species;
+class SpeciesBaseNode;
 class SpeciesAtom;
 
 // Species Site Definition
@@ -34,8 +34,8 @@ class SpeciesSite
     // EnumOptions for SiteType
     static EnumOptions<SiteType> siteTypes();
 
-    explicit SpeciesSite(const Species *parent, SiteType type = SiteType::Static);
-    SpeciesSite(const Species *parent, std::string name, SiteType type = SiteType::Static);
+    explicit SpeciesSite(const SpeciesBaseNode *parent, SiteType type = SiteType::Static);
+    SpeciesSite(const SpeciesBaseNode *parent, std::string name, SiteType type = SiteType::Static);
     ~SpeciesSite() = default;
 
     /*
@@ -45,7 +45,7 @@ class SpeciesSite
     // Name of site
     std::string name_;
     // Parent Species
-    const Species *parent_;
+    const SpeciesBaseNode *parent_;
     // Version of the SpeciesSite
     VersionCounter version_;
 
@@ -55,7 +55,7 @@ class SpeciesSite
     // Return anme of site
     std::string_view name() const;
     // Return species parent
-    const Species *parent() const;
+    const SpeciesBaseNode *parent() const;
     // Return version
     int version() const;
 

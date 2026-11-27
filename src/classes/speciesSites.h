@@ -9,7 +9,7 @@
 
 // Forward Declarations
 class SpeciesSite;
-class Species;
+class SpeciesBaseNode;
 
 // SpeciesSites - Sites from one or more Species
 class SpeciesSites : ResolvableContext
@@ -24,7 +24,7 @@ class SpeciesSites : ResolvableContext
      */
     private:
     // Target sites
-    ResolvableKeyedVector<const Species *, ResolvableKeyedVector<const SpeciesSite *, double>> sites_;
+    ResolvableKeyedVector<const SpeciesBaseNode *, ResolvableKeyedVector<const SpeciesSite *, double>> sites_;
 
     public:
     // Clear all existing data
@@ -34,8 +34,8 @@ class SpeciesSites : ResolvableContext
     // Remove specified site from the list (if it exists)
     void remove(const SpeciesSite *site);
     // Return vector of all sites
-    ResolvableKeyedVector<const Species *, ResolvableKeyedVector<const SpeciesSite *, double>> &sites();
-    const ResolvableKeyedVector<const Species *, ResolvableKeyedVector<const SpeciesSite *, double>> &sites() const;
+    ResolvableKeyedVector<const SpeciesBaseNode *, ResolvableKeyedVector<const SpeciesSite *, double>> &sites();
+    const ResolvableKeyedVector<const SpeciesBaseNode *, ResolvableKeyedVector<const SpeciesSite *, double>> &sites() const;
     // Return straight vector of all sites
     std::vector<const SpeciesSite *> getSpeciesSites() const;
 
@@ -48,5 +48,5 @@ class SpeciesSites : ResolvableContext
     // Read values from a serialisable value
     void deserialise(const SerialisedValue &node);
     // Resolve internal resolvable name references with supplied data
-    void resolve(const std::map<std::string, const Species *> &speciesInScope) override;
+    void resolve(const std::map<std::string, const SpeciesBaseNode *> &reachableSpecies) override;
 };

@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "classes/species.h"
 #include "classes/speciesAngle.h"
 #include "classes/speciesBond.h"
 #include "classes/speciesTorsion.h"
+#include "nodes/structure/speciesBase.h"
 
 // Add new common bond parameters
-CommonBond &Species::addCommonBond(std::string_view name, std::optional<int> insertAtIndex)
+CommonBond &SpeciesBaseNode::addCommonBond(std::string_view name, std::optional<int> insertAtIndex)
 {
     // Check for existence of common bond already
     if (getCommonBond(name))
@@ -24,7 +24,7 @@ CommonBond &Species::addCommonBond(std::string_view name, std::optional<int> ins
 }
 
 // Remove specified common bond
-void Species::removeCommonBond(const std::shared_ptr<CommonBond> &bond)
+void SpeciesBaseNode::removeCommonBond(const std::shared_ptr<CommonBond> &bond)
 {
     for (auto &b : bonds_)
         if (b.commonTerm() == bond.get())
@@ -34,11 +34,11 @@ void Species::removeCommonBond(const std::shared_ptr<CommonBond> &bond)
 }
 
 // Return list of common bond parameters
-std::vector<std::shared_ptr<CommonBond>> &Species::commonBonds() { return commonBonds_; }
-const std::vector<std::shared_ptr<CommonBond>> &Species::commonBonds() const { return commonBonds_; }
+std::vector<std::shared_ptr<CommonBond>> &SpeciesBaseNode::commonBonds() { return commonBonds_; }
+const std::vector<std::shared_ptr<CommonBond>> &SpeciesBaseNode::commonBonds() const { return commonBonds_; }
 
 // Return whether named common bond parameters exist
-OptionalReferenceWrapper<const CommonBond> Species::getCommonBond(std::string_view name) const
+OptionalReferenceWrapper<const CommonBond> SpeciesBaseNode::getCommonBond(std::string_view name) const
 {
     // Remove leading '@' if necessary
     std::string_view trimmedName = name[0] == '@' ? &name[1] : name;
@@ -50,7 +50,7 @@ OptionalReferenceWrapper<const CommonBond> Species::getCommonBond(std::string_vi
 }
 
 // Return whether named common bond parameters exist
-OptionalReferenceWrapper<CommonBond> Species::getCommonBond(std::string_view name)
+OptionalReferenceWrapper<CommonBond> SpeciesBaseNode::getCommonBond(std::string_view name)
 {
     // Remove leading '@' if necessary
     std::string_view trimmedName = name[0] == '@' ? &name[1] : name;
@@ -62,7 +62,7 @@ OptionalReferenceWrapper<CommonBond> Species::getCommonBond(std::string_view nam
 }
 
 // Add new common angle parameters
-CommonAngle &Species::addCommonAngle(std::string_view name)
+CommonAngle &SpeciesBaseNode::addCommonAngle(std::string_view name)
 {
     // Check for existence of common angle already
     if (getCommonAngle(name))
@@ -73,7 +73,7 @@ CommonAngle &Species::addCommonAngle(std::string_view name)
 }
 
 // Remove specified common angle
-void Species::removeCommonAngle(const std::shared_ptr<CommonAngle> &angle)
+void SpeciesBaseNode::removeCommonAngle(const std::shared_ptr<CommonAngle> &angle)
 {
     for (auto &a : angles_)
         if (a.commonTerm() == angle.get())
@@ -83,11 +83,11 @@ void Species::removeCommonAngle(const std::shared_ptr<CommonAngle> &angle)
 }
 
 // Return list of common angle parameters
-std::vector<std::shared_ptr<CommonAngle>> &Species::commonAngles() { return commonAngles_; }
-const std::vector<std::shared_ptr<CommonAngle>> &Species::commonAngles() const { return commonAngles_; }
+std::vector<std::shared_ptr<CommonAngle>> &SpeciesBaseNode::commonAngles() { return commonAngles_; }
+const std::vector<std::shared_ptr<CommonAngle>> &SpeciesBaseNode::commonAngles() const { return commonAngles_; }
 
 // Return whether named common angle parameters exist
-OptionalReferenceWrapper<CommonAngle> Species::getCommonAngle(std::string_view name)
+OptionalReferenceWrapper<CommonAngle> SpeciesBaseNode::getCommonAngle(std::string_view name)
 {
     // Remove leading '@' if necessary
     std::string_view trimmedName = name[0] == '@' ? &name[1] : name;
@@ -99,7 +99,7 @@ OptionalReferenceWrapper<CommonAngle> Species::getCommonAngle(std::string_view n
 }
 
 // Return whether named common angle parameters exist
-OptionalReferenceWrapper<const CommonAngle> Species::getCommonAngle(std::string_view name) const
+OptionalReferenceWrapper<const CommonAngle> SpeciesBaseNode::getCommonAngle(std::string_view name) const
 {
     // Remove leading '@' if necessary
     std::string_view trimmedName = name[0] == '@' ? &name[1] : name;
@@ -111,7 +111,7 @@ OptionalReferenceWrapper<const CommonAngle> Species::getCommonAngle(std::string_
 }
 
 // Add new common torsion parameters
-CommonTorsion &Species::addCommonTorsion(std::string_view name)
+CommonTorsion &SpeciesBaseNode::addCommonTorsion(std::string_view name)
 {
     // Check for existence of common torsion already
     if (getCommonTorsion(name))
@@ -122,7 +122,7 @@ CommonTorsion &Species::addCommonTorsion(std::string_view name)
 }
 
 // Remove specified common torsion
-void Species::removeCommonTorsion(const std::shared_ptr<CommonTorsion> &torsion)
+void SpeciesBaseNode::removeCommonTorsion(const std::shared_ptr<CommonTorsion> &torsion)
 {
     for (auto &t : torsions_)
         if (t.commonTerm() == torsion.get())
@@ -132,11 +132,11 @@ void Species::removeCommonTorsion(const std::shared_ptr<CommonTorsion> &torsion)
 }
 
 // Return list of common torsion parameters
-std::vector<std::shared_ptr<CommonTorsion>> &Species::commonTorsions() { return commonTorsions_; }
-const std::vector<std::shared_ptr<CommonTorsion>> &Species::commonTorsions() const { return commonTorsions_; }
+std::vector<std::shared_ptr<CommonTorsion>> &SpeciesBaseNode::commonTorsions() { return commonTorsions_; }
+const std::vector<std::shared_ptr<CommonTorsion>> &SpeciesBaseNode::commonTorsions() const { return commonTorsions_; }
 
 // Return whether named common torsion parameters exist
-OptionalReferenceWrapper<const CommonTorsion> Species::getCommonTorsion(std::string_view name) const
+OptionalReferenceWrapper<const CommonTorsion> SpeciesBaseNode::getCommonTorsion(std::string_view name) const
 {
     // Remove leading '@' if necessary
     std::string_view trimmedName = name[0] == '@' ? &name[1] : name;
@@ -148,7 +148,7 @@ OptionalReferenceWrapper<const CommonTorsion> Species::getCommonTorsion(std::str
 }
 
 // Return whether named common torsion parameters exist
-OptionalReferenceWrapper<CommonTorsion> Species::getCommonTorsion(std::string_view name)
+OptionalReferenceWrapper<CommonTorsion> SpeciesBaseNode::getCommonTorsion(std::string_view name)
 {
     // Remove leading '@' if necessary
     std::string_view trimmedName = name[0] == '@' ? &name[1] : name;
@@ -160,7 +160,7 @@ OptionalReferenceWrapper<CommonTorsion> Species::getCommonTorsion(std::string_vi
 }
 
 // Add new common improper parameters
-CommonImproper &Species::addCommonImproper(std::string_view name)
+CommonImproper &SpeciesBaseNode::addCommonImproper(std::string_view name)
 {
     // Check for existence of common improper already
     if (getCommonImproper(name))
@@ -170,8 +170,8 @@ CommonImproper &Species::addCommonImproper(std::string_view name)
     return *commonImpropers_.emplace_back(std::make_shared<CommonImproper>(name));
 }
 
-// Remove specified common Improper
-void Species::removeCommonImproper(const std::shared_ptr<CommonImproper> &improper)
+// Remove specified common improper
+void SpeciesBaseNode::removeCommonImproper(const std::shared_ptr<CommonImproper> &improper)
 {
     for (auto &i : impropers_)
         if (i.commonTerm() == improper.get())
@@ -181,11 +181,11 @@ void Species::removeCommonImproper(const std::shared_ptr<CommonImproper> &improp
 }
 
 // Return list of common improper parameters
-std::vector<std::shared_ptr<CommonImproper>> &Species::commonImpropers() { return commonImpropers_; }
-const std::vector<std::shared_ptr<CommonImproper>> &Species::commonImpropers() const { return commonImpropers_; }
+std::vector<std::shared_ptr<CommonImproper>> &SpeciesBaseNode::commonImpropers() { return commonImpropers_; }
+const std::vector<std::shared_ptr<CommonImproper>> &SpeciesBaseNode::commonImpropers() const { return commonImpropers_; }
 
 // Return whether named common improper parameters exist
-OptionalReferenceWrapper<const CommonImproper> Species::getCommonImproper(std::string_view name) const
+OptionalReferenceWrapper<const CommonImproper> SpeciesBaseNode::getCommonImproper(std::string_view name) const
 {
     // Remove leading '@' if necessary
     std::string_view trimmedName = name[0] == '@' ? &name[1] : name;
@@ -197,7 +197,7 @@ OptionalReferenceWrapper<const CommonImproper> Species::getCommonImproper(std::s
 }
 
 // Return whether named common improper parameters exist
-OptionalReferenceWrapper<CommonImproper> Species::getCommonImproper(std::string_view name)
+OptionalReferenceWrapper<CommonImproper> SpeciesBaseNode::getCommonImproper(std::string_view name)
 {
     // Remove leading '@' if necessary
     std::string_view trimmedName = name[0] == '@' ? &name[1] : name;
@@ -209,7 +209,7 @@ OptionalReferenceWrapper<CommonImproper> Species::getCommonImproper(std::string_
 }
 
 // Clear all common terms
-void Species::clearCommonTerms()
+void SpeciesBaseNode::clearCommonTerms()
 {
     commonBonds_.clear();
     commonAngles_.clear();
@@ -218,7 +218,7 @@ void Species::clearCommonTerms()
 }
 
 // Detach common term links for all interaction types, copying parameters to local SpeciesIntra
-void Species::detachFromCommonTerms()
+void SpeciesBaseNode::detachFromCommonTerms()
 {
     for (auto &bond : bonds_)
         bond.detachFromCommonTerm();
@@ -271,7 +271,7 @@ void generateCommonTerm(Intra &term, std::string_view termName,
 }
 
 // Reduce intramolecular terms to common terms
-void Species::reduceToCommonTerms()
+void SpeciesBaseNode::reduceToCommonTerms()
 {
     // Bonds
     for (auto &bond : bonds_)

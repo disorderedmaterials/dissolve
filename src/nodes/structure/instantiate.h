@@ -27,7 +27,7 @@ class InstantiateNode : public Node
 
     private:
     // Source Species
-    const Species *species_;
+    const SpeciesBaseNode *species_;
     // Target configuration to insert into
     Configuration *configuration_{nullptr};
     // Whether to set the configuration's box with that of the species (if one exists)

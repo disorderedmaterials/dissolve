@@ -9,7 +9,7 @@
 #include <QObject>
 
 // Forward Declarations
-class Species;
+class SpeciesBaseNode;
 
 namespace CommonTermModelData
 {
@@ -36,13 +36,13 @@ class CommonTermModel : public QAbstractTableModel
     Q_OBJECT
 
     public:
-    CommonTermModel(Species *species);
+    CommonTermModel(SpeciesBaseNode *species);
 
     protected:
     // Source Species
-    Species *species_{nullptr};
+    SpeciesBaseNode *species_{nullptr};
     // Icon return function
-    std::function<bool(std::string_view termName, Species *sp)> queryFunction_;
+    std::function<bool(std::string_view termName, SpeciesBaseNode *sp)> queryFunction_;
 
     public:
     // Return model data, by type, for specified term index
@@ -50,7 +50,7 @@ class CommonTermModel : public QAbstractTableModel
     // Set model data, by type, for specified term index
     virtual bool setTermData(int row, CommonTermModelData::DataType dataType, const QVariant &value) = 0;
     // Set function to return QIcon for item
-    void setQueryFunction(std::function<bool(std::string_view termName, Species *sp)> func);
+    void setQueryFunction(std::function<bool(std::string_view termName, SpeciesBaseNode *sp)> func);
 
     /*
      * QAbstractItemModel overrides

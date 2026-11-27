@@ -14,7 +14,7 @@
 
 // Forward Declarations
 class AtomType;
-class Species;
+class SpeciesBaseNode;
 
 /*
  * Isotopologue Definition
@@ -22,7 +22,7 @@ class Species;
 class Isotopologue
 {
     public:
-    Isotopologue(const Species *parent, std::string name = "");
+    Isotopologue(const SpeciesBaseNode *parent, std::string name = "");
     ~Isotopologue() = default;
 
     /*
@@ -30,13 +30,13 @@ class Isotopologue
      */
     private:
     // Parent Species
-    const Species *parent_{nullptr};
+    const SpeciesBaseNode *parent_{nullptr};
     // Descriptive name
     std::string name_;
 
     public:
     // Return parent Species
-    const Species *parent() const;
+    const SpeciesBaseNode *parent() const;
     // Set name of Isotopologue
     void setName(std::string_view name);
     // Return name of Isotopologue

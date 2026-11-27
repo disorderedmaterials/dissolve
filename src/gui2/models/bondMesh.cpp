@@ -2,7 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "gui2/models/bondMesh.h"
-#include "classes/species.h"
+#include "nodes/structure/speciesBase.h"
 
 double BondMesh::scale() const { return scale_; }
 

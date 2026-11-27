@@ -7,7 +7,7 @@
 #include "classes/configuration.h"
 #include "classes/molecule.h"
 #include "classes/potentialMap.h"
-#include "classes/species.h"
+#include "nodes/structure/speciesBase.h"
 #include "templates/algorithms.h"
 #include <iterator>
 

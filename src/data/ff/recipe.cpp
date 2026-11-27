@@ -2,11 +2,11 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "data/ff/recipe.h"
-#include "classes/species.h"
 #include "data/ff/ff.h"
+#include "nodes/structure/speciesBase.h"
 
 // Apply to species
-bool ForcefieldRecipe::apply(Species &species) const
+bool ForcefieldRecipe::apply(SpeciesBaseNode &species) const
 {
     if (!ff)
         return Messenger::error("No forcefield supplied!\n");

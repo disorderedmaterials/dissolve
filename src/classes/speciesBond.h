@@ -11,14 +11,14 @@
 
 // Forward Declarations
 class SpeciesAtom;
-class Species;
+class SpeciesBaseNode;
 
 // SpeciesBond Definition
 class SpeciesBond : public Bond<SpeciesAtom>, public SpeciesIntra<SpeciesBond, BondFunctions>
 {
     public:
     SpeciesBond();
-    SpeciesBond(Species *parent, SpeciesAtom *i, SpeciesAtom *j);
+    SpeciesBond(SpeciesBaseNode *parent, SpeciesAtom *i, SpeciesAtom *j);
     ~SpeciesBond() override;
 
     /*

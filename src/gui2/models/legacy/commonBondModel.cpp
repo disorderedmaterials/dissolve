@@ -2,9 +2,9 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "gui2/models/legacy/commonBondModel.h"
-#include "classes/species.h"
+#include "nodes/structure/speciesBase.h"
 
-CommonBondModel::CommonBondModel(Species *species) : CommonTermModel(species), sourceData_(species->commonBonds())
+CommonBondModel::CommonBondModel(SpeciesBaseNode *species) : CommonTermModel(species), sourceData_(species->commonBonds())
 {
     // Set connections
     modelUpdater.setModel(this);

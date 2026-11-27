@@ -17,7 +17,7 @@ class SiteRDFNodeTest : public ::testing::Test
     protected:
     TestGraph testGraph_;
     IterableGraph *iterator_{nullptr};
-    const Species *water_;
+    const SpeciesBaseNode *water_;
 
     protected:
     // Create graph

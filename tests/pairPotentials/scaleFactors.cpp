@@ -3,7 +3,7 @@
 
 #include "classes/localMolecule.h"
 #include "classes/potentialMap.h"
-#include "classes/species.h"
+#include "nodes/structure/species.h"
 #include <gtest/gtest.h>
 
 namespace UnitTest
@@ -11,7 +11,7 @@ namespace UnitTest
 class PairPotentialsScaleFactorsTest : public ::testing::Test
 {
     public:
-    PairPotentialsScaleFactorsTest() : pairPotentials_(true)
+    PairPotentialsScaleFactorsTest() : pairPotentials_(true), species_{nullptr}
     {
         // Create Species
         species_.load("species/ppScaleFactorTest.toml");
@@ -121,7 +121,7 @@ class PairPotentialsScaleFactorsTest : public ::testing::Test
     AtomType *atC1_{nullptr}, *atC2_{nullptr};
     DoubleKeyedMap<PairPotential> pairPotentials_;
     PotentialMap potentialMap_;
-    Species species_;
+    SpeciesNode species_;
     LocalMolecule molecule_;
 
     // Test potential function and wrapper, equivalent to the one defined in the potential map

@@ -10,14 +10,14 @@
 
 // Forward Declarations
 class SpeciesAtom;
-class Species;
+class SpeciesBaseNode;
 
 // SpeciesImproper Definition
 class SpeciesImproper : public SpeciesIntra<SpeciesImproper, TorsionFunctions>
 {
     public:
     SpeciesImproper();
-    SpeciesImproper(Species *parent, SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l);
+    SpeciesImproper(SpeciesBaseNode *parent, SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l);
     ~SpeciesImproper() override;
 
     /*

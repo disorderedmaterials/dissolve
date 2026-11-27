@@ -4,7 +4,7 @@
 #include "classes/structure.h"
 #include "base/serialiserLibrary.h"
 #include "classes/bond.h"
-#include "classes/species.h"
+#include "nodes/structure/speciesBase.h"
 #include "templates/algorithms.h"
 
 Structure::Structure(const Structure &source) { *this = source; }

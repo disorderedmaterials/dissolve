@@ -13,7 +13,7 @@ class AtomBase;
 class ConfigurationAtom;
 class Box;
 class Matrix3;
-class Species;
+class SpeciesBaseNode;
 
 // Molecule Definition
 class Molecule : public std::enable_shared_from_this<Molecule>
@@ -23,7 +23,7 @@ class Molecule : public std::enable_shared_from_this<Molecule>
      */
     protected:
     // Species that this Molecule represents
-    const Species *species_{nullptr};
+    const SpeciesBaseNode *species_{nullptr};
     // Vector of pointers to Atoms that belong to this Molecule
     std::vector<ConfigurationAtom *> atoms_;
     // Offset of first Atom in main configuration vector
@@ -33,9 +33,9 @@ class Molecule : public std::enable_shared_from_this<Molecule>
 
     public:
     // Set Species that this Molecule represents
-    virtual void setSpecies(const Species *sp);
+    virtual void setSpecies(const SpeciesBaseNode *sp);
     // Return Species that this Molecule represents
-    const Species *species() const;
+    const SpeciesBaseNode *species() const;
     // Add Atom to Molecule
     virtual void addAtom(ConfigurationAtom *i);
     // Return number of atoms in the molecule

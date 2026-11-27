@@ -54,27 +54,27 @@ class TestGraph : public DissolveGraph
     Node *appendNode(const std::string &nodeType, const std::optional<std::string> &name = {});
     // Create species insertion node chain
     Node *createAndInsertSpecies(Node *cfgSourceNode, std::string cfgSourceOutput,
-                                 const std::vector<std::pair<const Species *, int>> &species, double rho,
+                                 const std::vector<std::pair<const SpeciesBaseNode *, int>> &species, double rho,
                                  Units::DensityUnits rhoUnits = Units::DensityUnits::AtomsPerAngstromUnits,
                                  InsertRandomNode::BoxScalingType boxScalingType = InsertRandomNode::BoxScalingType::AddVolume);
 
     public:
     // Find a species corresponding to a species node belonging to the graph of any type
     // (Species/ImportSpecies/AtomicSpecies)Node
-    const Species *findSpecies(std::string name);
+    const SpeciesBaseNode *findSpecies(std::string name);
     // Create atomic species
-    const Species *createAtomicSpecies(Elements::Element element, std::string interactionPotential = "");
+    const SpeciesBaseNode *createAtomicSpecies(Elements::Element element, std::string interactionPotential = "");
     // Import species
-    const Species *importSpecies(std::filesystem::path tomlPath);
+    const SpeciesBaseNode *importSpecies(std::filesystem::path tomlPath);
     // Create a species node with structure and forcefield data sources
     SpeciesNode *createSpeciesFromStructureAndForcefield(std::string name, std::string structureNodeType,
                                                          std::string structureFilePath, std::shared_ptr<Forcefield> ff,
                                                          bool calculateBonding = true);
     // Create basic configuration graph, returning the last node
-    Node *createConfiguration(std::string name, const std::vector<std::pair<const Species *, int>> &species, double rho,
+    Node *createConfiguration(std::string name, const std::vector<std::pair<const SpeciesBaseNode *, int>> &species, double rho,
                               Units::DensityUnits rhoUnits = Units::DensityUnits::AtomsPerAngstromUnits);
     // Create basic configuration graph, returning the last node
-    Node *createConfiguration(std::string name, const std::vector<std::pair<const Species *, int>> &species,
+    Node *createConfiguration(std::string name, const std::vector<std::pair<const SpeciesBaseNode *, int>> &species,
                               const Vector3 &cellLengths, const Vector3 &cellAngles = {90.0, 90.0, 90.0});
     // Append a set coordinates node with a structure import input
     Node *appendSetCoordinates(std::string_view importNodeType, std::string filePath,
@@ -84,9 +84,10 @@ class TestGraph : public DissolveGraph
     // Append GR and SQ nodes
     std::pair<GRNode *, SQNode *> appendGRSQ(bool noAveraging = false, bool noIntraBroadening = false);
     // Create a NeutronSQ node with optional reference data
-    NeutronSQNode *appendNeutronSQ(SQNode *sqNode, std::string name,
-                                   const std::vector<std::tuple<const Species *, std::string, double>> isotopologues = {},
-                                   std::string referenceData = {}, bool isHistogram = true);
+    NeutronSQNode *
+    appendNeutronSQ(SQNode *sqNode, std::string name,
+                    const std::vector<std::tuple<const SpeciesBaseNode *, std::string, double>> isotopologues = {},
+                    std::string referenceData = {}, bool isHistogram = true);
     // Create an XRaySQ node with optional reference data
     XRaySQNode *appendXRaySQ(SQNode *sqNode, std::string name, std::string referenceData = {}, bool isHistogram = true);
 };

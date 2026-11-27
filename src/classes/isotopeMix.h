@@ -3,8 +3,8 @@
 
 #pragma once
 
-#include "classes/species.h"
 #include "data/isotopes.h"
+#include "nodes/structure/speciesBase.h"
 #include "templates/keyedVector.h"
 
 // Forward Declarations
@@ -36,7 +36,7 @@ class IsotopeMix
 
     public:
     // Create mix from Isotopologues
-    void create(const std::map<const Species *, double> &speciesPopulations, const IsotopologueSet &isotopologues);
+    void create(const std::map<const SpeciesBaseNode *, double> &speciesPopulations, const IsotopologueSet &isotopologues);
     // Return types/topes mix
     const KeyedVector<const AtomType *, std::map<Sears91::Isotope, double>> &mix() const;
     // Calculate and return full population of atom type in whole mix

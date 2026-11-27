@@ -5,7 +5,7 @@
 
 // Forward Declarations
 class Forcefield;
-class Species;
+class SpeciesBaseNode;
 
 // Forcefield Recipe
 struct ForcefieldRecipe
@@ -27,5 +27,5 @@ struct ForcefieldRecipe
 
     public:
     // Apply to species
-    bool apply(Species &species) const;
+    bool apply(SpeciesBaseNode &species) const;
 };

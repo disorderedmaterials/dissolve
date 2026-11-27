@@ -3,9 +3,9 @@
 
 #include "gui2/models/legacy/commonTermModel.h"
 
-CommonTermModel::CommonTermModel(Species *species) : species_(species) {}
+CommonTermModel::CommonTermModel(SpeciesBaseNode *species) : species_(species) {}
 
-void CommonTermModel::setQueryFunction(std::function<bool(std::string_view termName, Species *sp)> func)
+void CommonTermModel::setQueryFunction(std::function<bool(std::string_view termName, SpeciesBaseNode *sp)> func)
 {
     queryFunction_ = std::move(func);
 }

@@ -5,7 +5,7 @@
 #include "classes/empiricalFormula.h"
 #include "classes/fragment.h"
 #include "classes/molecule.h"
-#include "classes/species.h"
+#include "nodes/structure/speciesBase.h"
 #include <algorithm>
 #include <format>
 #include <iostream>
