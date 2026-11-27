@@ -10,8 +10,22 @@ SpeciesBaseNode::SpeciesBaseNode(Graph *parentGraph)
     addPointerOutput<const SpeciesBaseNode>("Species", "The species object", *this);
 
     // State data
-    // TODO DISSOLVE2
-    // addStateData("Species", species_);
+    addStateData("atomTypes", atomTypes_);
+    // Serialisable::vector<>(atoms_, "atoms", result);
+    // Serialisable::fromVectorToTable<>(commonBonds_, "commonBonds", result);
+    // Serialisable::vector<>(bonds_, "bonds", result);
+    // Serialisable::fromVectorToTable<>(commonAngles_, "commonAngles", result);
+    // Serialisable::vector<>(angles_, "angles", result);
+    // Serialisable::fromVectorToTable<>(commonTorsions_, "commonTorsions", result);
+    // Serialisable::vector<>(torsions_, "torsions", result);
+    // Serialisable::fromVectorToTable<>(commonImpropers_, "commonImpropers", result);
+    // Serialisable::vector<>(impropers_, "impropers", result);
+    // Serialisable::fromVectorToTable<>(isotopologues_, "isotopologues", result);
+    // Serialisable::fromVectorToTable<>(sites_, "sites", result);
+    // if (box_.type() != Box::BoxType::None)
+    // result["box"] = Serialisable::ser(box_);
+    // Serialisable::vector<>(instances_, "instances", result, [](const auto &instance)
+    // { return Serialisable::vector(instance, [](const auto &v) { return Serialisable::ser(v); }); });
 }
 
 /*
@@ -176,30 +190,6 @@ void SpeciesBaseNode::print() const
 /*
  * Serialisation
  */
-
-// Express as a serialisable value
-void SpeciesBaseNode::serialise(std::string tag, SerialisedValue &target) const
-{
-    auto &result = target[tag];
-    result["name"] = name_;
-
-    Serialisable::fromVectorToTable(atomTypes_, "atomTypes", result);
-    Serialisable::vector<>(atoms_, "atoms", result);
-    Serialisable::fromVectorToTable<>(commonBonds_, "commonBonds", result);
-    Serialisable::vector<>(bonds_, "bonds", result);
-    Serialisable::fromVectorToTable<>(commonAngles_, "commonAngles", result);
-    Serialisable::vector<>(angles_, "angles", result);
-    Serialisable::fromVectorToTable<>(commonTorsions_, "commonTorsions", result);
-    Serialisable::vector<>(torsions_, "torsions", result);
-    Serialisable::fromVectorToTable<>(commonImpropers_, "commonImpropers", result);
-    Serialisable::vector<>(impropers_, "impropers", result);
-    Serialisable::fromVectorToTable<>(isotopologues_, "isotopologues", result);
-    Serialisable::fromVectorToTable<>(sites_, "sites", result);
-    if (box_.type() != Box::BoxType::None)
-        result["box"] = Serialisable::ser(box_);
-    Serialisable::vector<>(instances_, "instances", result, [](const auto &instance)
-                           { return Serialisable::vector(instance, [](const auto &v) { return Serialisable::ser(v); }); });
-}
 
 // Read values from a serialisable value
 void SpeciesBaseNode::deserialise(const SerialisedValue &node)
