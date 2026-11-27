@@ -17,6 +17,7 @@ class SpeciesTorsion : public SpeciesIntra<SpeciesTorsion, TorsionFunctions>
 {
     public:
     SpeciesTorsion();
+    SpeciesTorsion(SpeciesBaseNode *parent);
     SpeciesTorsion(SpeciesBaseNode *parent, SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l);
     ~SpeciesTorsion() override;
 
@@ -88,6 +89,7 @@ class SpeciesTorsion : public SpeciesIntra<SpeciesTorsion, TorsionFunctions>
 class CommonTorsion : public SpeciesTorsion
 {
     public:
+    CommonTorsion() = default;
     explicit CommonTorsion(std::string_view name) : SpeciesTorsion(), name_{name} {};
     using SpeciesIntra<SpeciesTorsion, TorsionFunctions>::deserialise;
 

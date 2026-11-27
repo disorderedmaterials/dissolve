@@ -8,6 +8,8 @@
 
 SpeciesBond::SpeciesBond() : SpeciesIntra(nullptr, BondFunctions::Form::None) {}
 
+SpeciesBond::SpeciesBond(SpeciesBaseNode *parent) : SpeciesIntra(parent, BondFunctions::Form::None) {}
+
 SpeciesBond::SpeciesBond(SpeciesBaseNode *parent, SpeciesAtom *i, SpeciesAtom *j)
     : Bond(i, j), SpeciesIntra(parent, BondFunctions::Form::None)
 {

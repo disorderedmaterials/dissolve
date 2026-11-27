@@ -18,6 +18,7 @@ class SpeciesBond : public Bond<SpeciesAtom>, public SpeciesIntra<SpeciesBond, B
 {
     public:
     SpeciesBond();
+    SpeciesBond(SpeciesBaseNode *parent);
     SpeciesBond(SpeciesBaseNode *parent, SpeciesAtom *i, SpeciesAtom *j);
     ~SpeciesBond() override;
 
@@ -53,6 +54,7 @@ class SpeciesBond : public Bond<SpeciesAtom>, public SpeciesIntra<SpeciesBond, B
 class CommonBond : public SpeciesBond
 {
     public:
+    CommonBond() = default;
     explicit CommonBond(std::string_view name) : SpeciesBond(), name_{name} {};
     using SpeciesIntra<SpeciesBond, BondFunctions>::deserialise;
     /*

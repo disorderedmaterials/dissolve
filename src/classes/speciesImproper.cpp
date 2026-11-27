@@ -8,6 +8,8 @@
 
 SpeciesImproper::SpeciesImproper() : SpeciesIntra(nullptr, TorsionFunctions::Form::None) {}
 
+SpeciesImproper::SpeciesImproper(SpeciesBaseNode *parent) : SpeciesIntra(parent, TorsionFunctions::Form::None) {}
+
 SpeciesImproper::SpeciesImproper(SpeciesBaseNode *parent, SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l)
     : SpeciesIntra(parent, TorsionFunctions::Form::None), i_(i), j_(j), k_(k), l_(l)
 {

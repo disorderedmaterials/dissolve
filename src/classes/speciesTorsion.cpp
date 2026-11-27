@@ -9,6 +9,8 @@
 
 SpeciesTorsion::SpeciesTorsion() : SpeciesIntra(nullptr, TorsionFunctions::Form::None) {}
 
+SpeciesTorsion::SpeciesTorsion(SpeciesBaseNode *parent) : SpeciesIntra(parent, TorsionFunctions::Form::None) {}
+
 SpeciesTorsion::SpeciesTorsion(SpeciesBaseNode *parent, SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l)
     : SpeciesIntra(parent, TorsionFunctions::Form::None), i_(i), j_(j), k_(k), l_(l)
 {

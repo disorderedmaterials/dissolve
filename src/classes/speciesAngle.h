@@ -17,6 +17,7 @@ class SpeciesAngle : public SpeciesIntra<SpeciesAngle, AngleFunctions>
 {
     public:
     SpeciesAngle();
+    SpeciesAngle(SpeciesBaseNode *parent);
     SpeciesAngle(SpeciesBaseNode *parent, SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k);
     ~SpeciesAngle() override;
 
@@ -66,6 +67,7 @@ class SpeciesAngle : public SpeciesIntra<SpeciesAngle, AngleFunctions>
 class CommonAngle : public SpeciesAngle
 {
     public:
+    CommonAngle() = default;
     explicit CommonAngle(std::string_view name) : SpeciesAngle(), name_{name} {};
     using SpeciesIntra<SpeciesAngle, AngleFunctions>::deserialise;
 

@@ -17,6 +17,7 @@ class SpeciesImproper : public SpeciesIntra<SpeciesImproper, TorsionFunctions>
 {
     public:
     SpeciesImproper();
+    SpeciesImproper(SpeciesBaseNode *parent);
     SpeciesImproper(SpeciesBaseNode *parent, SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l);
     ~SpeciesImproper() override;
 
@@ -70,6 +71,7 @@ class SpeciesImproper : public SpeciesIntra<SpeciesImproper, TorsionFunctions>
 class CommonImproper : public SpeciesImproper
 {
     public:
+    CommonImproper() = default;
     explicit CommonImproper(std::string_view name) : SpeciesImproper(), name_{name} {};
     using SpeciesIntra<SpeciesImproper, TorsionFunctions>::deserialise;
 
