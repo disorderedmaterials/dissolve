@@ -27,6 +27,8 @@ class ReplicatedConfigurationNode : public Node
     Configuration *configuration_{nullptr};
     // Repeat amounts
     Vector3i repeat_;
+    // Molecule grouping
+    bool grouping_{false};
     // Supercell configuration
     Configuration replicated_;
 

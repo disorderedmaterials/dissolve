@@ -115,28 +115,3 @@ class CIFAssembly
     // Return the number of defined groups
     int nGroups() const;
 };
-
-// CIF Repeated Molecular Species
-class CIFMolecularSpecies
-{
-    public:
-    CIFMolecularSpecies();
-
-    private:
-    // Species parent for molecule instances
-    std::shared_ptr<Species> species_;
-    // Molecule instances
-    std::vector<LocalMolecule> instances_;
-
-    public:
-    // Return species parent for molecule instances
-    std::shared_ptr<Species> &species();
-    const std::shared_ptr<Species> &species() const;
-    // Return molecule instances
-    const std::vector<LocalMolecule> &instances() const;
-    std::vector<LocalMolecule> &instances();
-    // Append supplied instances to our vector
-    void appendInstances(const std::vector<LocalMolecule> &newInstances);
-    // Return coordinates for all instances as a vector of vectors
-    std::vector<std::vector<Vector3>> allInstanceCoordinates() const;
-};
