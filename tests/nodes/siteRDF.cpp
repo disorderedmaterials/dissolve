@@ -37,7 +37,7 @@ class SiteRDFNodeTest : public ::testing::Test
     SiteRDFNode *createSiteRDFNode(std::pair<std::string, std::string> sites, const RangedVector3 &distanceRange,
                                    bool enableSameMolecule)
     {
-        auto name = "SiteRDF//" + sites.first + "-" + sites.second;
+        auto name = sites.first + "-" + sites.second;
         auto siteRDFNode = dynamic_cast<SiteRDFNode *>(iterator_->createNode("SiteRDF", name));
         EXPECT_TRUE(siteRDFNode);
         EXPECT_TRUE(iterator_->addEdge({testGraph_.fetchHeadName(), "Configuration", name, "Configuration"}));
