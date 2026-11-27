@@ -89,9 +89,50 @@ template <typename DataClass, typename... ConstructorContext> class Serialisable
               })
     {
     }
+    // Vector of shared_ptr Serialisable
+    SerialisableClass(std::string_view key, DataClass &targetData, ConstructorContext... args)
+        requires(is_instance_of_v<DataClass, std::vector> &&
+                 is_instance_of_v<typename DataClass::value_type, std::shared_ptr> &&
+                 Serialisable::Serialisable<typename DataClass::value_type>)
+        : SerialisableData(key), data_(targetData), dataSerialiser_(
+                                                        [&]()
+                                                        {
+                                                            return Serialisable::vector(data_,
+                                                                                        [&](const auto &item)
+                                                                                        {
+                                                                                            SerialisedValue outer;
+                                                                                            item->serialise("inner", outer);
+                                                                                            return outer["inner"];
+                                                                                        });
+                                                        }),
+          dataDeserialiser_(
+              [&](const SerialisedValue &value)
+              {
+                  data_.clear();
+                  Deserialisable::vector(value,
+                                         [&](const auto &node)
+                                         {
+                                             auto shared = std::make_shared<typename DataClass::value_type::element_type>(
+                                                 std::forward<ConstructorContext>(args)...);
+                                             shared->deserialise(node);
+                                             data_.push_back(shared);
+                                         });
+              }),
+          dataChecker_([&]() { return !targetData.empty(); }),
+          dataResolver_(
+              [&](const std::map<std::string, const SpeciesBaseNode *> &reachableSpecies)
+              {
+                  if constexpr (std::is_base_of_v<ResolvableContext, typename DataClass::value_type>)
+                      for (auto &item : data_)
+                          item->resolve(reachableSpecies);
+              })
+    {
+    }
     // Vector of Serialisable
     SerialisableClass(std::string_view key, DataClass &targetData, ConstructorContext... args)
-        requires(is_instance_of_v<DataClass, std::vector> && Serialisable::Serialisable<typename DataClass::value_type>)
+        requires(is_instance_of_v<DataClass, std::vector> &&
+                 !is_instance_of_v<typename DataClass::value_type, std::shared_ptr> &&
+                 Serialisable::Serialisable<typename DataClass::value_type>)
         : SerialisableData(key), data_(targetData), dataSerialiser_(
                                                         [&]()
                                                         {

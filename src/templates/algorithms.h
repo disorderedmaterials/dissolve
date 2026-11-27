@@ -304,6 +304,8 @@ template <class T, template <class...> class U> inline constexpr bool is_instanc
 template <template <class...> class U, class... Vs> inline constexpr bool is_instance_of_v<U<Vs...>, U> = std::true_type{};
 template <typename> constexpr bool is_optional = false;
 template <typename T> constexpr bool is_optional<std::optional<T>> = true;
+template <typename> constexpr bool is_shared_ptr = false;
+template <typename T> constexpr bool is_shared_ptr<std::shared_ptr<T>> = true;
 
 // View that statically casts the elements in a range into a new type
 // given by the template.  For example,
