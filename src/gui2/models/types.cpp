@@ -2,6 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "gui2/models/types.h"
+#include "gui2/models/bondMesh.h"
 #include "gui2/models/dissolveModel.h"
 #include "gui2/models/graphModel.h"
 #include "gui2/models/legacy/atomTypeModel.h"
@@ -31,4 +32,5 @@ void Types::registerDissolveQmlTypes()
     qmlRegisterType<SimpleForcefieldModel>(PROJECT, 1, 0, "SimpleForcefieldModel");
     qmlRegisterType<NodeRegistrySortFilterModel>(PROJECT, 1, 0, "NodeRegistrySortFilterModel");
     qmlRegisterType<NodeMessages>(PROJECT, 1, 0, "NodeMessages");
+    qmlRegisterType<BondMesh>(PROJECT, 1, 0, "BondMesh");
 }

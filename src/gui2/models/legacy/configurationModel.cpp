@@ -73,7 +73,6 @@ QHash<int, QByteArray> ConfigurationMoleculesModel::roleNames() const
 {
     QHash<int, QByteArray> roles;
     roles[ConfigurationMoleculesModelRoles::Atoms] = "atoms";
-    roles[ConfigurationMoleculesModelRoles::Bonds] = "bonds";
     return roles;
 }
 
@@ -83,8 +82,6 @@ QVariant ConfigurationMoleculesModel::data(const QModelIndex &index, int role) c
     {
         case ConfigurationMoleculesModel::ConfigurationMoleculesModelRoles::Atoms:
             return QVariant::fromValue(atoms_[index.row()].get());
-        case ConfigurationMoleculesModel::ConfigurationMoleculesModelRoles::Bonds:
-            return QVariant::fromValue(bonds_[index.row()].get());
     }
     return {};
 }
@@ -93,14 +90,19 @@ void ConfigurationMoleculesModel::reset()
 {
     beginResetModel();
     atoms_.clear();
-    bonds_.clear();
     if (config)
         for (auto &mol : config->molecules())
-        {
             atoms_.emplace_back(std::make_unique<MoleculeAtomsModel>(mol.get()));
-            bonds_.emplace_back(std::make_unique<MoleculeBondsModel>(mol.get()));
-        }
     endResetModel();
+    Q_EMIT(newConfig());
+}
+
+Configuration *ConfigurationMoleculesModel::configuration() const { return config; }
+
+QVector3D ConfigurationMoleculesModel::centre() const
+{
+    auto c = config->box().axisLengths() / 2;
+    return QVector3D(c.x, c.y, c.z);
 }
 
 MoleculeAtomsModel::MoleculeAtomsModel(Molecule *mol) : mol_(mol) {}

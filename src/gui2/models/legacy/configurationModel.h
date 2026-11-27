@@ -60,21 +60,28 @@ class ConfigurationMoleculesModel : public QAbstractListModel
 {
     Q_OBJECT
 
+    Q_PROPERTY(const Configuration *configuration READ configuration NOTIFY newConfig);
+    Q_PROPERTY(const QVector3D centre READ centre NOTIFY newConfig);
+
     enum ConfigurationMoleculesModelRoles
     {
         Atoms = Qt::UserRole + 0,
-        Bonds = Qt::UserRole + 1,
     };
 
     public:
     Configuration *config = nullptr;
     std::vector<std::shared_ptr<MoleculeAtomsModel>> atoms_;
-    std::vector<std::shared_ptr<MoleculeBondsModel>> bonds_;
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
     QHash<int, QByteArray> roleNames() const override;
     void reset();
+
+    Configuration *configuration() const;
+    QVector3D centre() const;
+
+    Q_SIGNALS:
+    void newConfig();
 };
 
 // List the Configuration nodes in a graph, providing access to the
