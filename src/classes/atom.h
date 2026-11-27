@@ -116,7 +116,6 @@ class AtomBase
     public:
     // Express as a serialisable value
     void serialise(std::string tag, SerialisedValue &target) const;
-
     // Read values from a serialisable value
     void deserialise(const SerialisedValue &node);
 };
