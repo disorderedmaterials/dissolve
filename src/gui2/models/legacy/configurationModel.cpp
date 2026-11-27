@@ -2,9 +2,9 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "gui2/models/legacy/configurationModel.h"
-#include "classes/species.h"
 #include "data/elements.h"
 #include "nodes/structure/configuration.h"
+#include "nodes/structure/speciesBase.h"
 #include <QString>
 #include <QVariant>
 #include <QVector3D>
