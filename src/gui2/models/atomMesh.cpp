@@ -2,7 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "gui2/models/atomMesh.h"
-#include "classes/species.h"
+#include "nodes/structure/species.h"
 
 double AtomMesh::scale() const { return scale_; }
 
