@@ -5,6 +5,7 @@
 
 #include "classes/configuration.h"
 #include "classes/structure.h"
+#include "math/data2D.h"
 #include "nodes/node.h"
 
 // Test Node
@@ -18,6 +19,14 @@ class TestNode : public Node
      * Definition
      */
     private:
+    // Current iteration
+    int iteration_{0};
+    // 1D sine data
+    Data1D sineData1D_;
+    // 1D cosine data
+    Data1D cosineData1D_;
+    // 2D sinusoidal data
+    Data2D sinusoidalData2D_;
     // Configuration pointer input
     Configuration *configuration_{nullptr};
     // Optional configuration output
@@ -54,6 +63,14 @@ class TestNode : public Node
     }
     // Return the variant
     TestVariant variant();
+
+    private:
+    // Emplace an example sine dataset with a given phase angle (phi)
+    void emplaceSine(double phi = 0);
+    // Emplace an example cosine dataset with a given phase angle (phi)
+    void emplaceCosine(double phi = 0);
+    // Emplace an example 2D sinusoid dataset with a given phase angle (phi)
+    void shiftSinusoid2D(double phi);
 
     /*
      * Processing

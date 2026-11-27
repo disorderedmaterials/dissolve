@@ -22,7 +22,9 @@ class NodeRegistry
         Graphs,
         Import,
         Math,
-        Structure
+        Structure,
+        Test,
+        Utility
     };
     // Return enum option info for Category
     static EnumOptions<Category> category();

@@ -4,7 +4,7 @@ set(nodeGraphModels_MOC_HDRS
     enumRegistry.h
     exampleGraphModel.h
     graphModelBase.h
-    graphEdgeModel.h
+    graphEdges.h
     graphNodeModel.h
     generatorGraphModel.h
     nodeWrapper.h
@@ -18,7 +18,7 @@ set(nodeGraphModels_MOC_HDRS
 set(nodeGraphModel_SRCS
     enumOptionsModel.cpp
     enumRegistry.cpp
-    graphEdgeModel.cpp
+    graphEdges.cpp
     graphModel.cpp
     graphNodeModel.cpp
     parameterModel.cpp
@@ -28,6 +28,11 @@ set(nodeGraphModel_SRCS
     parameterEndPointsModel.cpp
     bondMesh.cpp
 )
+
+# Plot ###
+set(plotModels_MOC_HDRS plot/plotModelBase.h plot/plot2DModel.h plot/plot1DModel.h plot/renderableModel.h)
+
+set(plotModels_SRCS plot/plotModelBase.cpp plot/plot2DModel.cpp plot/plot1DModel.cpp plot/renderableModel.cpp)
 
 # QML Types ###
 set(# QML type register
@@ -79,7 +84,16 @@ set(legacyModels_SRCS
 
 find_package(Qt6 REQUIRED COMPONENTS Core Qml)
 
-add_library(models2 ${nodeGraphModel_SRCS} ${nodeGraphModel_MOC_SRCS} ${types_SRCS} ${legacyModels_SRCS} ${legacyModels_MOC_SRCS})
+add_library(
+  models2
+  ${nodeGraphModel_SRCS}
+  ${nodeGraphModel_MOC_SRCS}
+  ${types_SRCS}
+  ${legacyModels_SRCS}
+  ${legacyModels_MOC_SRCS}
+  ${plotModels_SRCS}
+  ${plotModels_MOC_SRCS}
+)
 
 target_include_directories(
   models2

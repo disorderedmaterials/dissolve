@@ -6,6 +6,7 @@ import "../Dissolve"
 Rectangle {
     id: root
 
+    required property bool bypass
     required property var imageSource
     required property string summary
 
@@ -18,6 +19,7 @@ Rectangle {
     border.width: 3
     height: width
     radius: width / 2
+    visible: !bypass
     width: 25
 
     HoverHandler {

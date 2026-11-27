@@ -66,7 +66,7 @@ int main(int args, char **argv)
     // If an input file was specified, load it here
     // TODO DISSOLVE2
     if (options.inputFile())
-        dissolveModel.loadInput(QUrl::fromLocalFile(QString(options.inputFile()->c_str())));
+        dissolveModel.loadInput(QUrl::fromLocalFile(QString::fromStdString(options.inputFile()->string())));
     // auto loadSuccessful = dissolveWindow.loadInputFile(options.inputFile().value());
 
     auto result = app.exec();

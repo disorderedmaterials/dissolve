@@ -1,0 +1,63 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2026 Team Dissolve and contributors
+
+#pragma once
+
+#include "gui2/models/plot/plot1DModel.h"
+#include "gui2/models/plot/plot2DModel.h"
+#include "math/data1D.h"
+#include "nodes/node.h"
+#include <QAbstractListModel>
+
+class RenderableModel : public QAbstractListModel
+{
+    Q_OBJECT;
+
+    public:
+    RenderableModel(const Node::NodeParameterMap &outputs);
+    ~RenderableModel() = default;
+
+    struct RenderableData
+    {
+        std::string name;
+        std::variant<const Data1D *, const Data2D *> data;
+    };
+
+    enum Roles
+    {
+        KEY,
+        DATA,
+        DIMENSIONS
+    };
+
+    public:
+    // Set source 1D data
+    bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole);
+
+    private:
+    // Renderable data
+    std::vector<std::pair<std::string, std::unique_ptr<PlotModelBase>>> datasets_;
+    //
+    int nExpectedDatasets_{0};
+
+    public Q_SLOTS:
+    // Update all renderable data
+    void update();
+    // Returns bool - true if there are no renderables associated with this node
+    bool empty();
+    // Returns bool - true if the number of realized datasets matches the number of expected datasets
+    bool renderablesRealized() const;
+
+    /*
+     * QAbstractListModel overrides
+     */
+
+    public:
+    // Return number of edges (required by QAbstractListModel)
+    int rowCount(const QModelIndex &parent = QModelIndex()) const override;
+    // Access edge by QModelIndex.  The correct role can be found in the roleNames function.
+    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
+    Qt::ItemFlags flags(const QModelIndex &index) const override;
+    // Return the mapping between role index and QML value name.  This is required by QAbstractListModel
+    QHash<int, QByteArray> roleNames() const override;
+};
